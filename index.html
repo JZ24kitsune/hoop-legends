@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Zain Game</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #10172f, #1c3470);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 95%;
+    max-width: 850px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.card {
+    background: rgba(10, 15, 35, 0.95);
+    border: 2px solid #4568b8;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+
+input {
+    width: min(90%, 350px);
+    padding: 14px;
+    border-radius: 10px;
+    border: 2px solid #4568b8;
+    background: #080d20;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+button {
+    padding: 13px 25px;
+    margin: 8px;
+    border: none;
+    border-radius: 10px;
+    background: #4d7cff;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #6b92ff;
+    transform: scale(1.03);
+}
+
+#gameScreen {
+    display: none;
+}
+
+.hud {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+#gameArea {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background:
+        radial-gradient(circle at 20% 30%, #18264b 0 2px, transparent 3px),
+        radial-gradient(circle at 70% 70%, #18264b 0 2px, transparent 3px),
+        #070c1c;
+    border: 3px solid #4568b8;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+#player {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    background: #4d7cff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #4d7cff;
+}
+
+.coin {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background: gold;
+    border-radius: 50%;
+    box-shadow: 0 0 18px gold;
+}
+
+.enemy {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    background: #ff405c;
+    border-radius: 50%;
+    box-shadow: 0 0 18px #ff405c;
+}
+
+.enemy::after {
+    content: "👾";
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    font-size: 26px;
+}
+
+#player::after {
+    content: "🧙";
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    font-size: 28px;
+}
+
+.coin::after {
+    content: "🪙";
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    font-size: 24px;
+}
+
+.instructions {
+    color: #c4d0ed;
+    margin: 12px;
+}
+
+#message {
+    min-height: 28px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.game-over {
+    font-size: 28px;
+    margin: 15px;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 30px;
+    }
+
+    #gameArea {
+        height: 400px;
+    }
+
+    .hud {
+        font-size: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- START SCREEN -->
+    <div id="startScreen" class="card">
+
+        <h1>🎮 Crypto Zain Game</h1>
+
+        <p>Welcome to your first web game!</p>
+
+        <p>Enter your username:</p>
+
+        <input
+            id="usernameInput"
+            type="text"
+            maxlength="16"
+            placeholder="Enter username"
+        >
+
+        <br><br>
+
+        <button onclick="startGame()">
+            🚀 PLAY
+        </button>
+
+        <p id="startMessage"></p>
+
+    </div>
+
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen">
+
+        <h1>🎮 Crypto Zain Game</h1>
+
+        <div class="hud">
+
+            <div>
+                👤 <span id="playerName">Player</span>
+            </div>
+
+            <div>
+                ⭐ Score: <span id="score">0</span>
+            </div>
+
+            <div>
+                🏆 Level: <span id="level">1</span>
+            </div>
+
+            <div>
+                ❤️ Lives: <span id="lives">3</span>
+            </div>
+
+        </div>
+
+
+        <div id="gameArea">
+
+            <div id="player"></div>
+
+            <div id="coin" class="coin"></div>
+
+            <div id="enemy1" class="enemy"></div>
+
+            <div id="enemy2" class="enemy"></div>
+
+        </div>
+
+
+        <p class="instructions">
+            🎮 Use the ARROW KEYS to move<br>
+            🪙 Collect coins &nbsp; | &nbsp;
+            👾 Avoid enemies
+        </p>
+
+        <div id="message"></div>
+
+        <button onclick="restartGame()">
+            🔄 Restart
+        </button>
+
+        <button onclick="returnToMenu()">
+            🏠 Menu
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   GAME VARIABLES
+========================= */
+
+let username = "";
+
+let score = 0;
+let lives = 3;
+let level = 1;
+
+let playerX = 40;
+let playerY = 40;
+
+let enemy1X = 400;
+let enemy1Y = 100;
+
+let enemy2X = 600;
+let enemy2Y = 300;
+
+let enemy1DX = 2;
+let enemy1DY = 1.5;
+
+let enemy2DX = -1.8;
+let enemy2DY = 2;
+
+let gameRunning = false;
+
+const playerSpeed = 12;
+
+
+/* =========================
+   GET HTML ELEMENTS
+========================= */
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const gameScreen =
+    document.getElementById("gameScreen");
+
+const usernameInput =
+    document.getElementById("usernameInput");
+
+const startMessage =
+    document.getElementById("startMessage");
+
+const player =
+    document.getElementById("player");
+
+const coin =
+    document.getElementById("coin");
+
+const enemy1 =
+    document.getElementById("enemy1");
+
+const enemy2 =
+    document.getElementById("enemy2");
+
+const gameArea =
+    document.getElementById("gameArea");
+
+const scoreText =
+    document.getElementById("score");
+
+const livesText =
+    document.getElementById("lives");
+
+const levelText =
+    document.getElementById("level");
+
+const playerName =
+    document.getElementById("playerName");
+
+const message =
+    document.getElementById("message");
+
+
+/* =========================
+   START GAME
+========================= */
+
+function startGame() {
+
+    username =
+        usernameInput.value.trim();
+
+    if (username === "") {
+
+        startMessage.textContent =
+            "⚠️ Please enter a username!";
+
+        return;
+    }
+
+    startMessage.textContent = "";
+
+    playerName.textContent =
+        username;
+
+    startScreen.style.display =
+        "none";
+
+    gameScreen.style.display =
+        "block";
+
+    restartGame();
+}
+
+
+/* =========================
+   RESTART GAME
+========================= */
+
+function restartGame() {
+
+    score = 0;
+    lives = 3;
+    level = 1;
+
+    playerX = 40;
+    playerY = 40;
+
+    enemy1X = 400;
+    enemy1Y = 100;
+
+    enemy2X = 600;
+    enemy2Y = 300;
+
+    enemy1DX = 2;
+    enemy1DY = 1.5;
+
+    enemy2DX = -1.8;
+    enemy2DY = 2;
+
+    gameRunning = true;
+
+    message.textContent = "";
+
+    updateHUD();
+
+    moveCoin();
+
+    draw();
+
+}
+
+
+/* =========================
+   PLAYER CONTROLS
+========================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (!gameRunning) {
+            return;
+        }
+
+        if (event.key === "ArrowUp") {
+
+            playerY -= playerSpeed;
+
+        }
+
+        if (event.key === "ArrowDown") {
+
+            playerY += playerSpeed;
+
+        }
+
+        if (event.key === "ArrowLeft") {
+
+            playerX -= playerSpeed;
+
+        }
+
+        if (event.key === "ArrowRight") {
+
+            playerX += playerSpeed;
+
+        }
+
+        keepPlayerInside();
+
+        draw();
+
+    }
+);
+
+
+/* =========================
+   KEEP PLAYER INSIDE
+========================= */
+
+function keepPlayerInside() {
+
+    const maxX =
+        gameArea.clientWidth - 38;
+
+    const maxY =
+        gameArea.clientHeight - 38;
+
+    playerX =
+        Math.max(
+            0,
+            Math.min(maxX, playerX)
+        );
+
+    playerY =
+        Math.max(
+            0,
+            Math.min(maxY, playerY)
+        );
+}
+
+
+/* =========================
+   DRAW EVERYTHING
+========================= */
+
+function draw() {
+
+    player.style.left =
+        playerX + "px";
+
+    player.style.top =
+        playerY + "px";
+
+    enemy1.style.left =
+        enemy1X + "px";
+
+    enemy1.style.top =
+        enemy1Y + "px";
+
+    enemy2.style.left =
+        enemy2X + "px";
+
+    enemy2.style.top =
+        enemy2Y + "px";
+
+}
+
+
+/* =========================
+   RANDOM COIN
+========================= */
+
+function moveCoin() {
+
+    const maxX =
+        gameArea.clientWidth - 30;
+
+    const maxY =
+        gameArea.clientHeight - 30;
+
+    const randomX =
+        Math.random() * maxX;
+
+    const randomY =
+        Math.random() * maxY;
+
+    coin.style.left =
+        randomX + "px";
+
+    coin.style.top =
+        randomY + "px";
+
+}
+
+
+/* =========================
+   COLLISION DETECTION
+========================= */
+
+function isTouching(element1, element2) {
+
+    const rect1 =
+        element1.getBoundingClientRect();
+
+    const rect2 =
+        element2.getBoundingClientRect();
+
+    return !(
+        rect1.right < rect2.left ||
+        rect1.left > rect2.right ||
+        rect1.bottom < rect2.top ||
+        rect1.top > rect2.bottom
+    );
+
+}
+
+
+/* =========================
+   ENEMY MOVEMENT
+========================= */
+
+function moveEnemies() {
+
+    if (!gameRunning) {
+        return;
+    }
+
+    enemy1X += enemy1DX;
+    enemy1Y += enemy1DY;
+
+    enemy2X += enemy2DX;
+    enemy2Y += enemy2DY;
+
+
+    const maxX =
+        gameArea.clientWidth - 38;
+
+    const maxY =
+        gameArea.clientHeight - 38;
+
+
+    if (
+        enemy1X <= 0 ||
+        enemy1X >= maxX
+    ) {
+
+        enemy1DX *= -1;
+
+    }
+
+
+    if (
+        enemy1Y <= 0 ||
+        enemy1Y >= maxY
+    ) {
+
+        enemy1DY *= -1;
+
+    }
+
+
+    if (
+        enemy2X <= 0 ||
+        enemy2X >= maxX
+    ) {
+
+        enemy2DX *= -1;
+
+    }
+
+
+    if (
+        enemy2Y <= 0 ||
+        enemy2Y >= maxY
+    ) {
+
+        enemy2DY *= -1;
+
+    }
+
+
+    draw();
+
+
+    checkCollisions();
+
+}
+
+
+/* =========================
+   COLLISIONS
+========================= */
+
+let enemyCooldown = false;
+
+function checkCollisions() {
+
+
+    /* COIN */
+
+    if (
+        isTouching(
+            player,
+            coin
+        )
+    ) {
+
+        score += 10;
+
+        moveCoin();
+
+        message.textContent =
+            "🪙 +10 points!";
+
+        checkLevel();
+
+    }
+
+
+    /* ENEMY */
+
+    if (
+        !enemyCooldown &&
+        (
+            isTouching(player, enemy1) ||
+            isTouching(player, enemy2)
+        )
+    ) {
+
+        enemyCooldown = true;
+
+        lives--;
+
+        message.textContent =
+            "💥 Ouch! You lost a life!";
+
+        playerX = 40;
+        playerY = 40;
+
+        updateHUD();
+
+
+        setTimeout(
+            function() {
+
+                enemyCooldown = false;
+
+            },
+            1000
+        );
+
+
+        if (lives <= 0) {
+
+            gameOver();
+
+        }
+
+    }
+
+}
+
+
+/* =========================
+   LEVEL SYSTEM
+========================= */
+
+function checkLevel() {
+
+    const newLevel =
+        Math.floor(score / 100) + 1;
+
+    if (newLevel > level) {
+
+        level = newLevel;
+
+        message.textContent =
+            "🚀 LEVEL " +
+            level +
+            "!";
+
+        enemy1DX *= 1.15;
+        enemy1DY *= 1.15;
+
+        enemy2DX *= 1.15;
+        enemy2DY *= 1.15;
+
+    }
+
+    updateHUD();
+
+}
+
+
+/* =========================
+   UPDATE HUD
+========================= */
+
+function updateHUD() {
+
+    scoreText.textContent =
+        score;
+
+    livesText.textContent =
+        lives;
+
+    levelText.textContent =
+        level;
+
+}
+
+
+/* =========================
+   GAME OVER
+========================= */
+
+function gameOver() {
+
+    gameRunning = false;
+
+    message.innerHTML =
+        "💀 GAME OVER!<br>" +
+        username +
+        " scored " +
+        score +
+        " points!";
+
+}
+
+
+/* =========================
+   RETURN TO MENU
+========================= */
+
+function returnToMenu() {
+
+    gameRunning = false;
+
+    gameScreen.style.display =
+        "none";
+
+    startScreen.style.display =
+        "block";
+
+    usernameInput.value =
+        username;
+
+    startMessage.textContent = "";
+
+}
+
+
+/* =========================
+   GAME LOOP
+========================= */
+
+setInterval(
+    moveEnemies,
+    16
+);
+
+
+/* =========================
+   ENTER KEY
+========================= */
+
+usernameInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            startGame();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
