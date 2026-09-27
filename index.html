@@ -1,831 +1,766 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Zain Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoop Legends 3D</title>
 
-<style>
-* {
-    box-sizing: border-box;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #10172f, #1c3470);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #111;
+            font-family: Arial, sans-serif;
+        }
 
-.container {
-    width: 95%;
-    max-width: 850px;
-    text-align: center;
-}
+        #info {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+            color: white;
+            background: rgba(0, 0, 0, 0.65);
+            padding: 14px 18px;
+            border-radius: 12px;
+        }
 
-h1 {
-    font-size: 42px;
-    margin-bottom: 10px;
-}
+        #info h1 {
+            margin: 0 0 8px;
+            font-size: 22px;
+        }
 
-.card {
-    background: rgba(10, 15, 35, 0.95);
-    border: 2px solid #4568b8;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
-}
+        #info p {
+            margin: 4px 0;
+        }
 
-input {
-    width: min(90%, 350px);
-    padding: 14px;
-    border-radius: 10px;
-    border: 2px solid #4568b8;
-    background: #080d20;
-    color: white;
-    font-size: 18px;
-    text-align: center;
-}
+        #scoreboard {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 18px;
+        }
 
-button {
-    padding: 13px 25px;
-    margin: 8px;
-    border: none;
-    border-radius: 10px;
-    background: #4d7cff;
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-}
+        #score {
+            font-size: 30px;
+            font-weight: bold;
+        }
 
-button:hover {
-    background: #6b92ff;
-    transform: scale(1.03);
-}
-
-#gameScreen {
-    display: none;
-}
-
-.hud {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 12px;
-    font-size: 18px;
-}
-
-#gameArea {
-    position: relative;
-    width: 100%;
-    height: 480px;
-    background:
-        radial-gradient(circle at 20% 30%, #18264b 0 2px, transparent 3px),
-        radial-gradient(circle at 70% 70%, #18264b 0 2px, transparent 3px),
-        #070c1c;
-    border: 3px solid #4568b8;
-    border-radius: 18px;
-    overflow: hidden;
-}
-
-#player {
-    position: absolute;
-    width: 38px;
-    height: 38px;
-    background: #4d7cff;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #4d7cff;
-}
-
-.coin {
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    background: gold;
-    border-radius: 50%;
-    box-shadow: 0 0 18px gold;
-}
-
-.enemy {
-    position: absolute;
-    width: 38px;
-    height: 38px;
-    background: #ff405c;
-    border-radius: 50%;
-    box-shadow: 0 0 18px #ff405c;
-}
-
-.enemy::after {
-    content: "👾";
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    font-size: 26px;
-}
-
-#player::after {
-    content: "🧙";
-    position: absolute;
-    left: 2px;
-    top: 2px;
-    font-size: 28px;
-}
-
-.coin::after {
-    content: "🪙";
-    position: absolute;
-    left: 1px;
-    top: 1px;
-    font-size: 24px;
-}
-
-.instructions {
-    color: #c4d0ed;
-    margin: 12px;
-}
-
-#message {
-    min-height: 28px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.game-over {
-    font-size: 28px;
-    margin: 15px;
-}
-
-@media (max-width: 600px) {
-    h1 {
-        font-size: 30px;
-    }
-
-    #gameArea {
-        height: 400px;
-    }
-
-    .hud {
-        font-size: 14px;
-    }
-}
-</style>
+        #message {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
-
-    <!-- START SCREEN -->
-    <div id="startScreen" class="card">
-
-        <h1>🎮 Crypto Zain Game</h1>
-
-        <p>Welcome to your first web game!</p>
-
-        <p>Enter your username:</p>
-
-        <input
-            id="usernameInput"
-            type="text"
-            maxlength="16"
-            placeholder="Enter username"
-        >
-
-        <br><br>
-
-        <button onclick="startGame()">
-            🚀 PLAY
-        </button>
-
-        <p id="startMessage"></p>
-
-    </div>
-
-
-    <!-- GAME SCREEN -->
-    <div id="gameScreen">
-
-        <h1>🎮 Crypto Zain Game</h1>
-
-        <div class="hud">
-
-            <div>
-                👤 <span id="playerName">Player</span>
-            </div>
-
-            <div>
-                ⭐ Score: <span id="score">0</span>
-            </div>
-
-            <div>
-                🏆 Level: <span id="level">1</span>
-            </div>
-
-            <div>
-                ❤️ Lives: <span id="lives">3</span>
-            </div>
-
-        </div>
-
-
-        <div id="gameArea">
-
-            <div id="player"></div>
-
-            <div id="coin" class="coin"></div>
-
-            <div id="enemy1" class="enemy"></div>
-
-            <div id="enemy2" class="enemy"></div>
-
-        </div>
-
-
-        <p class="instructions">
-            🎮 Use the ARROW KEYS to move<br>
-            🪙 Collect coins &nbsp; | &nbsp;
-            👾 Avoid enemies
-        </p>
-
-        <div id="message"></div>
-
-        <button onclick="restartGame()">
-            🔄 Restart
-        </button>
-
-        <button onclick="returnToMenu()">
-            🏠 Menu
-        </button>
-
-    </div>
-
+<div id="info">
+    <h1>🏀 Hoop Legends 3D</h1>
+    <p>W A S D — Move</p>
+    <p>SPACE — Shoot</p>
+    <p>SHIFT — Sprint</p>
 </div>
 
+<div id="scoreboard">
+    HOME<br>
+    <span id="score">0 - 0</span>
+</div>
 
-<script>
+<div id="message">
+    Welcome to the court!
+</div>
 
-/* =========================
-   GAME VARIABLES
-========================= */
+<script type="module">
 
-let username = "";
-
-let score = 0;
-let lives = 3;
-let level = 1;
-
-let playerX = 40;
-let playerY = 40;
-
-let enemy1X = 400;
-let enemy1Y = 100;
-
-let enemy2X = 600;
-let enemy2Y = 300;
-
-let enemy1DX = 2;
-let enemy1DY = 1.5;
-
-let enemy2DX = -1.8;
-let enemy2DY = 2;
-
-let gameRunning = false;
-
-const playerSpeed = 12;
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 
 
-/* =========================
-   GET HTML ELEMENTS
-========================= */
+// =====================================
+// SCENE
+// =====================================
 
-const startScreen =
-    document.getElementById("startScreen");
+const scene = new THREE.Scene();
 
-const gameScreen =
-    document.getElementById("gameScreen");
+scene.background = new THREE.Color(0x87ceeb);
 
-const usernameInput =
-    document.getElementById("usernameInput");
 
-const startMessage =
-    document.getElementById("startMessage");
+// =====================================
+// CAMERA
+// =====================================
+
+const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
+
+camera.position.set(0, 12, 18);
+
+
+// =====================================
+// RENDERER
+// =====================================
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.shadowMap.enabled = true;
+
+document.body.appendChild(renderer.domElement);
+
+
+// =====================================
+// LIGHTING
+// =====================================
+
+const sunlight = new THREE.DirectionalLight(
+    0xffffff,
+    2
+);
+
+sunlight.position.set(
+    10,
+    20,
+    10
+);
+
+sunlight.castShadow = true;
+
+scene.add(sunlight);
+
+
+const ambientLight = new THREE.AmbientLight(
+    0xffffff,
+    0.7
+);
+
+scene.add(ambientLight);
+
+
+// =====================================
+// COURT
+// =====================================
+
+const courtGeometry =
+    new THREE.BoxGeometry(
+        28,
+        0.4,
+        15
+    );
+
+const courtMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xc98245
+    });
+
+const court =
+    new THREE.Mesh(
+        courtGeometry,
+        courtMaterial
+    );
+
+court.receiveShadow = true;
+
+scene.add(court);
+
+
+// =====================================
+// COURT LINES
+// =====================================
+
+function makeLine(
+    x,
+    y,
+    z,
+    width,
+    height,
+    depth
+) {
+
+    const geometry =
+        new THREE.BoxGeometry(
+            width,
+            height,
+            depth
+        );
+
+    const material =
+        new THREE.MeshBasicMaterial({
+            color: 0xffffff
+        });
+
+    const line =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    line.position.set(
+        x,
+        y,
+        z
+    );
+
+    scene.add(line);
+}
+
+
+// Center line
+
+makeLine(
+    0,
+    0.22,
+    0,
+    0.12,
+    0.03,
+    15
+);
+
+
+// =====================================
+// CENTER CIRCLE
+// =====================================
+
+const circleGeometry =
+    new THREE.RingGeometry(
+        2.3,
+        2.38,
+        64
+    );
+
+const circleMaterial =
+    new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        side: THREE.DoubleSide
+    });
+
+const centerCircle =
+    new THREE.Mesh(
+        circleGeometry,
+        circleMaterial
+    );
+
+centerCircle.rotation.x =
+    -Math.PI / 2;
+
+centerCircle.position.y =
+    0.23;
+
+scene.add(centerCircle);
+
+
+// =====================================
+// BACKBOARD
+// =====================================
+
+function createHoop(z) {
+
+    // Backboard
+
+    const boardGeometry =
+        new THREE.BoxGeometry(
+            5,
+            3,
+            0.25
+        );
+
+    const boardMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xffffff
+        });
+
+    const board =
+        new THREE.Mesh(
+            boardGeometry,
+            boardMaterial
+        );
+
+    board.position.set(
+        0,
+        4,
+        z
+    );
+
+    board.castShadow = true;
+
+    scene.add(board);
+
+
+    // Rim
+
+    const rimGeometry =
+        new THREE.TorusGeometry(
+            0.75,
+            0.12,
+            16,
+            32
+        );
+
+    const rimMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xff4500
+        });
+
+    const rim =
+        new THREE.Mesh(
+            rimGeometry,
+            rimMaterial
+        );
+
+    rim.rotation.x =
+        Math.PI / 2;
+
+    rim.position.set(
+        0,
+        2.9,
+        z > 0 ? z - 0.8 : z + 0.8
+    );
+
+    scene.add(rim);
+
+
+    // Pole
+
+    const poleGeometry =
+        new THREE.CylinderGeometry(
+            0.25,
+            0.25,
+            4,
+            16
+        );
+
+    const poleMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x333333
+        });
+
+    const pole =
+        new THREE.Mesh(
+            poleGeometry,
+            poleMaterial
+        );
+
+    pole.position.set(
+        0,
+        2,
+        z
+    );
+
+    scene.add(pole);
+}
+
+
+createHoop(7);
+createHoop(-7);
+
+
+// =====================================
+// PLAYER
+// =====================================
 
 const player =
-    document.getElementById("player");
-
-const coin =
-    document.getElementById("coin");
-
-const enemy1 =
-    document.getElementById("enemy1");
-
-const enemy2 =
-    document.getElementById("enemy2");
-
-const gameArea =
-    document.getElementById("gameArea");
-
-const scoreText =
-    document.getElementById("score");
-
-const livesText =
-    document.getElementById("lives");
-
-const levelText =
-    document.getElementById("level");
-
-const playerName =
-    document.getElementById("playerName");
-
-const message =
-    document.getElementById("message");
+    new THREE.Group();
 
 
-/* =========================
-   START GAME
-========================= */
+// Body
 
-function startGame() {
+const bodyGeometry =
+    new THREE.BoxGeometry(
+        1,
+        2,
+        0.7
+    );
 
-    username =
-        usernameInput.value.trim();
+const bodyMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x2455ff
+    });
 
-    if (username === "") {
+const body =
+    new THREE.Mesh(
+        bodyGeometry,
+        bodyMaterial
+    );
 
-        startMessage.textContent =
-            "⚠️ Please enter a username!";
+body.position.y =
+    1.2;
 
-        return;
-    }
+body.castShadow = true;
 
-    startMessage.textContent = "";
-
-    playerName.textContent =
-        username;
-
-    startScreen.style.display =
-        "none";
-
-    gameScreen.style.display =
-        "block";
-
-    restartGame();
-}
+player.add(body);
 
 
-/* =========================
-   RESTART GAME
-========================= */
+// Head
 
-function restartGame() {
+const headGeometry =
+    new THREE.SphereGeometry(
+        0.45,
+        24,
+        24
+    );
 
-    score = 0;
-    lives = 3;
-    level = 1;
+const headMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xd89b72
+    });
 
-    playerX = 40;
-    playerY = 40;
+const head =
+    new THREE.Mesh(
+        headGeometry,
+        headMaterial
+    );
 
-    enemy1X = 400;
-    enemy1Y = 100;
+head.position.y =
+    2.65;
 
-    enemy2X = 600;
-    enemy2Y = 300;
+head.castShadow = true;
 
-    enemy1DX = 2;
-    enemy1DY = 1.5;
-
-    enemy2DX = -1.8;
-    enemy2DY = 2;
-
-    gameRunning = true;
-
-    message.textContent = "";
-
-    updateHUD();
-
-    moveCoin();
-
-    draw();
-
-}
+player.add(head);
 
 
-/* =========================
-   PLAYER CONTROLS
-========================= */
+// Player position
+
+player.position.set(
+    0,
+    0,
+    3
+);
+
+scene.add(player);
+
+
+// =====================================
+// BASKETBALL
+// =====================================
+
+const ballGeometry =
+    new THREE.SphereGeometry(
+        0.35,
+        24,
+        24
+    );
+
+const ballMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xe87920
+    });
+
+const ball =
+    new THREE.Mesh(
+        ballGeometry,
+        ballMaterial
+    );
+
+ball.castShadow = true;
+
+ball.position.set(
+    0.8,
+    1,
+    3
+);
+
+scene.add(ball);
+
+
+// =====================================
+// CONTROLS
+// =====================================
+
+const keys = {};
 
 document.addEventListener(
     "keydown",
     function(event) {
 
-        if (!gameRunning) {
-            return;
+        keys[event.key.toLowerCase()] = true;
+
+        if (event.code === "Space") {
+            shoot();
         }
-
-        if (event.key === "ArrowUp") {
-
-            playerY -= playerSpeed;
-
-        }
-
-        if (event.key === "ArrowDown") {
-
-            playerY += playerSpeed;
-
-        }
-
-        if (event.key === "ArrowLeft") {
-
-            playerX -= playerSpeed;
-
-        }
-
-        if (event.key === "ArrowRight") {
-
-            playerX += playerSpeed;
-
-        }
-
-        keepPlayerInside();
-
-        draw();
-
     }
 );
 
 
-/* =========================
-   KEEP PLAYER INSIDE
-========================= */
+document.addEventListener(
+    "keyup",
+    function(event) {
 
-function keepPlayerInside() {
-
-    const maxX =
-        gameArea.clientWidth - 38;
-
-    const maxY =
-        gameArea.clientHeight - 38;
-
-    playerX =
-        Math.max(
-            0,
-            Math.min(maxX, playerX)
-        );
-
-    playerY =
-        Math.max(
-            0,
-            Math.min(maxY, playerY)
-        );
-}
+        keys[event.key.toLowerCase()] = false;
+    }
+);
 
 
-/* =========================
-   DRAW EVERYTHING
-========================= */
+// =====================================
+// SHOOTING
+// =====================================
 
-function draw() {
+let ballFlying = false;
 
-    player.style.left =
-        playerX + "px";
+let shotTime = 0;
 
-    player.style.top =
-        playerY + "px";
+function shoot() {
 
-    enemy1.style.left =
-        enemy1X + "px";
-
-    enemy1.style.top =
-        enemy1Y + "px";
-
-    enemy2.style.left =
-        enemy2X + "px";
-
-    enemy2.style.top =
-        enemy2Y + "px";
-
-}
-
-
-/* =========================
-   RANDOM COIN
-========================= */
-
-function moveCoin() {
-
-    const maxX =
-        gameArea.clientWidth - 30;
-
-    const maxY =
-        gameArea.clientHeight - 30;
-
-    const randomX =
-        Math.random() * maxX;
-
-    const randomY =
-        Math.random() * maxY;
-
-    coin.style.left =
-        randomX + "px";
-
-    coin.style.top =
-        randomY + "px";
-
-}
-
-
-/* =========================
-   COLLISION DETECTION
-========================= */
-
-function isTouching(element1, element2) {
-
-    const rect1 =
-        element1.getBoundingClientRect();
-
-    const rect2 =
-        element2.getBoundingClientRect();
-
-    return !(
-        rect1.right < rect2.left ||
-        rect1.left > rect2.right ||
-        rect1.bottom < rect2.top ||
-        rect1.top > rect2.bottom
-    );
-
-}
-
-
-/* =========================
-   ENEMY MOVEMENT
-========================= */
-
-function moveEnemies() {
-
-    if (!gameRunning) {
+    if (ballFlying) {
         return;
     }
 
-    enemy1X += enemy1DX;
-    enemy1Y += enemy1DY;
+    ballFlying = true;
 
-    enemy2X += enemy2DX;
-    enemy2Y += enemy2DY;
+    shotTime = 0;
 
-
-    const maxX =
-        gameArea.clientWidth - 38;
-
-    const maxY =
-        gameArea.clientHeight - 38;
-
-
-    if (
-        enemy1X <= 0 ||
-        enemy1X >= maxX
-    ) {
-
-        enemy1DX *= -1;
-
-    }
-
-
-    if (
-        enemy1Y <= 0 ||
-        enemy1Y >= maxY
-    ) {
-
-        enemy1DY *= -1;
-
-    }
-
-
-    if (
-        enemy2X <= 0 ||
-        enemy2X >= maxX
-    ) {
-
-        enemy2DX *= -1;
-
-    }
-
-
-    if (
-        enemy2Y <= 0 ||
-        enemy2Y >= maxY
-    ) {
-
-        enemy2DY *= -1;
-
-    }
-
-
-    draw();
-
-
-    checkCollisions();
-
+    document.getElementById(
+        "message"
+    ).textContent =
+        "🏀 SHOT!";
 }
 
 
-/* =========================
-   COLLISIONS
-========================= */
+// =====================================
+// GAME VARIABLES
+// =====================================
 
-let enemyCooldown = false;
+let homeScore = 0;
+let awayScore = 0;
 
-function checkCollisions() {
 
+// =====================================
+// UPDATE PLAYER
+// =====================================
 
-    /* COIN */
+function updatePlayer() {
 
-    if (
-        isTouching(
-            player,
-            coin
-        )
-    ) {
+    let speed = 0.12;
 
-        score += 10;
-
-        moveCoin();
-
-        message.textContent =
-            "🪙 +10 points!";
-
-        checkLevel();
-
+    if (keys["shift"]) {
+        speed = 0.22;
     }
 
 
-    /* ENEMY */
+    if (keys["w"]) {
+        player.position.z -= speed;
+    }
 
-    if (
-        !enemyCooldown &&
-        (
-            isTouching(player, enemy1) ||
-            isTouching(player, enemy2)
-        )
-    ) {
+    if (keys["s"]) {
+        player.position.z += speed;
+    }
 
-        enemyCooldown = true;
+    if (keys["a"]) {
+        player.position.x -= speed;
+    }
 
-        lives--;
-
-        message.textContent =
-            "💥 Ouch! You lost a life!";
-
-        playerX = 40;
-        playerY = 40;
-
-        updateHUD();
+    if (keys["d"]) {
+        player.position.x += speed;
+    }
 
 
-        setTimeout(
-            function() {
+    // Keep player on court
 
-                enemyCooldown = false;
-
-            },
-            1000
+    player.position.x =
+        THREE.MathUtils.clamp(
+            player.position.x,
+            -13,
+            13
         );
 
+    player.position.z =
+        THREE.MathUtils.clamp(
+            player.position.z,
+            -6.5,
+            6.5
+        );
+}
 
-        if (lives <= 0) {
 
-            gameOver();
+// =====================================
+// BALL
+// =====================================
+
+function updateBall() {
+
+    if (!ballFlying) {
+
+        ball.position.x =
+            player.position.x + 0.8;
+
+        ball.position.z =
+            player.position.z;
+
+        ball.position.y =
+            1;
+
+        return;
+    }
+
+
+    shotTime += 0.025;
+
+
+    ball.position.x =
+        player.position.x;
+
+    ball.position.z =
+        player.position.z -
+        shotTime * 8;
+
+    ball.position.y =
+        1 +
+        Math.sin(
+            shotTime * Math.PI
+        ) * 4;
+
+
+    if (shotTime >= 1) {
+
+        ballFlying = false;
+
+        const distance =
+            Math.abs(
+                ball.position.z - 6
+            );
+
+
+        if (distance < 2) {
+
+            homeScore += 2;
+
+            document.getElementById(
+                "message"
+            ).textContent =
+                "🔥 BUCKET! +2";
+
+        } else {
+
+            document.getElementById(
+                "message"
+            ).textContent =
+                "❌ Miss!";
 
         }
 
+
+        updateScore();
     }
-
 }
 
 
-/* =========================
-   LEVEL SYSTEM
-========================= */
+// =====================================
+// SCOREBOARD
+// =====================================
 
-function checkLevel() {
+function updateScore() {
 
-    const newLevel =
-        Math.floor(score / 100) + 1;
-
-    if (newLevel > level) {
-
-        level = newLevel;
-
-        message.textContent =
-            "🚀 LEVEL " +
-            level +
-            "!";
-
-        enemy1DX *= 1.15;
-        enemy1DY *= 1.15;
-
-        enemy2DX *= 1.15;
-        enemy2DY *= 1.15;
-
-    }
-
-    updateHUD();
-
+    document.getElementById(
+        "score"
+    ).textContent =
+        homeScore +
+        " - " +
+        awayScore;
 }
 
 
-/* =========================
-   UPDATE HUD
-========================= */
+// =====================================
+// CAMERA
+// =====================================
 
-function updateHUD() {
+function updateCamera() {
 
-    scoreText.textContent =
-        score;
+    const targetX =
+        player.position.x;
 
-    livesText.textContent =
-        lives;
+    const targetZ =
+        player.position.z + 10;
 
-    levelText.textContent =
-        level;
 
+    camera.position.x +=
+        (targetX -
+        camera.position.x) * 0.08;
+
+
+    camera.position.z +=
+        (targetZ -
+        camera.position.z) * 0.08;
+
+
+    camera.lookAt(
+        player.position.x,
+        1,
+        player.position.z
+    );
 }
 
 
-/* =========================
-   GAME OVER
-========================= */
+// =====================================
+// ANIMATION LOOP
+// =====================================
 
-function gameOver() {
+function animate() {
 
-    gameRunning = false;
+    requestAnimationFrame(
+        animate
+    );
 
-    message.innerHTML =
-        "💀 GAME OVER!<br>" +
-        username +
-        " scored " +
-        score +
-        " points!";
 
+    updatePlayer();
+
+    updateBall();
+
+    updateCamera();
+
+
+    renderer.render(
+        scene,
+        camera
+    );
 }
 
 
-/* =========================
-   RETURN TO MENU
-========================= */
-
-function returnToMenu() {
-
-    gameRunning = false;
-
-    gameScreen.style.display =
-        "none";
-
-    startScreen.style.display =
-        "block";
-
-    usernameInput.value =
-        username;
-
-    startMessage.textContent = "";
-
-}
+animate();
 
 
-/* =========================
-   GAME LOOP
-========================= */
+// =====================================
+// WINDOW RESIZE
+// =====================================
 
-setInterval(
-    moveEnemies,
-    16
-);
+window.addEventListener(
+    "resize",
+    function() {
 
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
 
-/* =========================
-   ENTER KEY
-========================= */
+        camera.updateProjectionMatrix();
 
-usernameInput.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (event.key === "Enter") {
-
-            startGame();
-
-        }
-
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
     }
 );
 
