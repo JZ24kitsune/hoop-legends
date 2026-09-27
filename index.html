@@ -1,2224 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Hoop Legends 3D</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+    <title>Hoop Legends 3D</title>
 
-body{
-    background:#080b12;
-    color:white;
-    font-family:Arial,Helvetica,sans-serif;
-    overflow:hidden;
-}
-
-button,
-select,
-input{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-.screen{
-    position:absolute;
-    inset:0;
-    display:none;
-}
-
-.screen.active{
-    display:flex;
-}
-
-/* =========================
-   MAIN MENU
-========================= */
-
-#menu{
-    align-items:center;
-    justify-content:center;
-    background:
-        radial-gradient(circle at 50% 20%,#24395d,#080b12 65%);
-}
-
-.menuBox{
-    width:min(650px,92%);
-    padding:40px;
-    text-align:center;
-    border:1px solid #3c4c68;
-    border-radius:24px;
-    background:rgba(10,15,25,.94);
-    box-shadow:0 20px 80px rgba(0,0,0,.5);
-}
-
-.logo{
-    font-size:clamp(42px,8vw,78px);
-    font-weight:900;
-    letter-spacing:-4px;
-    margin-bottom:8px;
-}
-
-.subtitle{
-    color:#9daac0;
-    margin-bottom:32px;
-}
-
-.menuButtons{
-    display:grid;
-    gap:12px;
-}
-
-.menuButton{
-    border:0;
-    border-radius:14px;
-    padding:16px;
-    background:#1c2739;
-    color:white;
-    font-weight:bold;
-    transition:.15s;
-}
-
-.menuButton:hover{
-    transform:translateY(-2px);
-    background:#273650;
-}
-
-.menuButton.primary{
-    background:#f39a27;
-    color:#111;
-}
-
-/* =========================
-   CREATOR
-========================= */
-
-#creator{
-    align-items:center;
-    justify-content:center;
-    background:#0c111b;
-    overflow:auto;
-    padding:20px;
-}
-
-.creatorBox{
-    width:min(950px,96%);
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-    background:#121a27;
-    border:1px solid #34445e;
-    border-radius:22px;
-    padding:25px;
-}
-
-.preview{
-    min-height:500px;
-    border-radius:18px;
-    background:
-        radial-gradient(circle at 50% 25%,#364c6b,#111824 55%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-}
-
-.previewLabel{
-    position:absolute;
-    top:15px;
-    left:15px;
-    color:#aebbd0;
-}
-
-.avatar{
-    width:160px;
-    height:300px;
-    position:relative;
-}
-
-/* simple character */
-
-.avatar .head{
-    position:absolute;
-    width:105px;
-    height:105px;
-    left:27px;
-    top:10px;
-    border-radius:50%;
-    background:#b97850;
-}
-
-.avatar .hair{
-    position:absolute;
-    width:110px;
-    height:55px;
-    left:24px;
-    top:3px;
-    border-radius:55px 55px 20px 20px;
-    background:#171717;
-    z-index:3;
-}
-
-.avatar .eye{
-    position:absolute;
-    width:10px;
-    height:10px;
-    border-radius:50%;
-    background:#222;
-    top:52px;
-    z-index:5;
-}
-
-.avatar .eye.left{
-    left:52px;
-}
-
-.avatar .eye.right{
-    left:93px;
-}
-
-.avatar .brow{
-    position:absolute;
-    width:22px;
-    height:5px;
-    background:#171717;
-    top:43px;
-    z-index:5;
-}
-
-.avatar .brow.left{
-    left:45px;
-    transform:rotate(-5deg);
-}
-
-.avatar .brow.right{
-    left:88px;
-    transform:rotate(5deg);
-}
-
-.avatar .nose{
-    position:absolute;
-    width:9px;
-    height:20px;
-    left:75px;
-    top:57px;
-    border-right:3px solid rgba(0,0,0,.25);
-    z-index:5;
-}
-
-.avatar .mouth{
-    position:absolute;
-    width:30px;
-    height:10px;
-    left:65px;
-    top:83px;
-    border-bottom:3px solid #692e35;
-    border-radius:50%;
-    z-index:5;
-}
-
-.avatar .body{
-    position:absolute;
-    width:125px;
-    height:125px;
-    left:18px;
-    top:110px;
-    background:#e75b32;
-    border-radius:20px 20px 8px 8px;
-}
-
-.avatar .number{
-    position:absolute;
-    left:57px;
-    top:145px;
-    z-index:5;
-    font-size:35px;
-    font-weight:900;
-}
-
-.avatar .arm{
-    position:absolute;
-    width:30px;
-    height:110px;
-    top:120px;
-    background:#b97850;
-    border-radius:20px;
-}
-
-.avatar .arm.left{
-    left:-5px;
-    transform:rotate(8deg);
-}
-
-.avatar .arm.right{
-    right:-5px;
-    transform:rotate(-8deg);
-}
-
-.avatar .leg{
-    position:absolute;
-    width:38px;
-    height:105px;
-    top:220px;
-    background:#202938;
-    border-radius:8px;
-}
-
-.avatar .leg.left{
-    left:37px;
-}
-
-.avatar .leg.right{
-    right:37px;
-}
-
-.controls h2{
-    margin-bottom:15px;
-}
-
-.field{
-    margin-bottom:13px;
-}
-
-.field label{
-    display:block;
-    color:#aebbd0;
-    font-size:13px;
-    margin-bottom:6px;
-}
-
-.field input,
-.field select{
-    width:100%;
-    border:1px solid #3c4b63;
-    background:#0b111b;
-    color:white;
-    border-radius:9px;
-    padding:11px;
-}
-
-.creatorButtons{
-    display:flex;
-    gap:10px;
-    margin-top:20px;
-}
-
-.creatorButtons button{
-    flex:1;
-    padding:13px;
-    border:0;
-    border-radius:10px;
-    font-weight:bold;
-}
-
-.startBtn{
-    background:#f39a27;
-    color:#111;
-}
-
-.backBtn{
-    background:#283449;
-    color:white;
-}
-
-/* =========================
-   GAME
-========================= */
-
-#game{
-    background:#05070b;
-}
-
-#gameCanvas{
-    position:absolute;
-    inset:0;
-}
-
-.hud{
-    position:absolute;
-    top:15px;
-    left:50%;
-    transform:translateX(-50%);
-    min-width:min(500px,90%);
-    text-align:center;
-    pointer-events:none;
-}
-
-.scoreboard{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    align-items:center;
-    background:rgba(5,8,13,.82);
-    border:1px solid #3d4b61;
-    border-radius:14px;
-    padding:10px 18px;
-}
-
-.teamScore{
-    min-width:90px;
-}
-
-.teamName{
-    color:#aebbd0;
-    font-size:12px;
-}
-
-.score{
-    font-size:30px;
-    font-weight:900;
-}
-
-.clock{
-    font-weight:bold;
-    color:#f4a13a;
-}
-
-.shotMeter{
-    position:absolute;
-    left:50%;
-    bottom:70px;
-    transform:translateX(-50%);
-    width:260px;
-    height:18px;
-    border:2px solid white;
-    border-radius:20px;
-    overflow:hidden;
-    display:none;
-}
-
-.shotFill{
-    height:100%;
-    width:0%;
-    background:#f39a27;
-}
-
-.message{
-    margin-top:10px;
-    font-weight:bold;
-    text-shadow:0 2px 5px black;
-}
-
-.pauseButton{
-    position:absolute;
-    top:15px;
-    right:15px;
-    z-index:10;
-    border:1px solid #53647e;
-    background:rgba(8,12,19,.85);
-    color:white;
-    border-radius:10px;
-    padding:10px 14px;
-}
-
-/* =========================
-   PAUSE
-========================= */
-
-#pause{
-    align-items:center;
-    justify-content:center;
-    background:rgba(0,0,0,.72);
-    z-index:20;
-}
-
-.pauseBox{
-    background:#121a27;
-    padding:35px;
-    border:1px solid #43526b;
-    border-radius:20px;
-    text-align:center;
-    width:min(400px,90%);
-}
-
-.pauseBox button{
-    width:100%;
-    margin-top:10px;
-    padding:13px;
-    border:0;
-    border-radius:10px;
-    background:#26344a;
-    color:white;
-    font-weight:bold;
-}
-
-/* =========================
-   TOUCH CONTROLS
-========================= */
-
-.touchControls{
-    display:none;
-    position:absolute;
-    left:12px;
-    right:12px;
-    bottom:12px;
-    justify-content:space-between;
-    pointer-events:none;
-}
-
-.touchGroup{
-    display:flex;
-    gap:8px;
-    pointer-events:auto;
-}
-
-.touchBtn{
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    border:1px solid #60718b;
-    background:rgba(15,22,34,.8);
-    color:white;
-    font-weight:bold;
-    user-select:none;
-}
-
-@media(max-width:700px){
-    .creatorBox{
-        grid-template-columns:1fr;
-    }
-
-    .preview{
-        min-height:330px;
-    }
-
-    .touchControls{
-        display:flex;
-    }
-}
-</style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- =========================
-     MAIN MENU
-========================= -->
+    <!-- ==============================
+         MAIN MENU
+    =============================== -->
 
-<section id="menu" class="screen active">
-    <div class="menuBox">
-        <div class="logo">HOOP<br>LEGENDS</div>
-        <div class="subtitle">3D Basketball — Build Your Legend</div>
+    <div id="mainMenu" class="screen active">
 
-        <div class="menuButtons">
-            <button class="menuButton primary" id="playButton">
-                PLAY
+        <div class="menu-container">
+
+            <h1>HOOP LEGENDS</h1>
+
+            <p class="subtitle">
+                3D Basketball
+            </p>
+
+            <button id="playNowButton">
+                PLAY NOW
             </button>
 
-            <button class="menuButton" id="creatorButton">
-                CREATE PLAYER
+            <button id="createPlayerButton">
+                MY PLAYER
             </button>
 
-            <button class="menuButton" id="howButton">
+            <button id="teamsButton">
+                MY TEAM
+            </button>
+
+            <button id="practiceButton">
+                PRACTICE
+            </button>
+
+            <button id="controlsButton">
                 CONTROLS
             </button>
+
         </div>
 
-        <p id="menuInfo" style="margin-top:20px;color:#8492a9;font-size:13px;">
-            Original basketball game prototype
-        </p>
     </div>
-</section>
 
-<!-- =========================
-     PLAYER CREATOR
-========================= -->
 
-<section id="creator" class="screen">
+    <!-- ==============================
+         PLAYER CREATOR
+    =============================== -->
 
-    <div class="creatorBox">
+    <div id="creatorScreen" class="screen">
 
-        <div class="preview">
-            <div class="previewLabel">PLAYER PREVIEW</div>
+        <div class="creator-container">
 
-            <div class="avatar" id="avatar">
+            <div class="creator-preview">
 
-                <div class="hair" id="avatarHair"></div>
+                <h2>PLAYER PREVIEW</h2>
 
-                <div class="head" id="avatarHead"></div>
-
-                <div class="brow left"></div>
-                <div class="brow right"></div>
-
-                <div class="eye left" id="eyeLeft"></div>
-                <div class="eye right" id="eyeRight"></div>
-
-                <div class="nose"></div>
-                <div class="mouth"></div>
-
-                <div class="arm left"></div>
-                <div class="arm right"></div>
-
-                <div class="body" id="avatarBody"></div>
-
-                <div class="number" id="avatarNumber">7</div>
-
-                <div class="leg left"></div>
-                <div class="leg right"></div>
+                <div id="playerPreview">
+                    🏀
+                </div>
 
             </div>
-        </div>
 
-        <div class="controls">
 
-            <h2>Create Your Player</h2>
+            <div class="creator-controls">
 
-            <div class="field">
-                <label>Username</label>
-                <input id="username" maxlength="16" value="Player">
-            </div>
+                <h1>CREATE YOUR PLAYER</h1>
 
-            <div class="field">
-                <label>Player Name</label>
-                <input id="playerName" maxlength="18" value="My Player">
-            </div>
+                <label>
+                    Username
+                    <input
+                        id="usernameInput"
+                        maxlength="16"
+                        value="Player"
+                    >
+                </label>
 
-            <div class="field">
-                <label>Face Shape</label>
-                <select id="faceShape">
-                    <option value="round">Round</option>
-                    <option value="oval">Oval</option>
-                    <option value="square">Square</option>
-                </select>
-            </div>
 
-            <div class="field">
-                <label>Skin Tone</label>
-                <select id="skin">
-                    <option value="#f0b58b">Light</option>
-                    <option value="#c98259">Medium</option>
-                    <option value="#9d5f3e">Tan</option>
-                    <option value="#6d3d29">Dark</option>
-                </select>
-            </div>
+                <label>
+                    Player Name
+                    <input
+                        id="playerNameInput"
+                        maxlength="20"
+                        value="My Player"
+                    >
+                </label>
 
-            <div class="field">
-                <label>Hair Style</label>
-                <select id="hair">
-                    <option value="short">Short</option>
-                    <option value="curly">Curly</option>
-                    <option value="fade">Fade</option>
-                    <option value="none">None</option>
-                </select>
-            </div>
 
-            <div class="field">
-                <label>Hair Colour</label>
-                <select id="hairColor">
-                    <option value="#151515">Black</option>
-                    <option value="#513526">Brown</option>
-                    <option value="#9b6a39">Dark Brown</option>
-                    <option value="#d5bd83">Blonde</option>
-                </select>
-            </div>
+                <label>
+                    Skin
+                    <select id="skinInput">
 
-            <div class="field">
-                <label>Eye Colour</label>
-                <select id="eyeColor">
-                    <option value="#171717">Brown</option>
-                    <option value="#416b89">Blue</option>
-                    <option value="#4b7650">Green</option>
-                    <option value="#777777">Grey</option>
-                </select>
-            </div>
+                        <option value="#f2bd91">
+                            Light
+                        </option>
 
-            <div class="field">
-                <label>Eye Size</label>
-                <select id="eyeSize">
-                    <option value="small">Small</option>
-                    <option value="normal" selected>Normal</option>
-                    <option value="large">Large</option>
-                </select>
-            </div>
+                        <option value="#c9865d">
+                            Medium
+                        </option>
 
-            <div class="field">
-                <label>Jersey Number</label>
-                <input id="jerseyNumber" type="number" min="0" max="99" value="7">
-            </div>
+                        <option value="#985d3d">
+                            Tan
+                        </option>
 
-            <div class="field">
-                <label>Team</label>
-                <select id="team">
-                    <option value="Legends">Legends</option>
-                    <option value="Titans">Titans</option>
-                    <option value="Falcons">Falcons</option>
-                    <option value="Wolves">Wolves</option>
-                </select>
-            </div>
+                        <option value="#633a29">
+                            Dark
+                        </option>
 
-            <div class="creatorButtons">
-                <button class="backBtn" id="creatorBack">
+                    </select>
+                </label>
+
+
+                <label>
+                    Hair
+                    <select id="hairInput">
+
+                        <option value="short">
+                            Short
+                        </option>
+
+                        <option value="curly">
+                            Curly
+                        </option>
+
+                        <option value="fade">
+                            Fade
+                        </option>
+
+                        <option value="none">
+                            None
+                        </option>
+
+                    </select>
+                </label>
+
+
+                <label>
+                    Hair Colour
+                    <select id="hairColorInput">
+
+                        <option value="#171717">
+                            Black
+                        </option>
+
+                        <option value="#4d2d1f">
+                            Brown
+                        </option>
+
+                        <option value="#8b633d">
+                            Light Brown
+                        </option>
+
+                        <option value="#d5b36a">
+                            Blonde
+                        </option>
+
+                    </select>
+                </label>
+
+
+                <label>
+                    Eyes
+                    <select id="eyeInput">
+
+                        <option value="#26170f">
+                            Brown
+                        </option>
+
+                        <option value="#3e7198">
+                            Blue
+                        </option>
+
+                        <option value="#48754d">
+                            Green
+                        </option>
+
+                        <option value="#777777">
+                            Grey
+                        </option>
+
+                    </select>
+                </label>
+
+
+                <label>
+                    Face Shape
+                    <select id="faceInput">
+
+                        <option value="round">
+                            Round
+                        </option>
+
+                        <option value="oval">
+                            Oval
+                        </option>
+
+                        <option value="square">
+                            Square
+                        </option>
+
+                    </select>
+                </label>
+
+
+                <label>
+                    Jersey Number
+                    <input
+                        id="numberInput"
+                        type="number"
+                        min="0"
+                        max="99"
+                        value="7"
+                    >
+                </label>
+
+
+                <button id="savePlayerButton">
+                    SAVE PLAYER
+                </button>
+
+                <button id="creatorBackButton">
                     BACK
                 </button>
 
-                <button class="startBtn" id="savePlayer">
-                    SAVE & PLAY
-                </button>
             </div>
 
         </div>
+
     </div>
 
-</section>
 
-<!-- =========================
-     GAME
-========================= -->
+    <!-- ==============================
+         TEAM SCREEN
+    =============================== -->
 
-<section id="game" class="screen">
+    <div id="teamScreen" class="screen">
 
-    <canvas id="gameCanvas"></canvas>
+        <div class="team-container">
 
-    <button class="pauseButton" id="pauseButton">
-        II
-    </button>
+            <h1>MY TEAM</h1>
 
-    <div class="hud">
+            <p>
+                Choose your team.
+            </p>
 
-        <div class="scoreboard">
+            <button class="team-choice" data-team="Legends">
+                LEGENDS
+            </button>
 
-            <div class="teamScore">
-                <div class="teamName" id="homeName">LEGENDS</div>
-                <div class="score" id="homeScore">0</div>
-            </div>
+            <button class="team-choice" data-team="Titans">
+                TITANS
+            </button>
 
-            <div>
-                <div class="clock" id="gameClock">04:00</div>
-                <div style="font-size:11px;color:#8390a4;">
-                    Q<span id="quarter">1</span>
+            <button class="team-choice" data-team="Falcons">
+                FALCONS
+            </button>
+
+            <button class="team-choice" data-team="Wolves">
+                WOLVES
+            </button>
+
+            <button id="teamBackButton">
+                BACK
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         GAME
+    =============================== -->
+
+    <div id="gameScreen" class="screen">
+
+        <canvas id="gameCanvas"></canvas>
+
+
+        <div id="gameHUD">
+
+            <div class="scoreboard">
+
+                <div>
+
+                    <small id="homeTeamName">
+                        LEGENDS
+                    </small>
+
+                    <strong id="homeScore">
+                        0
+                    </strong>
+
                 </div>
+
+
+                <div class="game-time">
+
+                    <strong id="gameClock">
+                        04:00
+                    </strong>
+
+                    <small>
+                        Q<span id="quarter">
+                            1
+                        </span>
+                    </small>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        TITANS
+                    </small>
+
+                    <strong id="awayScore">
+                        0
+                    </strong>
+
+                </div>
+
             </div>
 
-            <div class="teamScore">
-                <div class="teamName">TITANS</div>
-                <div class="score" id="awayScore">0</div>
+
+            <div id="gameMessage">
+                GET READY!
             </div>
 
         </div>
 
-        <div class="message" id="gameMessage">
-            Get ready!
+
+        <button
+            id="pauseButton"
+            class="pause-button"
+        >
+            II
+        </button>
+
+
+        <div id="shotMeter">
+
+            <div id="shotMeterFill"></div>
+
+        </div>
+
+
+        <div id="controlsHelp">
+
+            <b>WASD</b> Move
+            &nbsp; | &nbsp;
+
+            <b>SPACE</b> Shoot
+            &nbsp; | &nbsp;
+
+            <b>E</b> Pass
+            &nbsp; | &nbsp;
+
+            <b>F</b> Steal
+
         </div>
 
     </div>
 
-    <div class="shotMeter" id="shotMeter">
-        <div class="shotFill" id="shotFill"></div>
-    </div>
 
-    <div class="touchControls">
+    <!-- ==============================
+         PAUSE
+    =============================== -->
 
-        <div class="touchGroup">
-            <button class="touchBtn" data-key="w">▲</button>
-            <button class="touchBtn" data-key="s">▼</button>
-            <button class="touchBtn" data-key="a">◀</button>
-            <button class="touchBtn" data-key="d">▶</button>
+    <div id="pauseScreen" class="screen">
+
+        <div class="pause-container">
+
+            <h1>PAUSED</h1>
+
+            <button id="resumeButton">
+                RESUME
+            </button>
+
+            <button id="restartButton">
+                RESTART
+            </button>
+
+            <button id="pauseMenuButton">
+                MAIN MENU
+            </button>
+
         </div>
 
-        <div class="touchGroup">
-            <button class="touchBtn" data-action="pass">PASS</button>
-            <button class="touchBtn" data-action="shoot">SHOT</button>
-            <button class="touchBtn" data-action="steal">STEAL</button>
-        </div>
-
     </div>
 
-</section>
 
-<!-- =========================
-     PAUSE
-========================= -->
+    <!-- ==============================
+         JAVASCRIPT
+    =============================== -->
 
-<section id="pause" class="screen">
-
-    <div class="pauseBox">
-
-        <h1>PAUSED</h1>
-
-        <button id="resumeButton">
-            RESUME
-        </button>
-
-        <button id="restartButton">
-            RESTART MATCH
-        </button>
-
-        <button id="menuButton">
-            MAIN MENU
-        </button>
-
-    </div>
-
-</section>
-
-<script type="module">
-
-import * as THREE from
-"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
-
-/* =====================================================
-   GAME STATE
-===================================================== */
-
-const state = {
-
-    username:"Player",
-
-    playerName:"My Player",
-
-    jersey:7,
-
-    team:"Legends",
-
-    skin:"#f0b58b",
-
-    hair:"#151515",
-
-    eye:"#171717",
-
-    scoreHome:0,
-
-    scoreAway:0,
-
-    quarter:1,
-
-    seconds:240,
-
-    running:false,
-
-    paused:false,
-
-    shotPower:0,
-
-    chargingShot:false,
-
-    possession:true
-
-};
-
-/* =====================================================
-   SCREEN SYSTEM
-===================================================== */
-
-const screens = {
-
-    menu:document.getElementById("menu"),
-
-    creator:document.getElementById("creator"),
-
-    game:document.getElementById("game"),
-
-    pause:document.getElementById("pause")
-
-};
-
-function showScreen(name){
-
-    Object.values(screens).forEach(s=>{
-        s.classList.remove("active");
-    });
-
-    screens[name].classList.add("active");
-
-}
-
-/* =====================================================
-   MENU
-===================================================== */
-
-document.getElementById("playButton").addEventListener("click",()=>{
-
-    startGame();
-
-});
-
-document.getElementById("creatorButton").addEventListener("click",()=>{
-
-    showScreen("creator");
-
-});
-
-document.getElementById("creatorBack").addEventListener("click",()=>{
-
-    showScreen("menu");
-
-});
-
-document.getElementById("howButton").addEventListener("click",()=>{
-
-    document.getElementById("menuInfo").textContent =
-    "WASD / arrows = move | Space = shoot | E = pass | F = steal | P = pause";
-
-});
-
-/* =====================================================
-   PLAYER CREATOR
-===================================================== */
-
-const avatarHead = document.getElementById("avatarHead");
-const avatarHair = document.getElementById("avatarHair");
-const avatarBody = document.getElementById("avatarBody");
-const avatarNumber = document.getElementById("avatarNumber");
-
-function updateAvatar(){
-
-    const skin =
-    document.getElementById("skin").value;
-
-    const hair =
-    document.getElementById("hairColor").value;
-
-    const eye =
-    document.getElementById("eyeColor").value;
-
-    const hairStyle =
-    document.getElementById("hair").value;
-
-    const face =
-    document.getElementById("faceShape").value;
-
-    const eyeSize =
-    document.getElementById("eyeSize").value;
-
-    const number =
-    Math.max(
-        0,
-        Math.min(
-            99,
-            Number(document.getElementById("jerseyNumber").value) || 0
-        )
-    );
-
-    avatarHead.style.background=skin;
-
-    avatarHair.style.background=hair;
-
-    avatarBody.style.background="#e75b32";
-
-    avatarNumber.textContent=number;
-
-    document.querySelectorAll(".eye").forEach(e=>{
-        e.style.background=eye;
-
-        let size=10;
-
-        if(eyeSize==="small") size=7;
-
-        if(eyeSize==="large") size=14;
-
-        e.style.width=size+"px";
-        e.style.height=size+"px";
-    });
-
-    if(face==="round"){
-
-        avatarHead.style.borderRadius="50%";
-
-    }
-
-    if(face==="oval"){
-
-        avatarHead.style.borderRadius="48% 48% 42% 42%";
-
-    }
-
-    if(face==="square"){
-
-        avatarHead.style.borderRadius="28px";
-
-    }
-
-    if(hairStyle==="none"){
-
-        avatarHair.style.display="none";
-
-    }else{
-
-        avatarHair.style.display="block";
-
-        if(hairStyle==="curly"){
-
-            avatarHair.style.borderRadius="50%";
-            avatarHair.style.height="65px";
-
-        }else if(hairStyle==="fade"){
-
-            avatarHair.style.borderRadius="50px 50px 8px 8px";
-            avatarHair.style.height="42px";
-
-        }else{
-
-            avatarHair.style.borderRadius="55px 55px 20px 20px";
-            avatarHair.style.height="55px";
-
-        }
-
-    }
-
-}
-
-document.querySelectorAll(
-    "#creator select,#jerseyNumber"
-).forEach(el=>{
-
-    el.addEventListener("input",updateAvatar);
-
-});
-
-document.getElementById("savePlayer").addEventListener("click",()=>{
-
-    state.username =
-        document.getElementById("username").value.trim() || "Player";
-
-    state.playerName =
-        document.getElementById("playerName").value.trim() || "My Player";
-
-    state.jersey =
-        Number(document.getElementById("jerseyNumber").value) || 7;
-
-    state.team =
-        document.getElementById("team").value;
-
-    state.skin =
-        document.getElementById("skin").value;
-
-    state.hair =
-        document.getElementById("hairColor").value;
-
-    state.eye =
-        document.getElementById("eyeColor").value;
-
-    startGame();
-
-});
-
-updateAvatar();
-
-/* =====================================================
-   THREE.JS
-===================================================== */
-
-const canvas =
-document.getElementById("gameCanvas");
-
-const renderer =
-new THREE.WebGLRenderer({
-    canvas,
-    antialias:true
-});
-
-renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio,2)
-);
-
-renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-);
-
-renderer.shadowMap.enabled=true;
-
-const scene =
-new THREE.Scene();
-
-scene.background =
-new THREE.Color(0x080b12);
-
-const camera =
-new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth/window.innerHeight,
-    0.1,
-    1000
-);
-
-camera.position.set(0,15,18);
-
-const light =
-new THREE.HemisphereLight(
-    0xffffff,
-    0x202030,
-    2.2
-);
-
-scene.add(light);
-
-const sun =
-new THREE.DirectionalLight(
-    0xffffff,
-    2.5
-);
-
-sun.position.set(5,20,8);
-sun.castShadow=true;
-
-scene.add(sun);
-
-/* =====================================================
-   COURT
-===================================================== */
-
-const courtGroup =
-new THREE.Group();
-
-scene.add(courtGroup);
-
-const floor =
-new THREE.Mesh(
-
-    new THREE.BoxGeometry(
-        18,
-        .3,
-        30
-    ),
-
-    new THREE.MeshStandardMaterial({
-        color:0x9b633e
-    })
-
-);
-
-floor.receiveShadow=true;
-
-courtGroup.add(floor);
-
-/* court lines */
-
-function line(
-    x,
-    z,
-    width,
-    depth,
-    rotation=0
-){
-
-    const m =
-    new THREE.Mesh(
-
-        new THREE.BoxGeometry(
-            width,
-            .03,
-            depth
-        ),
-
-        new THREE.MeshBasicMaterial({
-            color:0xffffff
-        })
-
-    );
-
-    m.position.set(
-        x,
-        .17,
-        z
-    );
-
-    m.rotation.y=rotation;
-
-    courtGroup.add(m);
-
-}
-
-line(0,-14,18,.12);
-line(0,14,18,.12);
-line(-9,0,.12,30);
-line(9,0,.12,30);
-
-line(0,0,.12,30);
-
-const circle =
-new THREE.Mesh(
-
-    new THREE.RingGeometry(
-        2.3,
-        2.42,
-        64
-    ),
-
-    new THREE.MeshBasicMaterial({
-        color:0xffffff,
-        side:THREE.DoubleSide
-    })
-
-);
-
-circle.rotation.x=-Math.PI/2;
-circle.position.y=.18;
-
-courtGroup.add(circle);
-
-/* key areas */
-
-function key(z){
-
-    const k =
-    new THREE.Mesh(
-
-        new THREE.BoxGeometry(
-            5,
-            .04,
-            5
-        ),
-
-        new THREE.MeshBasicMaterial({
-            color:0xffffff,
-            wireframe:true
-        })
-
-    );
-
-    k.position.set(0,.19,z);
-
-    courtGroup.add(k);
-
-}
-
-key(-11);
-key(11);
-
-/* =====================================================
-   HOOPS
-===================================================== */
-
-function createHoop(z){
-
-    const group =
-    new THREE.Group();
-
-    const pole =
-    new THREE.Mesh(
-
-        new THREE.CylinderGeometry(
-            .18,
-            .18,
-            5,
-            16
-        ),
-
-        new THREE.MeshStandardMaterial({
-            color:0x555555
-        })
-
-    );
-
-    pole.position.y=2.5;
-
-    group.add(pole);
-
-    const board =
-    new THREE.Mesh(
-
-        new THREE.BoxGeometry(
-            4,
-            2.5,
-            .18
-        ),
-
-        new THREE.MeshStandardMaterial({
-            color:0xe8edf5
-        })
-
-    );
-
-    board.position.set(
-        0,
-        5.8,
-        0
-    );
-
-    group.add(board);
-
-    const rim =
-    new THREE.Mesh(
-
-        new THREE.TorusGeometry(
-            .75,
-            .09,
-            12,
-            32
-        ),
-
-        new THREE.MeshStandardMaterial({
-            color:0xff5a24
-        })
-
-    );
-
-    rim.rotation.x=Math.PI/2;
-
-    rim.position.set(
-        0,
-        4.5,
-        z>0 ? -.7 : .7
-    );
-
-    group.add(rim);
-
-    group.position.z=z;
-
-    courtGroup.add(group);
-
-}
-
-createHoop(-14);
-createHoop(14);
-
-/* =====================================================
-   PLAYER
-===================================================== */
-
-function createPlayer(
-    color,
-    skinColor,
-    number
-){
-
-    const g =
-    new THREE.Group();
-
-    const body =
-    new THREE.Mesh(
-
-        new THREE.CapsuleGeometry(
-            .65,
-            1.2,
-            8,
-            16
-        ),
-
-        new THREE.MeshStandardMaterial({
-            color
-        })
-
-    );
-
-    body.position.y=1.5;
-
-    body.castShadow=true;
-
-    g.add(body);
-
-    const head =
-    new THREE.Mesh(
-
-        new THREE.SphereGeometry(
-            .48,
-            20,
-            20
-        ),
-
-        new THREE.MeshStandardMaterial({
-            color:skinColor
-        })
-
-    );
-
-    head.position.y=2.65;
-
-    head.castShadow=true;
-
-    g.add(head);
-
-    /* hair */
-
-    const hair =
-    new THREE.Mesh(
-
-        new THREE.SphereGeometry(
-            .50,
-            20,
-            12,
-            0,
-            Math.PI*2,
-            0,
-            Math.PI/2
-        ),
-
-        new THREE.MeshStandardMaterial({
-            color:state.hair
-        })
-
-    );
-
-    hair.position.y=2.72;
-
-    g.add(hair);
-
-    /* eyes */
-
-    const eyeMaterial =
-    new THREE.MeshBasicMaterial({
-        color:state.eye
-    });
-
-    [-.18,.18].forEach(x=>{
-
-        const eye =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(.055,8,8),
-            eyeMaterial
-        );
-
-        eye.position.set(
-            x,
-            2.7,
-            -.45
-        );
-
-        g.add(eye);
-
-    });
-
-    /* arms */
-
-    [-1,1].forEach(side=>{
-
-        const arm =
-        new THREE.Mesh(
-
-            new THREE.CapsuleGeometry(
-                .18,
-                .85,
-                6,
-                10
-            ),
-
-            new THREE.MeshStandardMaterial({
-                color:skinColor
-            })
-
-        );
-
-        arm.position.set(
-            side*.82,
-            1.6,
-            0
-        );
-
-        arm.rotation.z=
-        side*.25;
-
-        g.add(arm);
-
-    });
-
-    /* legs */
-
-    [-1,1].forEach(side=>{
-
-        const leg =
-        new THREE.Mesh(
-
-            new THREE.CapsuleGeometry(
-                .22,
-                .85,
-                6,
-                10
-            ),
-
-            new THREE.MeshStandardMaterial({
-                color:0x172033
-            })
-
-        );
-
-        leg.position.set(
-            side*.3,
-            .45,
-            0
-        );
-
-        g.add(leg);
-
-    });
-
-    return g;
-
-}
-
-const player =
-createPlayer(
-    0xe75b32,
-    state.skin,
-    state.jersey
-);
-
-player.position.set(
-    0,
-    0,
-    8
-);
-
-scene.add(player);
-
-/* AI */
-
-const ai =
-createPlayer(
-    0x315bdb,
-    "#9d5f3e",
-    23
-);
-
-ai.position.set(
-    0,
-    0,
-    -7
-);
-
-scene.add(ai);
-
-/* second AI */
-
-const ai2 =
-createPlayer(
-    0x315bdb,
-    "#c98259",
-    14
-);
-
-ai2.scale.setScalar(.9);
-
-ai2.position.set(
-    -4,
-    0,
-    -4
-);
-
-scene.add(ai2);
-
-/* =====================================================
-   BALL
-===================================================== */
-
-const ball =
-new THREE.Mesh(
-
-    new THREE.SphereGeometry(
-        .32,
-        20,
-        20
-    ),
-
-    new THREE.MeshStandardMaterial({
-        color:0xd87528
-    })
-
-);
-
-ball.castShadow=true;
-
-scene.add(ball);
-
-ball.position.set(
-    .8,
-    1,
-    7.2
-);
-
-/* =====================================================
-   MOVEMENT
-===================================================== */
-
-const keys={};
-
-window.addEventListener("keydown",e=>{
-
-    keys[e.key.toLowerCase()]=true;
-
-    if(
-        e.key===" " &&
-        state.running &&
-        !state.paused
-    ){
-
-        shoot();
-
-        e.preventDefault();
-
-    }
-
-    if(
-        e.key.toLowerCase()==="e" &&
-        state.running
-    ){
-
-        pass();
-
-    }
-
-    if(
-        e.key.toLowerCase()==="f" &&
-        state.running
-    ){
-
-        steal();
-
-    }
-
-    if(
-        e.key.toLowerCase()==="p"
-    ){
-
-        togglePause();
-
-    }
-
-});
-
-window.addEventListener("keyup",e=>{
-
-    keys[e.key.toLowerCase()]=false;
-
-});
-
-function updateMovement(){
-
-    if(!state.running || state.paused)
-        return;
-
-    let speed =
-        keys.shift ? .18 : .11;
-
-    let dx=0;
-    let dz=0;
-
-    if(keys.w || keys.arrowup)
-        dz-=speed;
-
-    if(keys.s || keys.arrowdown)
-        dz+=speed;
-
-    if(keys.a || keys.arrowleft)
-        dx-=speed;
-
-    if(keys.d || keys.arrowright)
-        dx+=speed;
-
-    player.position.x+=dx;
-    player.position.z+=dz;
-
-    player.position.x=
-        THREE.MathUtils.clamp(
-            player.position.x,
-            -8,
-            8
-        );
-
-    player.position.z=
-        THREE.MathUtils.clamp(
-            player.position.z,
-            -13,
-            13
-        );
-
-}
-
-/* =====================================================
-   DRIBBLING
-===================================================== */
-
-let dribbleTime=0;
-
-function updateBall(){
-
-    if(!state.running)
-        return;
-
-    dribbleTime+=.18;
-
-    if(state.possession){
-
-        ball.position.x =
-            player.position.x+.75;
-
-        ball.position.z =
-            player.position.z+.2;
-
-        ball.position.y =
-            .65+
-            Math.abs(
-                Math.sin(dribbleTime)
-            )*.55;
-
-    }
-
-}
-
-/* =====================================================
-   SHOOTING
-===================================================== */
-
-function shoot(){
-
-    if(!state.possession)
-        return;
-
-    state.possession=false;
-
-    const meter=
-        document.getElementById("shotMeter");
-
-    const fill=
-        document.getElementById("shotFill");
-
-    meter.style.display="block";
-
-    let power=0;
-
-    const interval=
-    setInterval(()=>{
-
-        power+=.08;
-
-        fill.style.width=
-            Math.min(power*100,100)+"%";
-
-        if(power>=1){
-
-            clearInterval(interval);
-
-            meter.style.display="none";
-
-            const distance=
-                Math.abs(
-                    player.position.z+14
-                );
-
-            const successChance=
-                Math.max(
-                    .25,
-                    1-distance/30
-                );
-
-            const made=
-                Math.random()<
-                successChance;
-
-            if(made){
-
-                state.scoreHome+=2;
-
-                showMessage(
-                    "BUCKET! +2"
-                );
-
-            }else{
-
-                showMessage(
-                    "MISS!"
-                );
-
-            }
-
-            updateScore();
-
-            setTimeout(()=>{
-
-                state.possession=true;
-
-            },900);
-
-        }
-
-    },45);
-
-}
-
-/* =====================================================
-   PASSING
-===================================================== */
-
-function pass(){
-
-    if(!state.possession)
-        return;
-
-    state.possession=false;
-
-    showMessage(
-        "PASS!"
-    );
-
-    setTimeout(()=>{
-
-        state.possession=true;
-
-    },500);
-
-}
-
-/* =====================================================
-   DEFENSE
-===================================================== */
-
-function steal(){
-
-    const distance=
-        player.position.distanceTo(
-            ai.position
-        );
-
-    if(distance<3){
-
-        if(Math.random()<.55){
-
-            state.possession=true;
-
-            showMessage(
-                "STEAL!"
-            );
-
-        }else{
-
-            showMessage(
-                "STEAL FAILED"
-            );
-
-        }
-
-    }else{
-
-        showMessage(
-            "Move closer!"
-        );
-
-    }
-
-}
-
-/* =====================================================
-   AI
-===================================================== */
-
-let aiTimer=0;
-
-function updateAI(){
-
-    if(!state.running || state.paused)
-        return;
-
-    aiTimer+=.016;
-
-    ai.position.x +=
-        (player.position.x-ai.position.x)
-        *.006;
-
-    ai.position.z +=
-        (player.position.z-ai.position.z)
-        *.003;
-
-    ai.position.x=
-        THREE.MathUtils.clamp(
-            ai.position.x,
-            -8,
-            8
-        );
-
-    ai.position.z=
-        THREE.MathUtils.clamp(
-            ai.position.z,
-            -13,
-            0
-        );
-
-    ai2.position.x +=
-        Math.sin(aiTimer)*.012;
-
-    if(
-        aiTimer>8 &&
-        Math.random()<.005
-    ){
-
-        state.scoreAway+=2;
-
-        updateScore();
-
-        showMessage(
-            "TITANS SCORE!"
-        );
-
-        aiTimer=0;
-
-    }
-
-}
-
-/* =====================================================
-   SCORE
-===================================================== */
-
-function updateScore(){
-
-    document.getElementById(
-        "homeScore"
-    ).textContent=
-        state.scoreHome;
-
-    document.getElementById(
-        "awayScore"
-    ).textContent=
-        state.scoreAway;
-
-    document.getElementById(
-        "homeName"
-    ).textContent=
-        state.team.toUpperCase();
-
-}
-
-/* =====================================================
-   CLOCK
-===================================================== */
-
-let lastClock=0;
-
-function updateClock(){
-
-    if(!state.running || state.paused)
-        return;
-
-    const now=
-        performance.now();
-
-    if(now-lastClock<1000)
-        return;
-
-    lastClock=now;
-
-    state.seconds--;
-
-    if(state.seconds<=0){
-
-        if(state.quarter<4){
-
-            state.quarter++;
-
-            state.seconds=240;
-
-            showMessage(
-                "QUARTER "+state.quarter
-            );
-
-        }else{
-
-            state.running=false;
-
-            showMessage(
-                "GAME OVER!"
-            );
-
-            return;
-
-        }
-
-    }
-
-    const min=
-        Math.floor(state.seconds/60);
-
-    const sec=
-        state.seconds%60;
-
-    document.getElementById(
-        "gameClock"
-    ).textContent=
-        String(min).padStart(2,"0")
-        +":"+
-        String(sec).padStart(2,"0");
-
-    document.getElementById(
-        "quarter"
-    ).textContent=
-        state.quarter;
-
-}
-
-/* =====================================================
-   CAMERA
-===================================================== */
-
-function updateCamera(){
-
-    const target=
-        new THREE.Vector3(
-            player.position.x,
-            2,
-            player.position.z
-        );
-
-    const desired=
-        new THREE.Vector3(
-            player.position.x,
-            13,
-            player.position.z+14
-        );
-
-    camera.position.lerp(
-        desired,
-        .08
-    );
-
-    camera.lookAt(target);
-
-}
-
-/* =====================================================
-   MESSAGES
-===================================================== */
-
-let messageTimeout;
-
-function showMessage(text){
-
-    const el=
-        document.getElementById(
-            "gameMessage"
-        );
-
-    el.textContent=text;
-
-    clearTimeout(messageTimeout);
-
-    messageTimeout=
-        setTimeout(()=>{
-
-            el.textContent=
-                state.username;
-
-        },1500);
-
-}
-
-/* =====================================================
-   GAME START
-===================================================== */
-
-function startGame(){
-
-    state.running=true;
-    state.paused=false;
-    state.scoreHome=0;
-    state.scoreAway=0;
-    state.quarter=1;
-    state.seconds=240;
-    state.possession=true;
-
-    player.position.set(
-        0,
-        0,
-        8
-    );
-
-    ai.position.set(
-        0,
-        0,
-        -7
-    );
-
-    ai2.position.set(
-        -4,
-        0,
-        -4
-    );
-
-    updateScore();
-
-    showScreen("game");
-
-    showMessage(
-        "Welcome "+state.username+"!"
-    );
-
-}
-
-/* =====================================================
-   PAUSE
-===================================================== */
-
-function togglePause(){
-
-    if(!state.running)
-        return;
-
-    state.paused=
-        !state.paused;
-
-    if(state.paused){
-
-        showScreen("pause");
-
-    }else{
-
-        showScreen("game");
-
-    }
-
-}
-
-document.getElementById(
-    "pauseButton"
-).addEventListener(
-    "click",
-    togglePause
-);
-
-document.getElementById(
-    "resumeButton"
-).addEventListener(
-    "click",
-    togglePause
-);
-
-document.getElementById(
-    "restartButton"
-).addEventListener(
-    "click",
-    startGame
-);
-
-document.getElementById(
-    "menuButton"
-).addEventListener(
-    "click",
-    ()=>{
-
-        state.running=false;
-
-        showScreen("menu");
-
-    }
-);
-
-/* =====================================================
-   TOUCH CONTROLS
-===================================================== */
-
-document.querySelectorAll(
-    ".touchBtn[data-key]"
-).forEach(button=>{
-
-    const key=
-        button.dataset.key;
-
-    button.addEventListener(
-        "pointerdown",
-        e=>{
-
-            e.preventDefault();
-
-            keys[key]=true;
-
-        }
-    );
-
-    button.addEventListener(
-        "pointerup",
-        ()=>{
-
-            keys[key]=false;
-
-        }
-    );
-
-    button.addEventListener(
-        "pointerleave",
-        ()=>{
-
-            keys[key]=false;
-
-        }
-    );
-
-});
-
-document.querySelectorAll(
-    ".touchBtn[data-action]"
-).forEach(button=>{
-
-    button.addEventListener(
-        "pointerdown",
-        e=>{
-
-            e.preventDefault();
-
-            const action=
-                button.dataset.action;
-
-            if(action==="shoot")
-                shoot();
-
-            if(action==="pass")
-                pass();
-
-            if(action==="steal")
-                steal();
-
-        }
-    );
-
-});
-
-/* =====================================================
-   RESIZE
-===================================================== */
-
-window.addEventListener(
-    "resize",
-    ()=>{
-
-        camera.aspect=
-            window.innerWidth/
-            window.innerHeight;
-
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
-
-    }
-);
-
-/* =====================================================
-   MAIN LOOP
-===================================================== */
-
-function animate(){
-
-    requestAnimationFrame(
-        animate
-    );
-
-    updateMovement();
-
-    updateBall();
-
-    updateAI();
-
-    updateClock();
-
-    updateCamera();
-
-    renderer.render(
-        scene,
-        camera
-    );
-
-}
-
-animate();
-
-</script>
+    <script type="module" src="js/main.js"></script>
 
 </body>
 </html>
