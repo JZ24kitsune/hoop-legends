@@ -1,92 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoop Legends 3D</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<title>Hoop Legends 3D - V2</title>
 
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #111;
-            font-family: Arial, sans-serif;
-        }
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        #info {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 10;
-            color: white;
-            background: rgba(0, 0, 0, 0.65);
-            padding: 14px 18px;
-            border-radius: 12px;
-        }
+    body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: #080808;
+    }
 
-        #info h1 {
-            margin: 0 0 8px;
-            font-size: 22px;
-        }
+    canvas {
+        display: block;
+    }
 
-        #info p {
-            margin: 4px 0;
-        }
+    /* TOP LEFT */
 
-        #scoreboard {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            z-index: 10;
-            color: white;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 14px 20px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 18px;
-        }
+    #controls {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 10;
 
-        #score {
-            font-size: 30px;
-            font-weight: bold;
-        }
+        color: white;
 
-        #message {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            color: white;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 12px 22px;
-            border-radius: 12px;
-            font-size: 18px;
-        }
-    </style>
+        background: rgba(0,0,0,0.72);
+
+        padding: 14px 18px;
+
+        border-radius: 12px;
+
+        border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    #controls h2 {
+        margin: 0 0 8px 0;
+        font-size: 20px;
+    }
+
+    #controls p {
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    /* SCOREBOARD */
+
+    #scoreboard {
+        position: absolute;
+
+        top: 15px;
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        z-index: 10;
+
+        color: white;
+
+        background: rgba(0,0,0,0.82);
+
+        padding: 10px 28px;
+
+        border-radius: 14px;
+
+        text-align: center;
+
+        min-width: 230px;
+
+        border: 2px solid rgba(255,255,255,0.15);
+    }
+
+    #teams {
+        font-size: 13px;
+        opacity: 0.8;
+    }
+
+    #score {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 3px 0;
+    }
+
+    #quarter {
+        font-size: 13px;
+        opacity: 0.8;
+    }
+
+    /* MESSAGE */
+
+    #message {
+        position: absolute;
+
+        bottom: 25px;
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        z-index: 10;
+
+        color: white;
+
+        background: rgba(0,0,0,0.75);
+
+        padding: 12px 25px;
+
+        border-radius: 20px;
+
+        font-size: 17px;
+
+        border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* SHOT BAR */
+
+    #shotBar {
+        position: absolute;
+
+        bottom: 75px;
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        width: 250px;
+        height: 14px;
+
+        background: rgba(0,0,0,0.65);
+
+        border-radius: 10px;
+
+        overflow: hidden;
+
+        display: none;
+    }
+
+    #shotPower {
+        width: 0%;
+
+        height: 100%;
+
+        background: linear-gradient(
+            90deg,
+            #00ff66,
+            #ffff00,
+            #ff4400
+        );
+    }
+</style>
 </head>
 
 <body>
 
-<div id="info">
-    <h1>🏀 Hoop Legends 3D</h1>
-    <p>W A S D — Move</p>
-    <p>SPACE — Shoot</p>
-    <p>SHIFT — Sprint</p>
+<!-- CONTROLS -->
+
+<div id="controls">
+
+    <h2>🏀 Hoop Legends 3D</h2>
+
+    <p><b>W A S D</b> — Move</p>
+
+    <p><b>SHIFT</b> — Sprint</p>
+
+    <p><b>SPACE</b> — Shoot</p>
+
+    <p><b>R</b> — Reset ball</p>
+
 </div>
+
+
+<!-- SCOREBOARD -->
 
 <div id="scoreboard">
-    HOME<br>
-    <span id="score">0 - 0</span>
+
+    <div id="teams">
+        HOME &nbsp;&nbsp; VS &nbsp;&nbsp; AWAY
+    </div>
+
+    <div id="score">
+        00 - 00
+    </div>
+
+    <div id="quarter">
+        Q1 &nbsp; 10:00
+    </div>
+
 </div>
 
+
+<!-- MESSAGE -->
+
 <div id="message">
-    Welcome to the court!
+    Welcome to Hoop Legends!
 </div>
+
+
+<!-- SHOT POWER -->
+
+<div id="shotBar">
+
+    <div id="shotPower"></div>
+
+</div>
+
 
 <script type="module">
 
@@ -94,107 +216,327 @@ import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 
 
-// =====================================
+// ==================================================
 // SCENE
-// =====================================
+// ==================================================
 
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x87ceeb);
+scene.background =
+    new THREE.Color(0x111827);
 
 
-// =====================================
+// ==================================================
 // CAMERA
-// =====================================
+// ==================================================
 
-const camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
+const camera =
+    new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth /
+        window.innerHeight,
+        0.1,
+        1000
+    );
+
+camera.position.set(
+    0,
+    10,
+    15
 );
 
-camera.position.set(0, 12, 18);
 
-
-// =====================================
+// ==================================================
 // RENDERER
-// =====================================
+// ==================================================
 
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias: true
+    });
 
 renderer.setSize(
     window.innerWidth,
     window.innerHeight
 );
 
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+);
+
 renderer.shadowMap.enabled = true;
 
-document.body.appendChild(renderer.domElement);
+document.body.appendChild(
+    renderer.domElement
+);
 
 
-// =====================================
+// ==================================================
 // LIGHTING
-// =====================================
+// ==================================================
 
-const sunlight = new THREE.DirectionalLight(
-    0xffffff,
-    2
-);
-
-sunlight.position.set(
-    10,
-    20,
-    10
-);
-
-sunlight.castShadow = true;
-
-scene.add(sunlight);
-
-
-const ambientLight = new THREE.AmbientLight(
-    0xffffff,
-    0.7
-);
-
-scene.add(ambientLight);
-
-
-// =====================================
-// COURT
-// =====================================
-
-const courtGeometry =
-    new THREE.BoxGeometry(
-        28,
-        0.4,
-        15
+const ambient =
+    new THREE.AmbientLight(
+        0xffffff,
+        1.0
     );
 
-const courtMaterial =
+scene.add(ambient);
+
+
+const mainLight =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2.5
+    );
+
+mainLight.position.set(
+    5,
+    20,
+    8
+);
+
+mainLight.castShadow = true;
+
+scene.add(mainLight);
+
+
+// Arena lights
+
+const light1 =
+    new THREE.PointLight(
+        0xffffff,
+        25,
+        40
+    );
+
+light1.position.set(
+    -12,
+    10,
+    -5
+);
+
+scene.add(light1);
+
+
+const light2 =
+    new THREE.PointLight(
+        0xffffff,
+        25,
+        40
+    );
+
+light2.position.set(
+    12,
+    10,
+    5
+);
+
+scene.add(light2);
+
+
+// ==================================================
+// FLOOR
+// ==================================================
+
+const floorGeometry =
+    new THREE.BoxGeometry(
+        30,
+        0.4,
+        17
+    );
+
+const floorMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0xc98245
+        color: 0xb96b35,
+        roughness: 0.65
     });
 
-const court =
+const floor =
     new THREE.Mesh(
-        courtGeometry,
-        courtMaterial
+        floorGeometry,
+        floorMaterial
     );
 
-court.receiveShadow = true;
+floor.receiveShadow = true;
 
-scene.add(court);
+scene.add(floor);
 
 
-// =====================================
+// ==================================================
 // COURT LINES
-// =====================================
+// ==================================================
 
-function makeLine(
+const lineMaterial =
+    new THREE.MeshBasicMaterial({
+        color: 0xffffff
+    });
+
+
+function courtLine(
+    x,
+    z,
+    width,
+    depth
+) {
+
+    const geometry =
+        new THREE.BoxGeometry(
+            width,
+            0.035,
+            depth
+        );
+
+    const line =
+        new THREE.Mesh(
+            geometry,
+            lineMaterial
+        );
+
+    line.position.set(
+        x,
+        0.22,
+        z
+    );
+
+    scene.add(line);
+}
+
+
+// Sidelines
+
+courtLine(
+    0,
+    -8,
+    30,
+    0.12
+);
+
+courtLine(
+    0,
+    8,
+    30,
+    0.12
+);
+
+
+// End lines
+
+courtLine(
+    -15,
+    0,
+    0.12,
+    16
+);
+
+courtLine(
+    15,
+    0,
+    0.12,
+    16
+);
+
+
+// Center line
+
+courtLine(
+    0,
+    0,
+    0.12,
+    16
+);
+
+
+// ==================================================
+// CENTER CIRCLE
+// ==================================================
+
+const centerRing =
+    new THREE.Mesh(
+        new THREE.RingGeometry(
+            2.4,
+            2.52,
+            64
+        ),
+        lineMaterial
+    );
+
+centerRing.rotation.x =
+    -Math.PI / 2;
+
+centerRing.position.y =
+    0.24;
+
+scene.add(centerRing);
+
+
+// ==================================================
+// KEY AREAS
+// ==================================================
+
+function createKey(z) {
+
+    const geometry =
+        new THREE.BoxGeometry(
+            6,
+            0.035,
+            5
+        );
+
+    const material =
+        new THREE.MeshBasicMaterial({
+            color: 0xd28a52,
+            transparent: true,
+            opacity: 0.8
+        });
+
+    const key =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    key.position.set(
+        0,
+        0.23,
+        z
+    );
+
+    scene.add(key);
+
+
+    // Key outline
+
+    courtLine(
+        -3,
+        z - 2.5,
+        0.1,
+        5
+    );
+
+    courtLine(
+        3,
+        z - 2.5,
+        0.1,
+        5
+    );
+}
+
+createKey(5.5);
+createKey(-5.5);
+
+
+// ==================================================
+// ARENA WALLS
+// ==================================================
+
+const wallMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x151515
+    });
+
+
+function createWall(
     x,
     y,
     z,
@@ -210,101 +552,153 @@ function makeLine(
             depth
         );
 
-    const material =
-        new THREE.MeshBasicMaterial({
-            color: 0xffffff
-        });
-
-    const line =
+    const wall =
         new THREE.Mesh(
             geometry,
-            material
+            wallMaterial
         );
 
-    line.position.set(
+    wall.position.set(
         x,
         y,
         z
     );
 
-    scene.add(line);
+    scene.add(wall);
 }
 
 
-// Center line
+createWall(
+    0,
+    4,
+    -11,
+    34,
+    8,
+    0.5
+);
 
-makeLine(
+createWall(
+    -18,
+    4,
     0,
-    0.22,
+    0.5,
+    8,
+    24
+);
+
+createWall(
+    18,
+    4,
     0,
-    0.12,
-    0.03,
-    15
+    0.5,
+    8,
+    24
 );
 
 
-// =====================================
-// CENTER CIRCLE
-// =====================================
+// ==================================================
+// CROWD STANDS
+// ==================================================
 
-const circleGeometry =
-    new THREE.RingGeometry(
-        2.3,
-        2.38,
-        64
-    );
-
-const circleMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        side: THREE.DoubleSide
+const seatMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x292929
     });
 
-const centerCircle =
-    new THREE.Mesh(
-        circleGeometry,
-        circleMaterial
+
+function createSeats(
+    sideZ
+) {
+
+    for (
+        let row = 0;
+        row < 4;
+        row++
+    ) {
+
+        for (
+            let x = -14;
+            x <= 14;
+            x += 1.4
+        ) {
+
+            const seat =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        1,
+                        0.35,
+                        0.8
+                    ),
+                    seatMaterial
+                );
+
+            seat.position.set(
+                x,
+                0.7 + row * 0.7,
+                sideZ + row * 0.9
+            );
+
+            scene.add(seat);
+        }
+    }
+}
+
+createSeats(-9.5);
+
+
+// ==================================================
+// BACKBOARD + HOOP
+// ==================================================
+
+function createBasket(
+    z,
+    direction
+) {
+
+    // Pole
+
+    const pole =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.25,
+                0.25,
+                4.5,
+                20
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0x555555
+            })
+        );
+
+    pole.position.set(
+        0,
+        2.3,
+        z
     );
 
-centerCircle.rotation.x =
-    -Math.PI / 2;
+    pole.castShadow = true;
 
-centerCircle.position.y =
-    0.23;
+    scene.add(pole);
 
-scene.add(centerCircle);
-
-
-// =====================================
-// BACKBOARD
-// =====================================
-
-function createHoop(z) {
 
     // Backboard
 
-    const boardGeometry =
-        new THREE.BoxGeometry(
-            5,
-            3,
-            0.25
-        );
-
-    const boardMaterial =
-        new THREE.MeshStandardMaterial({
-            color: 0xffffff
-        });
-
     const board =
         new THREE.Mesh(
-            boardGeometry,
-            boardMaterial
+            new THREE.BoxGeometry(
+                5,
+                3,
+                0.2
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xf4f4f4
+            })
         );
 
     board.position.set(
         0,
-        4,
-        z
+        4.5,
+        z - direction * 0.8
     );
 
     board.castShadow = true;
@@ -312,25 +706,42 @@ function createHoop(z) {
     scene.add(board);
 
 
-    // Rim
+    // Backboard square
 
-    const rimGeometry =
-        new THREE.TorusGeometry(
-            0.75,
-            0.12,
-            16,
-            32
+    const square =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                1.8,
+                1.2,
+                0.05
+            ),
+            new THREE.MeshBasicMaterial({
+                color: 0xff3333
+            })
         );
 
-    const rimMaterial =
-        new THREE.MeshStandardMaterial({
-            color: 0xff4500
-        });
+    square.position.set(
+        0,
+        4.4,
+        z - direction * 0.93
+    );
+
+    scene.add(square);
+
+
+    // Rim
 
     const rim =
         new THREE.Mesh(
-            rimGeometry,
-            rimMaterial
+            new THREE.TorusGeometry(
+                0.75,
+                0.11,
+                16,
+                32
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xff5a00
+            })
         );
 
     rim.rotation.x =
@@ -338,78 +749,113 @@ function createHoop(z) {
 
     rim.position.set(
         0,
-        2.9,
-        z > 0 ? z - 0.8 : z + 0.8
+        3.25,
+        z - direction * 1.35
     );
 
     scene.add(rim);
 
 
-    // Pole
+    // Net
 
-    const poleGeometry =
-        new THREE.CylinderGeometry(
-            0.25,
-            0.25,
-            4,
-            16
-        );
-
-    const poleMaterial =
-        new THREE.MeshStandardMaterial({
-            color: 0x333333
-        });
-
-    const pole =
+    const net =
         new THREE.Mesh(
-            poleGeometry,
-            poleMaterial
+            new THREE.CylinderGeometry(
+                0.65,
+                0.48,
+                0.8,
+                16,
+                1,
+                true
+            ),
+            new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.7
+            })
         );
 
-    pole.position.set(
+    net.position.set(
         0,
-        2,
-        z
+        2.85,
+        z - direction * 1.35
     );
 
-    scene.add(pole);
+    scene.add(net);
 }
 
 
-createHoop(7);
-createHoop(-7);
+createBasket(
+    -7.2,
+    -1
+);
+
+createBasket(
+    7.2,
+    1
+);
 
 
-// =====================================
+// ==================================================
 // PLAYER
-// =====================================
+// ==================================================
 
 const player =
     new THREE.Group();
 
 
-// Body
+// Legs
 
-const bodyGeometry =
-    new THREE.BoxGeometry(
-        1,
-        2,
-        0.7
+function createLeg(
+    x
+) {
+
+    const leg =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.16,
+                0.16,
+                1.2,
+                12
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0x222222
+            })
+        );
+
+    leg.position.set(
+        x,
+        0.65,
+        0
     );
 
-const bodyMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x2455ff
-    });
+    leg.castShadow = true;
+
+    player.add(leg);
+}
+
+createLeg(-0.25);
+createLeg(0.25);
+
+
+// Body
 
 const body =
     new THREE.Mesh(
-        bodyGeometry,
-        bodyMaterial
+        new THREE.CylinderGeometry(
+            0.55,
+            0.65,
+            1.5,
+            16
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x1557ff
+        })
     );
 
 body.position.y =
-    1.2;
+    1.65;
 
 body.castShadow = true;
 
@@ -418,30 +864,119 @@ player.add(body);
 
 // Head
 
-const headGeometry =
-    new THREE.SphereGeometry(
-        0.45,
-        24,
-        24
-    );
-
-const headMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0xd89b72
-    });
-
 const head =
     new THREE.Mesh(
-        headGeometry,
-        headMaterial
+        new THREE.SphereGeometry(
+            0.43,
+            24,
+            24
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xc98b65
+        })
     );
 
 head.position.y =
-    2.65;
+    2.75;
 
 head.castShadow = true;
 
 player.add(head);
+
+
+// Arms
+
+function createArm(
+    x
+) {
+
+    const arm =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.13,
+                0.13,
+                1.1,
+                12
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xc98b65
+            })
+        );
+
+    arm.rotation.z =
+        x > 0 ? -0.3 : 0.3;
+
+    arm.position.set(
+        x,
+        1.75,
+        0
+    );
+
+    arm.castShadow = true;
+
+    player.add(arm);
+}
+
+createArm(-0.7);
+createArm(0.7);
+
+
+// Jersey number
+
+const numberCanvas =
+    document.createElement("canvas");
+
+numberCanvas.width = 256;
+numberCanvas.height = 256;
+
+const ctx =
+    numberCanvas.getContext("2d");
+
+ctx.fillStyle =
+    "white";
+
+ctx.font =
+    "bold 130px Arial";
+
+ctx.textAlign =
+    "center";
+
+ctx.textBaseline =
+    "middle";
+
+ctx.fillText(
+    "7",
+    128,
+    128
+);
+
+const numberTexture =
+    new THREE.CanvasTexture(
+        numberCanvas
+    );
+
+const number =
+    new THREE.Mesh(
+        new THREE.PlaneGeometry(
+            0.7,
+            0.7
+        ),
+        new THREE.MeshBasicMaterial({
+            map: numberTexture,
+            transparent: true
+        })
+    );
+
+number.position.set(
+    0,
+    1.7,
+    -0.66
+);
+
+number.rotation.y =
+    Math.PI;
+
+player.add(number);
 
 
 // Player position
@@ -455,53 +990,56 @@ player.position.set(
 scene.add(player);
 
 
-// =====================================
+// ==================================================
 // BASKETBALL
-// =====================================
-
-const ballGeometry =
-    new THREE.SphereGeometry(
-        0.35,
-        24,
-        24
-    );
-
-const ballMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0xe87920
-    });
+// ==================================================
 
 const ball =
     new THREE.Mesh(
-        ballGeometry,
-        ballMaterial
+        new THREE.SphereGeometry(
+            0.38,
+            32,
+            32
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xe8751a,
+            roughness: 0.7
+        })
     );
 
 ball.castShadow = true;
 
-ball.position.set(
-    0.8,
-    1,
-    3
-);
-
 scene.add(ball);
 
 
-// =====================================
+// ==================================================
 // CONTROLS
-// =====================================
+// ==================================================
 
 const keys = {};
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    event => {
 
-        keys[event.key.toLowerCase()] = true;
+        keys[
+            event.key.toLowerCase()
+        ] = true;
 
-        if (event.code === "Space") {
-            shoot();
+        if (
+            event.code === "Space"
+        ) {
+
+            event.preventDefault();
+
+            startShot();
+        }
+
+        if (
+            event.key.toLowerCase() === "r"
+        ) {
+
+            resetBall();
         }
     }
 );
@@ -509,74 +1047,55 @@ document.addEventListener(
 
 document.addEventListener(
     "keyup",
-    function(event) {
+    event => {
 
-        keys[event.key.toLowerCase()] = false;
+        keys[
+            event.key.toLowerCase()
+        ] = false;
     }
 );
 
 
-// =====================================
-// SHOOTING
-// =====================================
-
-let ballFlying = false;
-
-let shotTime = 0;
-
-function shoot() {
-
-    if (ballFlying) {
-        return;
-    }
-
-    ballFlying = true;
-
-    shotTime = 0;
-
-    document.getElementById(
-        "message"
-    ).textContent =
-        "🏀 SHOT!";
-}
-
-
-// =====================================
+// ==================================================
 // GAME VARIABLES
-// =====================================
+// ==================================================
 
 let homeScore = 0;
+
 let awayScore = 0;
 
+let shooting = false;
 
-// =====================================
-// UPDATE PLAYER
-// =====================================
+let shotProgress = 0;
+
+let shotPower = 0;
+
+let shotDirection = -1;
+
+
+// ==================================================
+// MOVEMENT
+// ==================================================
 
 function updatePlayer() {
 
-    let speed = 0.12;
+    let speed =
+        keys["shift"]
+            ? 0.20
+            : 0.11;
 
-    if (keys["shift"]) {
-        speed = 0.22;
-    }
 
-
-    if (keys["w"]) {
+    if (keys["w"])
         player.position.z -= speed;
-    }
 
-    if (keys["s"]) {
+    if (keys["s"])
         player.position.z += speed;
-    }
 
-    if (keys["a"]) {
+    if (keys["a"])
         player.position.x -= speed;
-    }
 
-    if (keys["d"]) {
+    if (keys["d"])
         player.position.x += speed;
-    }
 
 
     // Keep player on court
@@ -584,8 +1103,8 @@ function updatePlayer() {
     player.position.x =
         THREE.MathUtils.clamp(
             player.position.x,
-            -13,
-            13
+            -13.5,
+            13.5
         );
 
     player.position.z =
@@ -594,58 +1113,154 @@ function updatePlayer() {
             -6.5,
             6.5
         );
+
+
+    // Player turning
+
+    if (keys["a"])
+        player.rotation.y =
+            Math.PI / 2;
+
+    if (keys["d"])
+        player.rotation.y =
+            -Math.PI / 2;
+
+    if (keys["w"])
+        player.rotation.y = 0;
+
+    if (keys["s"])
+        player.rotation.y =
+            Math.PI;
 }
 
 
-// =====================================
-// BALL
-// =====================================
+// ==================================================
+// BALL FOLLOW
+// ==================================================
 
-function updateBall() {
+function followBall() {
 
-    if (!ballFlying) {
-
-        ball.position.x =
-            player.position.x + 0.8;
-
-        ball.position.z =
-            player.position.z;
-
-        ball.position.y =
-            1;
-
+    if (shooting)
         return;
-    }
-
-
-    shotTime += 0.025;
 
 
     ball.position.x =
-        player.position.x;
+        player.position.x + 0.75;
 
     ball.position.z =
-        player.position.z -
-        shotTime * 8;
+        player.position.z;
 
     ball.position.y =
-        1 +
+        1.0 +
+        Math.abs(
+            Math.sin(
+                performance.now() * 0.008
+            )
+        ) * 0.15;
+}
+
+
+// ==================================================
+// SHOOTING
+// ==================================================
+
+function startShot() {
+
+    if (shooting)
+        return;
+
+
+    shooting = true;
+
+    shotProgress = 0;
+
+    shotPower = 0.85;
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        "🏀 SHOOTING!";
+
+    document.getElementById(
+        "shotBar"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "shotPower"
+    ).style.width =
+        "85%";
+}
+
+
+// ==================================================
+// UPDATE SHOT
+// ==================================================
+
+function updateShot() {
+
+    if (!shooting)
+        return;
+
+
+    shotProgress += 0.025;
+
+
+    const startX =
+        player.position.x;
+
+    const startZ =
+        player.position.z;
+
+
+    // Ball moves toward far hoop
+
+    ball.position.x =
+        startX;
+
+    ball.position.z =
+        startZ -
+        shotProgress * 7;
+
+
+    // Shooting arc
+
+    ball.position.y =
+        1.5 +
         Math.sin(
-            shotTime * Math.PI
+            shotProgress * Math.PI
         ) * 4;
 
 
-    if (shotTime >= 1) {
+    // Spin
 
-        ballFlying = false;
+    ball.rotation.x +=
+        0.25;
 
-        const distance =
+
+    if (
+        shotProgress >= 1
+    ) {
+
+        shooting = false;
+
+        document.getElementById(
+            "shotBar"
+        ).style.display =
+            "none";
+
+
+        // Basic scoring detection
+
+        if (
             Math.abs(
-                ball.position.z - 6
-            );
-
-
-        if (distance < 2) {
+                ball.position.x
+            ) < 1.4
+            &&
+            Math.abs(
+                ball.position.z + 7
+            ) < 1.5
+        ) {
 
             homeScore += 2;
 
@@ -665,59 +1280,98 @@ function updateBall() {
 
 
         updateScore();
+
+        setTimeout(
+            resetBall,
+            900
+        );
     }
 }
 
 
-// =====================================
+// ==================================================
+// RESET BALL
+// ==================================================
+
+function resetBall() {
+
+    shooting = false;
+
+    ball.position.set(
+        player.position.x + 0.75,
+        1,
+        player.position.z
+    );
+
+    document.getElementById(
+        "shotBar"
+    ).style.display =
+        "none";
+}
+
+
+// ==================================================
 // SCOREBOARD
-// =====================================
+// ==================================================
 
 function updateScore() {
 
     document.getElementById(
         "score"
     ).textContent =
-        homeScore +
-        " - " +
-        awayScore;
+
+        String(homeScore)
+            .padStart(2, "0")
+
+        +
+
+        " - "
+
+        +
+
+        String(awayScore)
+            .padStart(2, "0");
 }
 
 
-// =====================================
+// ==================================================
 // CAMERA
-// =====================================
+// ==================================================
 
 function updateCamera() {
 
-    const targetX =
+    const desiredX =
         player.position.x;
 
-    const targetZ =
+    const desiredZ =
         player.position.z + 10;
 
 
     camera.position.x +=
-        (targetX -
-        camera.position.x) * 0.08;
+        (
+            desiredX -
+            camera.position.x
+        ) * 0.08;
 
 
     camera.position.z +=
-        (targetZ -
-        camera.position.z) * 0.08;
+        (
+            desiredZ -
+            camera.position.z
+        ) * 0.08;
 
 
     camera.lookAt(
         player.position.x,
-        1,
+        1.4,
         player.position.z
     );
 }
 
 
-// =====================================
-// ANIMATION LOOP
-// =====================================
+// ==================================================
+// GAME LOOP
+// ==================================================
 
 function animate() {
 
@@ -728,7 +1382,15 @@ function animate() {
 
     updatePlayer();
 
-    updateBall();
+    if (!shooting) {
+
+        followBall();
+
+    } else {
+
+        updateShot();
+
+    }
 
     updateCamera();
 
@@ -743,13 +1405,13 @@ function animate() {
 animate();
 
 
-// =====================================
-// WINDOW RESIZE
-// =====================================
+// ==================================================
+// RESIZE
+// ==================================================
 
 window.addEventListener(
     "resize",
-    function() {
+    () => {
 
         camera.aspect =
             window.innerWidth /
