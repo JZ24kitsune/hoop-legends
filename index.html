@@ -3,129 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Hoop Legends 3D</title>
 
 <style>
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
     margin:0;
     width:100%;
     height:100%;
     overflow:hidden;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#05070c;
+    background:#05070d;
     color:white;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-button,input,select{
-    font:inherit;
-}
+button,input,select{font:inherit}
 
 button{
     cursor:pointer;
+    border:0;
 }
 
-#game{
+.hidden{display:none!important}
+
+#app{
     position:fixed;
     inset:0;
 }
 
-canvas{
-    display:block;
-}
-
-.screen{
-    position:absolute;
+#loading{
+    position:fixed;
     inset:0;
+    z-index:1000;
+    background:#05070d;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:
-        radial-gradient(circle at center,rgba(40,50,90,.35),rgba(0,0,0,.9));
-    z-index:20;
-}
-
-.hidden{
-    display:none!important;
-}
-
-/* MAIN MENU */
-
-.menu{
-    width:min(950px,94vw);
-    padding:35px;
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:25px;
-    background:rgba(10,14,24,.94);
-    box-shadow:0 30px 100px rgba(0,0,0,.7);
     text-align:center;
 }
 
-.logo{
-    font-size:52px;
-    font-weight:900;
-    letter-spacing:3px;
-    margin-bottom:5px;
+.loader{
+    width:min(600px,90vw);
+    padding:35px;
+    background:#0e1422;
+    border:1px solid #293550;
+    border-radius:22px;
 }
 
-.subtitle{
-    color:#9ca8c5;
-    margin-bottom:30px;
+.loader h1{
+    font-size:42px;
+    margin:0 0 10px;
+}
+
+.loader p{
+    color:#9aa8c2;
+}
+
+#loadError{
+    color:#ff7272;
+    margin-top:15px;
+}
+
+/* MENU */
+
+.screen{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:rgba(3,5,10,.82);
+    backdrop-filter:blur(8px);
+}
+
+.panel{
+    width:min(950px,94vw);
+    max-height:92vh;
+    overflow:auto;
+    padding:34px;
+    border-radius:25px;
+    background:linear-gradient(145deg,#11192a,#080c15);
+    border:1px solid #293550;
+    box-shadow:0 30px 100px #000;
+}
+
+.logo{
+    font-size:54px;
+    font-weight:1000;
+    letter-spacing:4px;
+    text-align:center;
+    text-shadow:0 0 30px #286dff;
+}
+
+.tagline{
+    text-align:center;
+    color:#8491aa;
+    margin:8px 0 30px;
 }
 
 .menuGrid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-    max-width:600px;
+    max-width:650px;
     margin:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:13px;
 }
 
-.menuButton{
-    border:0;
-    border-radius:14px;
-    padding:18px;
+.btn{
+    padding:17px;
+    border-radius:13px;
     color:white;
-    background:linear-gradient(135deg,#1769ff,#633cff);
     font-weight:bold;
-    font-size:17px;
+    background:linear-gradient(135deg,#1768ff,#7040ff);
     transition:.15s;
 }
 
-.menuButton:hover{
-    transform:translateY(-3px);
+.btn:hover{
+    transform:translateY(-2px);
     filter:brightness(1.15);
 }
 
-.secondary{
-    background:#171d2c;
+.btn.dark{
+    background:#171f31;
 }
 
-.credit{
-    margin-top:25px;
-    color:#66718b;
+.btn.red{
+    background:linear-gradient(135deg,#d93655,#8d2140);
+}
+
+.small{
+    color:#65728b;
     font-size:12px;
+    text-align:center;
+    margin-top:25px;
 }
 
 /* CREATOR */
-
-.creator{
-    width:min(1000px,94vw);
-    max-height:92vh;
-    overflow:auto;
-    padding:30px;
-    border-radius:24px;
-    background:#0d1321;
-    border:1px solid #26314a;
-}
-
-.creator h1{
-    margin-top:0;
-}
 
 .creatorGrid{
     display:grid;
@@ -134,261 +149,249 @@ canvas{
 }
 
 .preview{
-    min-height:430px;
+    height:440px;
     border-radius:20px;
     background:
-        radial-gradient(circle at 50% 25%,#263b68,#101522 55%,#080a10);
+        radial-gradient(circle at 50% 30%,#304d82,#121a2b 50%,#070a11);
     display:flex;
     align-items:center;
     justify-content:center;
-    position:relative;
 }
 
 .previewPlayer{
     position:relative;
-    width:150px;
-    height:280px;
+    width:180px;
+    height:360px;
 }
 
-.previewHead{
+.pHead{
+    position:absolute;
     width:105px;
     height:115px;
-    border-radius:50%;
-    position:absolute;
-    left:22px;
-    top:0;
+    left:38px;
+    top:10px;
     background:#9b633d;
-    border:4px solid rgba(0,0,0,.3);
-}
-
-.previewHair{
-    position:absolute;
-    left:14px;
-    top:-5px;
-    width:120px;
-    height:52px;
-    border-radius:55px 55px 20px 20px;
-    background:#17100d;
-    z-index:3;
-}
-
-.eye{
-    position:absolute;
-    width:13px;
-    height:13px;
     border-radius:50%;
-    background:white;
-    top:48px;
+    border:3px solid #222;
 }
 
-.eye:after{
+.pHair{
+    position:absolute;
+    width:118px;
+    height:58px;
+    left:31px;
+    top:0;
+    border-radius:60px 60px 20px 20px;
+    background:#17110d;
+    z-index:4;
+}
+
+.pEye{
+    position:absolute;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#24150d;
+    top:53px;
+    z-index:5;
+}
+
+.pEye:after{
     content:"";
     position:absolute;
     width:5px;
     height:5px;
-    background:#111;
     border-radius:50%;
+    background:white;
     left:4px;
     top:4px;
 }
 
-.eye.left{left:25px}
-.eye.right{right:25px}
+.pEye.l{left:26px}
+.pEye.r{right:26px}
 
-.nose{
+.pNose{
     position:absolute;
-    width:10px;
+    width:9px;
     height:20px;
-    border-left:3px solid rgba(0,0,0,.25);
+    border-left:3px solid #6e422a;
+    top:65px;
     left:48px;
-    top:59px;
 }
 
-.mouth{
+.pMouth{
     position:absolute;
-    width:32px;
+    width:30px;
     height:9px;
-    border-bottom:3px solid #461b1b;
+    border-bottom:3px solid #451515;
     border-radius:50%;
-    left:36px;
-    top:83px;
+    top:88px;
+    left:37px;
 }
 
-.previewBody{
+.pBody{
     position:absolute;
-    top:105px;
-    left:15px;
-    width:120px;
-    height:145px;
+    top:117px;
+    left:27px;
+    width:125px;
+    height:140px;
+    border-radius:25px 25px 12px 12px;
     background:#1769ff;
-    border-radius:30px 30px 10px 10px;
 }
 
-.previewNumber{
+.pNum{
+    text-align:center;
+    font-size:45px;
+    font-weight:1000;
+    padding-top:43px;
+}
+
+.pLeg{
     position:absolute;
-    color:white;
-    font-weight:900;
-    font-size:40px;
-    left:45px;
-    top:50px;
+    top:245px;
+    width:40px;
+    height:105px;
+    background:#252d3b;
 }
 
-.previewLeg1,
-.previewLeg2{
-    position:absolute;
-    width:35px;
-    height:95px;
-    background:#242b3a;
-    top:230px;
-}
-
-.previewLeg1{left:30px}
-.previewLeg2{right:30px}
+.pLeg.l{left:43px}
+.pLeg.r{right:43px}
 
 .form{
     display:grid;
-    gap:12px;
-}
-
-label{
-    font-size:13px;
-    color:#aeb9cf;
-}
-
-input,select{
-    width:100%;
-    border:1px solid #2a3650;
-    background:#141b2b;
-    color:white;
-    padding:12px;
-    border-radius:10px;
-    outline:none;
-}
-
-input:focus,select:focus{
-    border-color:#5689ff;
-}
-
-.creatorButtons{
-    display:flex;
     gap:10px;
-    margin-top:15px;
+}
+
+.form label{
+    color:#9ba8bf;
+    font-size:13px;
+}
+
+.form input,
+.form select{
+    width:100%;
+    padding:11px;
+    color:white;
+    background:#151e30;
+    border:1px solid #2a3854;
+    border-radius:9px;
 }
 
 /* HUD */
 
 #hud{
-    position:absolute;
+    position:fixed;
     inset:0;
+    z-index:20;
     pointer-events:none;
-    z-index:10;
 }
 
 .scoreboard{
     position:absolute;
-    top:18px;
+    top:14px;
     left:50%;
     transform:translateX(-50%);
     display:flex;
     align-items:center;
-    gap:22px;
-    background:rgba(7,10,17,.88);
-    padding:12px 22px;
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,.15);
-    box-shadow:0 8px 30px rgba(0,0,0,.45);
+    gap:18px;
+    padding:10px 18px;
+    border-radius:15px;
+    background:rgba(5,8,15,.9);
+    border:1px solid #29344a;
 }
 
-.teamName{
+.team{
     font-weight:900;
-    font-size:14px;
+    font-size:13px;
 }
 
 .score{
-    font-size:32px;
-    font-weight:900;
+    font-size:31px;
+    font-weight:1000;
 }
 
-.clock{
+.timeBox{
     text-align:center;
-    min-width:90px;
+    min-width:80px;
 }
 
-.clockTime{
-    font-size:24px;
+#gameClock{
+    font-size:22px;
     font-weight:900;
 }
 
-.quarter{
-    color:#8490a9;
+#period{
+    color:#8996ae;
     font-size:11px;
 }
 
-#playerInfo{
+#event{
     position:absolute;
-    left:18px;
-    bottom:18px;
-    background:rgba(7,10,17,.82);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:14px;
-    padding:12px 16px;
-}
-
-#message{
-    position:absolute;
-    top:100px;
+    top:95px;
     left:50%;
     transform:translateX(-50%);
-    font-weight:900;
-    font-size:22px;
-    text-shadow:0 3px 15px #000;
+    font-size:26px;
+    font-weight:1000;
+    text-shadow:0 4px 20px black;
 }
 
-#meter{
+#shotMeter{
     position:absolute;
-    left:50%;
     bottom:30px;
+    left:50%;
     transform:translateX(-50%);
-    width:240px;
-    height:18px;
+    width:260px;
+    height:20px;
+    border:2px solid white;
     border-radius:20px;
-    background:#161b28;
     overflow:hidden;
-    border:2px solid rgba(255,255,255,.5);
+    background:#101522;
 }
 
-#meterFill{
-    width:0%;
+#shotFill{
     height:100%;
-    background:linear-gradient(90deg,#ff3b3b,#ffd83d,#44e36d);
+    width:0%;
+    background:linear-gradient(90deg,#ef3434,#f5d83a,#39e66b);
+}
+
+#playerStats{
+    position:absolute;
+    left:15px;
+    bottom:15px;
+    background:rgba(5,8,15,.85);
+    border:1px solid #29344a;
+    border-radius:12px;
+    padding:11px 15px;
+    font-size:12px;
 }
 
 #controls{
     position:absolute;
-    right:18px;
-    bottom:18px;
-    background:rgba(7,10,17,.78);
-    padding:13px;
-    border-radius:13px;
-    color:#aeb9cf;
-    font-size:12px;
-    line-height:1.6;
+    right:15px;
+    bottom:15px;
+    padding:12px;
+    background:rgba(5,8,15,.82);
+    border:1px solid #29344a;
+    border-radius:12px;
+    color:#a8b4ca;
+    font-size:11px;
+    line-height:1.55;
 }
 
 #chat{
     position:absolute;
-    right:18px;
-    top:95px;
-    width:270px;
-    background:rgba(7,10,17,.92);
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:15px;
-    padding:12px;
+    right:15px;
+    top:90px;
+    width:290px;
     pointer-events:auto;
+    background:rgba(5,8,15,.95);
+    border:1px solid #29344a;
+    border-radius:14px;
+    padding:12px;
 }
 
-.chatMessages{
-    height:150px;
+#chatLog{
+    height:160px;
     overflow:auto;
     font-size:12px;
     margin-bottom:8px;
@@ -398,49 +401,64 @@ input:focus,select:focus{
     margin-bottom:7px;
 }
 
-.chatName{
-    font-weight:bold;
-}
-
 .chatInput{
     display:flex;
     gap:5px;
 }
 
 .chatInput input{
+    min-width:0;
+    flex:1;
+    color:white;
+    background:#131c2d;
+    border:1px solid #2a3854;
+    border-radius:7px;
     padding:8px;
 }
 
 .chatInput button{
-    border:0;
-    border-radius:8px;
-    background:#276cff;
     color:white;
-    padding:8px 10px;
+    background:#286cff;
+    border-radius:7px;
+    padding:8px 11px;
 }
 
-/* PAUSE */
+/* INFO */
 
-.pauseBox{
-    width:360px;
-    background:#0d1321;
+.infoGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.card{
+    background:#121a2a;
     border:1px solid #293650;
-    border-radius:20px;
-    padding:30px;
-    text-align:center;
+    border-radius:14px;
+    padding:18px;
+}
+
+.card h3{
+    margin-top:0;
+}
+
+.card p{
+    color:#9ca8bd;
+    line-height:1.6;
 }
 
 @media(max-width:700px){
-    .creatorGrid{
+    .creatorGrid,
+    .infoGrid{
         grid-template-columns:1fr;
-    }
-
-    .logo{
-        font-size:35px;
     }
 
     .menuGrid{
         grid-template-columns:1fr;
+    }
+
+    .logo{
+        font-size:36px;
     }
 
     #controls{
@@ -448,8 +466,8 @@ input:focus,select:focus{
     }
 
     .scoreboard{
-        gap:8px;
-        padding:8px 12px;
+        gap:7px;
+        padding:8px 10px;
     }
 }
 </style>
@@ -457,46 +475,59 @@ input:focus,select:focus{
 
 <body>
 
-<div id="game"></div>
+<div id="app"></div>
+
+<!-- LOADING -->
+
+<div id="loading">
+    <div class="loader">
+        <h1>HOOP LEGENDS 3D</h1>
+        <p id="loadText">Loading 3D engine...</p>
+        <div id="loadError"></div>
+    </div>
+</div>
 
 <!-- MAIN MENU -->
 
-<div id="menuScreen" class="screen">
-    <div class="menu">
+<div id="menu" class="screen hidden">
+    <div class="panel">
 
         <div class="logo">HOOP LEGENDS</div>
-        <div class="subtitle">3D STREET • ARENA • BASKETBALL</div>
+        <div class="tagline">
+            ORIGINAL 3D BASKETBALL EXPERIENCE
+        </div>
 
         <div class="menuGrid">
 
-            <button class="menuButton" onclick="startGame()">
+            <button class="btn" onclick="startGame()">
                 PLAY NOW
             </button>
 
-            <button class="menuButton secondary" onclick="openCreator()">
-                CREATE PLAYER
+            <button class="btn" onclick="openCreator()">
+                MY PLAYER
             </button>
 
-            <button class="menuButton secondary" onclick="chooseMode()">
-                GAME MODE
+            <button class="btn dark" onclick="openModes()">
+                GAME MODES
             </button>
 
-            <button class="menuButton secondary" onclick="openControls()">
+            <button class="btn dark" onclick="openTeams()">
+                MY TEAM
+            </button>
+
+            <button class="btn dark" onclick="openStats()">
+                STATS & CAREER
+            </button>
+
+            <button class="btn dark" onclick="openControls()">
                 CONTROLS
-            </button>
-
-            <button class="menuButton secondary" onclick="toggleChatMenu()">
-                TEAM CHAT
-            </button>
-
-            <button class="menuButton secondary" onclick="resetSave()">
-                RESET PLAYER
             </button>
 
         </div>
 
-        <div class="credit">
-            Original browser basketball project • Built for GitHub Pages
+        <div class="small">
+            Player: <b id="menuPlayer">Legend</b>
+            • Username: <b id="menuUser">Player</b>
         </div>
 
     </div>
@@ -504,11 +535,10 @@ input:focus,select:focus{
 
 <!-- CREATOR -->
 
-<div id="creatorScreen" class="screen hidden">
+<div id="creator" class="screen hidden">
+    <div class="panel">
 
-    <div class="creator">
-
-        <h1>Create Your Player</h1>
+        <h1>MY PLAYER</h1>
 
         <div class="creatorGrid">
 
@@ -516,94 +546,88 @@ input:focus,select:focus{
 
                 <div class="previewPlayer">
 
-                    <div id="previewHair" class="previewHair"></div>
+                    <div id="pvHair" class="pHair"></div>
 
-                    <div id="previewHead" class="previewHead">
-                        <div class="eye left"></div>
-                        <div class="eye right"></div>
-                        <div class="nose"></div>
-                        <div class="mouth"></div>
+                    <div id="pvHead" class="pHead">
+                        <div class="pEye l"></div>
+                        <div class="pEye r"></div>
+                        <div class="pNose"></div>
+                        <div class="pMouth"></div>
                     </div>
 
-                    <div class="previewBody">
-                        <div id="previewNumber" class="previewNumber">
+                    <div class="pBody">
+                        <div id="pvNumber" class="pNum">
                             7
                         </div>
                     </div>
 
-                    <div class="previewLeg1"></div>
-                    <div class="previewLeg2"></div>
+                    <div class="pLeg l"></div>
+                    <div class="pLeg r"></div>
 
                 </div>
 
             </div>
 
-            <div>
+            <div class="form">
 
-                <div class="form">
+                <label>Username</label>
+                <input id="username" placeholder="Your username">
 
-                    <label>Username</label>
-                    <input id="usernameInput" placeholder="Your username">
+                <label>Player Name</label>
+                <input id="playerName" placeholder="Player name">
 
-                    <label>Player Name</label>
-                    <input id="playerNameInput" placeholder="Player name">
+                <label>Skin</label>
+                <select id="skin">
+                    <option value="#6b3f29">Deep</option>
+                    <option value="#9b633d" selected>Brown</option>
+                    <option value="#c88758">Tan</option>
+                    <option value="#e1aa7b">Light</option>
+                    <option value="#f1c39c">Fair</option>
+                </select>
 
-                    <label>Skin Tone</label>
-                    <select id="skinInput">
-                        <option value="#6f422b">Deep</option>
-                        <option value="#9b633d" selected>Brown</option>
-                        <option value="#c7895b">Tan</option>
-                        <option value="#e0a879">Light</option>
-                        <option value="#f0c39b">Fair</option>
-                    </select>
+                <label>Face</label>
+                <select id="face">
+                    <option value="round">Round</option>
+                    <option value="oval">Oval</option>
+                    <option value="square">Square</option>
+                </select>
 
-                    <label>Hair</label>
-                    <select id="hairInput">
-                        <option value="short">Short</option>
-                        <option value="curly">Curly</option>
-                        <option value="fade">Fade</option>
-                        <option value="long">Long</option>
-                        <option value="buzz">Buzz</option>
-                    </select>
+                <label>Hair Style</label>
+                <select id="hair">
+                    <option value="short">Short</option>
+                    <option value="curly">Curly</option>
+                    <option value="fade">Fade</option>
+                    <option value="buzz">Buzz</option>
+                    <option value="long">Long</option>
+                </select>
 
-                    <label>Hair Colour</label>
-                    <select id="hairColorInput">
-                        <option value="#111111">Black</option>
-                        <option value="#4b2a16">Brown</option>
-                        <option value="#8c5b2c">Light Brown</option>
-                        <option value="#dddddd">Silver</option>
-                    </select>
+                <label>Hair Colour</label>
+                <select id="hairColor">
+                    <option value="#111111">Black</option>
+                    <option value="#4b2a16">Brown</option>
+                    <option value="#8c5b2c">Light Brown</option>
+                    <option value="#d6d6d6">Silver</option>
+                </select>
 
-                    <label>Eye Colour</label>
-                    <select id="eyeColorInput">
-                        <option value="#21140b">Brown</option>
-                        <option value="#2656a8">Blue</option>
-                        <option value="#318b50">Green</option>
-                        <option value="#111111">Black</option>
-                    </select>
+                <label>Eyes</label>
+                <select id="eyes">
+                    <option value="#21140d">Brown</option>
+                    <option value="#245ca8">Blue</option>
+                    <option value="#31834c">Green</option>
+                    <option value="#111111">Black</option>
+                </select>
 
-                    <label>Face Shape</label>
-                    <select id="faceInput">
-                        <option value="round">Round</option>
-                        <option value="oval">Oval</option>
-                        <option value="square">Square</option>
-                    </select>
+                <label>Jersey Number</label>
+                <input id="number" type="number" min="0" max="99" value="7">
 
-                    <label>Jersey Number</label>
-                    <input id="numberInput" type="number" min="0" max="99" value="7">
+                <div style="display:flex;gap:10px;margin-top:10px">
+                    <button class="btn" onclick="savePlayer()">
+                        SAVE
+                    </button>
 
-                    <div class="creatorButtons">
-
-                        <button class="menuButton" onclick="savePlayer()">
-                            SAVE PLAYER
-                        </button>
-
-                        <button class="menuButton secondary" onclick="closeCreator()">
-                            BACK
-                        </button>
-
-                    </div>
-
+                    <button class="btn dark" onclick="closeScreens()">
+                        BACK
+                    </button>
                 </div>
 
             </div>
@@ -611,75 +635,212 @@ input:focus,select:focus{
         </div>
 
     </div>
-
 </div>
 
-<!-- MODE -->
+<!-- MODES -->
 
-<div id="modeScreen" class="screen hidden">
+<div id="modes" class="screen hidden">
+    <div class="panel">
 
-    <div class="pauseBox">
+        <h1>GAME MODES</h1>
 
-        <h1>Game Mode</h1>
+        <div class="infoGrid">
 
-        <p id="modeText">5v5</p>
+            <div class="card">
+                <h3>Quick Match</h3>
+                <p>
+                    Fast competitive basketball with your custom player.
+                </p>
+                <button class="btn" onclick="setMode(5);startGame()">
+                    5v5
+                </button>
+            </div>
 
-        <button class="menuButton" onclick="setMode(3)">
-            3v3
-        </button>
+            <div class="card">
+                <h3>3v3</h3>
+                <p>
+                    Smaller court-style game with more space.
+                </p>
+                <button class="btn" onclick="setMode(3);startGame()">
+                    PLAY 3v3
+                </button>
+            </div>
 
-        <br><br>
+            <div class="card">
+                <h3>Practice</h3>
+                <p>
+                    Work on shooting, passing, layups and dunks.
+                </p>
+                <button class="btn" onclick="setPractice();startGame()">
+                    PRACTICE
+                </button>
+            </div>
 
-        <button class="menuButton" onclick="setMode(5)">
-            5v5
-        </button>
+            <div class="card">
+                <h3>Season</h3>
+                <p>
+                    Play games, earn points and build your career.
+                </p>
+                <button class="btn" onclick="setMode(5);startGame()">
+                    START SEASON
+                </button>
+            </div>
 
-        <br><br>
+        </div>
 
-        <button class="menuButton secondary" onclick="hideScreens()">
+        <br>
+
+        <button class="btn dark" onclick="closeScreens()">
             BACK
         </button>
 
     </div>
+</div>
 
+<!-- TEAM -->
+
+<div id="teams" class="screen hidden">
+    <div class="panel">
+
+        <h1>MY TEAM</h1>
+
+        <div class="infoGrid">
+
+            <div class="card">
+                <h3>Legends</h3>
+                <p>Blue • Fast offense • Balanced</p>
+            </div>
+
+            <div class="card">
+                <h3>Titans</h3>
+                <p>Red • Physical defense • Rebounding</p>
+            </div>
+
+            <div class="card">
+                <h3>Falcons</h3>
+                <p>Gold • Speed • Perimeter play</p>
+            </div>
+
+            <div class="card">
+                <h3>Wolves</h3>
+                <p>Purple • Defense • Transition</p>
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="btn dark" onclick="closeScreens()">
+            BACK
+        </button>
+
+    </div>
+</div>
+
+<!-- STATS -->
+
+<div id="stats" class="screen hidden">
+    <div class="panel">
+
+        <h1>CAREER</h1>
+
+        <div class="infoGrid">
+
+            <div class="card">
+                <h3>Games</h3>
+                <p id="careerGames">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Points</h3>
+                <p id="careerPoints">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Steals</h3>
+                <p id="careerSteals">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Blocks</h3>
+                <p id="careerBlocks">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Rebounds</h3>
+                <p id="careerRebounds">0</p>
+            </div>
+
+            <div class="card">
+                <h3>XP</h3>
+                <p id="careerXP">0</p>
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="btn dark" onclick="closeScreens()">
+            BACK
+        </button>
+
+    </div>
 </div>
 
 <!-- CONTROLS -->
 
 <div id="controlsScreen" class="screen hidden">
+    <div class="panel">
 
-    <div class="pauseBox">
+        <h1>CONTROLS</h1>
 
-        <h1>Controls</h1>
+        <div class="infoGrid">
 
-        <p>
-            W A S D — Move
-            <br>
-            SHIFT — Sprint
-            <br>
-            SPACE — Shoot
-            <br>
-            E — Pass
-            <br>
-            X — Dunk
-            <br>
-            C — Layup
-            <br>
-            F — Steal
-            <br>
-            B — Block
-            <br>
-            P — Pause
-            <br>
-            T — Team Chat
-        </p>
+            <div class="card">
+                <h3>Movement</h3>
+                <p>
+                    W A S D — Move<br>
+                    SHIFT — Sprint<br>
+                    SPACE — Shoot<br>
+                    E — Pass
+                </p>
+            </div>
 
-        <button class="menuButton" onclick="hideScreens()">
+            <div class="card">
+                <h3>Moves</h3>
+                <p>
+                    C — Layup<br>
+                    X — Dunk<br>
+                    F — Steal<br>
+                    B — Block
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Game</h3>
+                <p>
+                    P — Pause<br>
+                    T — Team Chat<br>
+                    R — Reset Position
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Tip</h3>
+                <p>
+                    Move toward the basket before attempting a layup or dunk.
+                </p>
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="btn dark" onclick="closeScreens()">
             BACK
         </button>
 
     </div>
-
 </div>
 
 <!-- HUD -->
@@ -688,55 +849,54 @@ input:focus,select:focus{
 
     <div class="scoreboard">
 
-        <div class="teamName">LEGENDS</div>
-
+        <div class="team">LEGENDS</div>
         <div id="homeScore" class="score">0</div>
 
-        <div class="clock">
-            <div id="clockTime" class="clockTime">03:00</div>
-            <div id="quarterText" class="quarter">Q1</div>
+        <div class="timeBox">
+            <div id="gameClock">03:00</div>
+            <div id="period">Q1</div>
         </div>
 
         <div id="awayScore" class="score">0</div>
-
-        <div class="teamName">TITANS</div>
+        <div class="team">TITANS</div>
 
     </div>
 
-    <div id="message"></div>
+    <div id="event"></div>
 
-    <div id="meter">
-        <div id="meterFill"></div>
+    <div id="shotMeter">
+        <div id="shotFill"></div>
     </div>
 
-    <div id="playerInfo">
-        <b id="hudPlayer">Player</b>
-        <br>
-        Stamina: <span id="staminaText">100</span>
+    <div id="playerStats">
+        <b id="hudName">Legend</b><br>
+        Stamina: <span id="stamina">100</span><br>
+        Mode: <span id="hudMode">5v5</span>
     </div>
 
     <div id="controls">
-        WASD Move<br>
+        W A S D Move<br>
         SHIFT Sprint<br>
         SPACE Shoot<br>
         E Pass<br>
-        X Dunk<br>
         C Layup<br>
+        X Dunk<br>
         F Steal<br>
         B Block<br>
         P Pause<br>
-        T Chat
+        T Chat<br>
+        R Reset
     </div>
 
     <div id="chat" class="hidden">
 
         <b>TEAM CHAT</b>
 
-        <div id="chatMessages" class="chatMessages"></div>
+        <div id="chatLog"></div>
 
         <div class="chatInput">
-            <input id="chatInput" placeholder="Say something...">
-            <button onclick="sendChat()">Send</button>
+            <input id="chatText" placeholder="Message team...">
+            <button onclick="sendChat()">SEND</button>
         </div>
 
     </div>
@@ -745,349 +905,250 @@ input:focus,select:focus{
 
 <!-- PAUSE -->
 
-<div id="pauseScreen" class="screen hidden">
-
-    <div class="pauseBox">
+<div id="pause" class="screen hidden">
+    <div class="panel" style="max-width:400px;text-align:center">
 
         <h1>PAUSED</h1>
 
-        <button class="menuButton" onclick="resumeGame()">
+        <button class="btn" onclick="resumeGame()">
             RESUME
         </button>
 
         <br><br>
 
-        <button class="menuButton secondary" onclick="quitGame()">
-            QUIT
+        <button class="btn dark" onclick="quitGame()">
+            QUIT MATCH
         </button>
 
     </div>
-
 </div>
 
-<!-- THREE.JS -->
+<!-- THREE -->
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 
 /* =========================================================
-   HOOP LEGENDS 3D
-   SINGLE FILE VERSION
+   GLOBAL GAME STATE
    ========================================================= */
 
 let scene;
 let camera;
 let renderer;
-let clock;
+let gameClock;
 
-let player;
+let userPlayer;
 let ball;
 
-let teammates = [];
-let opponents = [];
+let teammates=[];
+let opponents=[];
 
-let keys = {};
+let keys={};
 
-let gameRunning = false;
-let paused = false;
+let gameStarted=false;
+let paused=false;
+let practice=false;
 
-let gameMode = 5;
+let mode=5;
 
-let homeScore = 0;
-let awayScore = 0;
+let homeScore=0;
+let awayScore=0;
 
-let quarter = 1;
-let timeLeft = 180;
+let quarter=1;
+let quarterTime=180;
 
-let stamina = 100;
+let stamina=100;
 
-let ballState = "dribble";
+let ballMode="dribble";
 
-let shooting = false;
-let shotPower = 0;
-let shotDirection = 1;
+let shooting=false;
+let shotValue=0;
+let shotDirection=1;
 
-let username = "Player";
-let playerName = "Legend";
+let ballVelocity=
+    new THREE.Vector3();
 
-let playerData = {
+let career={
+    games:0,
+    points:0,
+    steals:0,
+    blocks:0,
+    rebounds:0,
+    xp:0
+};
+
+let playerInfo={
+    username:"Player",
+    name:"Legend",
     skin:"#9b633d",
+    face:"round",
     hair:"short",
     hairColor:"#111111",
-    eyeColor:"#21140b",
-    face:"round",
+    eyes:"#21140d",
     number:7
 };
 
-const COURT_WIDTH = 28;
-const COURT_LENGTH = 50;
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+window.addEventListener(
+    "load",
+    ()=>{
+        loadSave();
+
+        if(typeof THREE==="undefined"){
+
+            document.getElementById(
+                "loadText"
+            ).textContent=
+                "3D engine failed to load.";
+
+            document.getElementById(
+                "loadError"
+            ).textContent=
+                "Check your internet connection, then refresh the page.";
+
+            return;
+
+        }
+
+        init();
+
+        document.getElementById(
+            "loading"
+        ).classList.add("hidden");
+
+        document.getElementById(
+            "menu"
+        ).classList.remove("hidden");
+
+        updateMenu();
+
+    }
+);
 
 
 /* =========================================================
-   STORAGE
+   SAVE
    ========================================================= */
 
-function loadPlayer(){
+function loadSave(){
 
     try{
 
-        const saved =
-            JSON.parse(localStorage.getItem("hoopLegendsPlayer"));
+        const saved=
+            JSON.parse(
+                localStorage.getItem(
+                    "hoopLegendsSave"
+                )
+            );
 
         if(saved){
 
-            username = saved.username || username;
-            playerName = saved.playerName || playerName;
+            playerInfo={
+                ...playerInfo,
+                ...(saved.playerInfo||{})
+            };
 
-            playerData = {
-                ...playerData,
-                ...(saved.playerData || {})
+            career={
+                ...career,
+                ...(saved.career||{})
             };
 
         }
 
     }catch(e){
 
-        console.log("Save loading skipped.");
+        console.log("Save unavailable");
 
     }
 
 }
 
-function savePlayer(){
+function saveGame(){
 
-    username =
-        document.getElementById("usernameInput").value ||
-        "Player";
+    try{
 
-    playerName =
-        document.getElementById("playerNameInput").value ||
-        "Legend";
+        localStorage.setItem(
+            "hoopLegendsSave",
+            JSON.stringify({
+                playerInfo,
+                career
+            })
+        );
 
-    playerData.skin =
-        document.getElementById("skinInput").value;
-
-    playerData.hair =
-        document.getElementById("hairInput").value;
-
-    playerData.hairColor =
-        document.getElementById("hairColorInput").value;
-
-    playerData.eyeColor =
-        document.getElementById("eyeColorInput").value;
-
-    playerData.face =
-        document.getElementById("faceInput").value;
-
-    playerData.number =
-        Number(document.getElementById("numberInput").value) || 7;
-
-    localStorage.setItem(
-        "hoopLegendsPlayer",
-        JSON.stringify({
-            username,
-            playerName,
-            playerData
-        })
-    );
-
-    updatePreview();
-
-    hideScreens();
-
-    showMessage("PLAYER SAVED");
-
-}
-
-function resetSave(){
-
-    localStorage.removeItem("hoopLegendsPlayer");
-
-    username="Player";
-    playerName="Legend";
-
-    alert("Player reset.");
-
-}
-
-loadPlayer();
-
-
-/* =========================================================
-   UI
-   ========================================================= */
-
-function hideScreens(){
-
-    document.querySelectorAll(".screen")
-        .forEach(s=>s.classList.add("hidden"));
-
-}
-
-function openCreator(){
-
-    hideScreens();
-
-    document.getElementById("creatorScreen")
-        .classList.remove("hidden");
-
-    document.getElementById("usernameInput").value=username;
-    document.getElementById("playerNameInput").value=playerName;
-
-    document.getElementById("skinInput").value=playerData.skin;
-    document.getElementById("hairInput").value=playerData.hair;
-    document.getElementById("hairColorInput").value=playerData.hairColor;
-    document.getElementById("eyeColorInput").value=playerData.eyeColor;
-    document.getElementById("faceInput").value=playerData.face;
-    document.getElementById("numberInput").value=playerData.number;
-
-    updatePreview();
-
-}
-
-function closeCreator(){
-
-    hideScreens();
-
-    document.getElementById("menuScreen")
-        .classList.remove("hidden");
-
-}
-
-function chooseMode(){
-
-    hideScreens();
-
-    document.getElementById("modeScreen")
-        .classList.remove("hidden");
-
-}
-
-function setMode(n){
-
-    gameMode=n;
-
-    document.getElementById("modeText").textContent =
-        n+"v"+n;
-
-    hideScreens();
-
-    document.getElementById("menuScreen")
-        .classList.remove("hidden");
-
-    showMessage("MODE: "+n+"v"+n);
-
-}
-
-function openControls(){
-
-    hideScreens();
-
-    document.getElementById("controlsScreen")
-        .classList.remove("hidden");
-
-}
-
-function toggleChatMenu(){
-
-    alert(
-        "Team chat becomes available during a match.\n\nPress T while playing."
-    );
-
-}
-
-function updatePreview(){
-
-    const head =
-        document.getElementById("previewHead");
-
-    const hair =
-        document.getElementById("previewHair");
-
-    head.style.background =
-        playerData.skin;
-
-    hair.style.background =
-        playerData.hairColor;
-
-    if(playerData.face==="square"){
-        head.style.borderRadius="25px";
-    }
-
-    else if(playerData.face==="oval"){
-        head.style.borderRadius="48%";
-    }
-
-    else{
-        head.style.borderRadius="50%";
-    }
-
-    document.getElementById("previewNumber")
-        .textContent=playerData.number;
+    }catch(e){}
 
 }
 
 
 /* =========================================================
-   THREE INITIALIZATION
+   THREE INIT
    ========================================================= */
 
-function initThree(){
+function init(){
 
-    if(renderer) return;
-
-    scene =
+    scene=
         new THREE.Scene();
 
-    scene.background =
-        new THREE.Color(0x060911);
+    scene.background=
+        new THREE.Color(0x060912);
 
-    scene.fog =
-        new THREE.Fog(0x060911,55,130);
+    scene.fog=
+        new THREE.Fog(
+            0x060912,
+            55,
+            130
+        );
 
-    camera =
+    camera=
         new THREE.PerspectiveCamera(
-            60,
-            window.innerWidth/window.innerHeight,
+            58,
+            innerWidth/innerHeight,
             .1,
-            300
+            250
         );
 
     camera.position.set(
         0,
-        11,
-        18
+        10,
+        16
     );
 
-    renderer =
+    renderer=
         new THREE.WebGLRenderer({
-            antialias:true,
-            powerPreference:"high-performance"
+            antialias:true
         });
 
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio,2)
+        Math.min(
+            devicePixelRatio,
+            2
+        )
     );
 
     renderer.setSize(
-        window.innerWidth,
-        window.innerHeight
+        innerWidth,
+        innerHeight
     );
 
     renderer.shadowMap.enabled=true;
 
     document
-        .getElementById("game")
+        .getElementById("app")
         .appendChild(renderer.domElement);
 
-    clock =
+    gameClock=
         new THREE.Clock();
 
-    setupLights();
-    buildArena();
-    buildCourt();
-    buildHoops();
+    addLights();
+    addArena();
+    addCourt();
+    addHoop(-1);
+    addHoop(1);
 
     window.addEventListener(
         "resize",
@@ -1100,68 +1161,68 @@ function initThree(){
 
 
 /* =========================================================
-   LIGHTING
+   LIGHTS
    ========================================================= */
 
-function setupLights(){
+function addLights(){
 
-    const ambient =
+    const ambient=
         new THREE.HemisphereLight(
             0xffffff,
-            0x111827,
-            2
+            0x111522,
+            1.8
         );
 
     scene.add(ambient);
 
-    const main =
+    const sun=
         new THREE.DirectionalLight(
             0xffffff,
-            3
+            2.5
         );
 
-    main.position.set(
-        0,
-        35,
-        5
+    sun.position.set(
+        -15,
+        30,
+        10
     );
 
-    main.castShadow=true;
+    sun.castShadow=true;
 
-    main.shadow.mapSize.width=2048;
-    main.shadow.mapSize.height=2048;
+    sun.shadow.mapSize.width=2048;
+    sun.shadow.mapSize.height=2048;
 
-    scene.add(main);
+    scene.add(sun);
 
-    const side1 =
+    const blue=
         new THREE.PointLight(
-            0x4e7dff,
+            0x3975ff,
             80,
-            80
+            70
         );
 
-    side1.position.set(
-        -25,
-        15,
+    blue.position.set(
+        -30,
+        12,
         0
     );
 
-    scene.add(side1);
+    scene.add(blue);
 
-    const side2 =
+    const red=
         new THREE.PointLight(
-            0xff4f75,
+            0xff345d,
             70,
-            80
+            70
         );
 
-    side2.position.set(
-        25,
-        15,
+    red.position.set(
+        30,
+        12,
         0
     );
 
-    scene.add(side2);
+    scene.add(red);
 
 }
 
@@ -1170,9 +1231,9 @@ function setupLights(){
    ARENA
    ========================================================= */
 
-function buildArena(){
+function addArena(){
 
-    const floor =
+    const floor=
         new THREE.Mesh(
             new THREE.BoxGeometry(
                 100,
@@ -1180,8 +1241,7 @@ function buildArena(){
                 100
             ),
             new THREE.MeshStandardMaterial({
-                color:0x090d15,
-                roughness:.85
+                color:0x080c14
             })
         );
 
@@ -1191,61 +1251,87 @@ function buildArena(){
 
     scene.add(floor);
 
-    /* arena walls */
-
-    const wallMaterial =
-        new THREE.MeshStandardMaterial({
-            color:0x101827,
-            roughness:.75
-        });
-
-    const backWall =
+    const wall=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                100,
+                90,
                 20,
                 1
             ),
-            wallMaterial
+            new THREE.MeshStandardMaterial({
+                color:0x101827
+            })
         );
 
-    backWall.position.set(
+    wall.position.set(
         0,
         9,
-        -35
+        -34
     );
 
-    scene.add(backWall);
+    scene.add(wall);
 
-    /* crowd blocks */
+    /* arena screens */
 
     for(let side of [-1,1]){
 
-        for(let row=0;row<4;row++){
+        const screen=
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    14,
+                    5,
+                    .3
+                ),
+                new THREE.MeshBasicMaterial({
+                    color:
+                        side===-1 ?
+                        0x194fff :
+                        0xff3154
+                })
+            );
 
-            for(let i=-18;i<=18;i+=2){
+        screen.position.set(
+            side*25,
+            10,
+            0
+        );
 
-                const seat =
+        screen.rotation.y=
+            side===-1 ?
+            Math.PI/2 :
+            -Math.PI/2;
+
+        scene.add(screen);
+
+    }
+
+    /* crowd */
+
+    for(let row=0;row<5;row++){
+
+        for(let i=-20;i<=20;i+=2){
+
+            for(let side of [-1,1]){
+
+                const seat=
                     new THREE.Mesh(
                         new THREE.BoxGeometry(
-                            1.3,
-                            .7,
-                            1
+                            1.2,
+                            .65,
+                            .8
                         ),
                         new THREE.MeshStandardMaterial({
                             color:
-                                new THREE.Color().setHSL(
-                                    Math.random(),
-                                    .35,
-                                    .28
-                                )
+                                Math.random()>.5 ?
+                                0x33405c :
+                                0x20293b
                         })
                     );
 
                 seat.position.set(
                     i,
-                    .5+row*1.1,
-                    side*(28+row*1.3)
+                    .4+row,
+                    side*(28+row*1.2)
                 );
 
                 scene.add(seat);
@@ -1263,58 +1349,54 @@ function buildArena(){
    COURT
    ========================================================= */
 
-function buildCourt(){
+function addCourt(){
 
-    const court =
+    const court=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                COURT_WIDTH,
+                28,
                 .25,
-                COURT_LENGTH
+                50
             ),
             new THREE.MeshStandardMaterial({
-                color:0xb87442,
-                roughness:.55
+                color:0xb87948,
+                roughness:.6
             })
         );
 
     court.position.y=.1;
-
     court.receiveShadow=true;
 
     scene.add(court);
 
-    addLine(
+    /* court markings */
+
+    addFloorLine(
         0,
-        .24,
         0,
-        COURT_WIDTH,
+        28,
         .12
     );
 
-    addLine(
+    addFloorLine(
         0,
-        .24,
-        -COURT_LENGTH/2,
-        COURT_WIDTH,
+        -25,
+        28,
         .12
     );
 
-    addLine(
+    addFloorLine(
         0,
-        .24,
-        COURT_LENGTH/2,
-        COURT_WIDTH,
+        25,
+        28,
         .12
     );
 
-    /* center circle */
-
-    const circle =
+    const circle=
         new THREE.Mesh(
             new THREE.RingGeometry(
-                4.9,
-                5.05,
+                4.8,
+                5,
                 64
             ),
             new THREE.MeshBasicMaterial({
@@ -1323,49 +1405,32 @@ function buildCourt(){
             })
         );
 
-    circle.rotation.x=-Math.PI/2;
+    circle.rotation.x=
+        -Math.PI/2;
 
-    circle.position.y=.24;
+    circle.position.y=.25;
 
     scene.add(circle);
 
-    /* center logo */
-
-    const logo =
-        new THREE.Mesh(
-            new THREE.CircleGeometry(
-                2.2,
-                48
-            ),
-            new THREE.MeshBasicMaterial({
-                color:0x16284e
-            })
-        );
-
-    logo.rotation.x=-Math.PI/2;
-    logo.position.y=.25;
-
-    scene.add(logo);
-
-    /* keys */
+    /* painted areas */
 
     for(let z of [-18,18]){
 
-        const key =
+        const key=
             new THREE.Mesh(
                 new THREE.BoxGeometry(
                     12,
                     .03,
-                    16
+                    14
                 ),
                 new THREE.MeshStandardMaterial({
-                    color:0x263d64
+                    color:0x29416b
                 })
             );
 
         key.position.set(
             0,
-            .24,
+            .25,
             z
         );
 
@@ -1375,21 +1440,30 @@ function buildCourt(){
 
 }
 
-function addLine(x,y,z,w,d){
+function addFloorLine(
+    x,
+    z,
+    width,
+    depth
+){
 
-    const line =
+    const line=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                w,
+                width,
                 .04,
-                d
+                depth
             ),
             new THREE.MeshBasicMaterial({
                 color:0xffffff
             })
         );
 
-    line.position.set(x,y,z);
+    line.position.set(
+        x,
+        .25,
+        z
+    );
 
     scene.add(line);
 
@@ -1397,32 +1471,24 @@ function addLine(x,y,z,w,d){
 
 
 /* =========================================================
-   HOOPS
+   HOOP
    ========================================================= */
 
-function buildHoops(){
+function addHoop(side){
 
-    buildHoop(-1);
-    buildHoop(1);
+    const z=side*23;
 
-}
-
-function buildHoop(side){
-
-    const z =
-        side*23;
-
-    const pole =
+    const pole=
         new THREE.Mesh(
             new THREE.CylinderGeometry(
-                .25,
-                .35,
+                .28,
+                .4,
                 7,
                 16
             ),
             new THREE.MeshStandardMaterial({
-                color:0x777f91,
-                metalness:.5
+                color:0x777f8e,
+                metalness:.6
             })
         );
 
@@ -1436,7 +1502,7 @@ function buildHoop(side){
 
     scene.add(pole);
 
-    const board =
+    const board=
         new THREE.Mesh(
             new THREE.BoxGeometry(
                 10,
@@ -1444,9 +1510,9 @@ function buildHoop(side){
                 .3
             ),
             new THREE.MeshStandardMaterial({
-                color:0xe8edf5,
+                color:0xe5eaf3,
                 transparent:true,
-                opacity:.75
+                opacity:.82
             })
         );
 
@@ -1458,21 +1524,22 @@ function buildHoop(side){
 
     scene.add(board);
 
-    const rim =
+    const rim=
         new THREE.Mesh(
             new THREE.TorusGeometry(
                 1.35,
-                .10,
+                .1,
                 12,
                 32
             ),
             new THREE.MeshStandardMaterial({
-                color:0xff5b28,
+                color:0xff5b20,
                 metalness:.5
             })
         );
 
-    rim.rotation.x=Math.PI/2;
+    rim.rotation.x=
+        Math.PI/2;
 
     rim.position.set(
         0,
@@ -1480,227 +1547,191 @@ function buildHoop(side){
         z-side*1.2
     );
 
-    rim.castShadow=true;
-
     scene.add(rim);
-
-    /* net */
-
-    for(let i=0;i<12;i++){
-
-        const a =
-            i/12*Math.PI*2;
-
-        const net =
-            new THREE.Mesh(
-                new THREE.CylinderGeometry(
-                    .015,
-                    .015,
-                    1.5,
-                    5
-                ),
-                new THREE.MeshBasicMaterial({
-                    color:0xffffff,
-                    transparent:true,
-                    opacity:.55
-                })
-            );
-
-        net.position.set(
-            Math.cos(a)*1.25,
-            5.1,
-            z-side*1.2+
-            Math.sin(a)*1.25
-        );
-
-        scene.add(net);
-
-    }
 
 }
 
 
 /* =========================================================
-   PLAYER MODEL
+   PLAYER
    ========================================================= */
 
 function createPlayer(
-    isUser,
     team,
+    user,
     index
 ){
 
-    const group =
+    const g=
         new THREE.Group();
 
-    const skin =
-        isUser ?
-        playerData.skin :
-        (team==="home" ? "#7c5034" : "#8e674b");
+    const skin=
+        user ?
+        playerInfo.skin :
+        (Math.random()>.5 ?
+            0x7b4b31 :
+            0x9a6849);
 
-    const shirtColor =
+    const jersey=
         team==="home" ?
         0x1769ff :
-        0xe43b45;
+        0xe33c4e;
 
     /* body */
 
-    const body =
+    const body=
         new THREE.Mesh(
-            new THREE.CapsuleGeometry(
-                1.05,
+            new THREE.BoxGeometry(
                 1.7,
-                6,
-                12
+                2.1,
+                .95
             ),
             new THREE.MeshStandardMaterial({
-                color:shirtColor
+                color:jersey
             })
         );
 
-    body.position.y=2.5;
+    body.position.y=2.55;
 
     body.castShadow=true;
 
-    group.add(body);
+    g.add(body);
 
     /* shorts */
 
-    const shorts =
+    const shorts=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                1.9,
-                .8,
-                .9
+                1.8,
+                .7,
+                1
             ),
             new THREE.MeshStandardMaterial({
                 color:
                     team==="home" ?
-                    0x102a67 :
-                    0x651c24
+                    0x112e70 :
+                    0x681e28
             })
         );
 
-    shorts.position.y=1.25;
+    shorts.position.y=1.2;
 
-    shorts.castShadow=true;
-
-    group.add(shorts);
+    g.add(shorts);
 
     /* head */
 
-    const headGeo =
-        new THREE.SphereGeometry(
-            0.78,
-            32,
-            24
-        );
-
-    const head =
+    const head=
         new THREE.Mesh(
-            headGeo,
+            new THREE.SphereGeometry(
+                .82,
+                24,
+                20
+            ),
             new THREE.MeshStandardMaterial({
                 color:skin
             })
         );
 
-    head.position.y=4.45;
+    head.position.y=4.5;
 
-    head.scale.y=
-        playerData.face==="oval" ? 1.15 :
-        playerData.face==="square" ? 1.0 :
-        1.05;
+    if(user){
+
+        if(playerInfo.face==="oval")
+            head.scale.y=1.12;
+
+        if(playerInfo.face==="square")
+            head.scale.x=1.05;
+
+    }
 
     head.castShadow=true;
 
-    group.add(head);
+    g.add(head);
 
-    /* ears */
+    /* hair */
 
-    for(let s of [-1,1]){
-
-        const ear =
-            new THREE.Mesh(
-                new THREE.SphereGeometry(
-                    .17,
-                    16,
-                    12
-                ),
-                new THREE.MeshStandardMaterial({
-                    color:skin
-                })
-            );
-
-        ear.position.set(
-            s*.76,
-            4.45,
-            0
+    const hair=
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .86,
+                24,
+                16
+            ),
+            new THREE.MeshStandardMaterial({
+                color:
+                    user ?
+                    playerInfo.hairColor :
+                    0x15100d
+            })
         );
 
-        group.add(ear);
+    hair.position.y=4.77;
 
-    }
+    hair.scale.set(
+        1.03,
+        .7,
+        1.03
+    );
+
+    g.add(hair);
 
     /* eyes */
 
     for(let s of [-1,1]){
 
-        const eye =
+        const eye=
             new THREE.Mesh(
                 new THREE.SphereGeometry(
                     .12,
-                    16,
-                    12
+                    12,
+                    10
                 ),
                 new THREE.MeshStandardMaterial({
                     color:
-                        isUser ?
-                        playerData.eyeColor :
-                        0x20140e
+                        user ?
+                        playerInfo.eyes :
+                        0x21140d
                 })
             );
 
         eye.position.set(
-            s*.27,
-            4.55,
-            -.69
+            s*.29,
+            4.58,
+            -.74
         );
 
-        group.add(eye);
+        g.add(eye);
 
-        /* eyebrow */
+        /* eyebrows */
 
-        const brow =
+        const brow=
             new THREE.Mesh(
                 new THREE.BoxGeometry(
-                    .25,
-                    .055,
-                    .06
+                    .27,
+                    .06,
+                    .05
                 ),
                 new THREE.MeshStandardMaterial({
-                    color:0x21140e
+                    color:0x17100c
                 })
             );
 
         brow.position.set(
-            s*.27,
-            4.75,
-            -.70
+            s*.29,
+            4.78,
+            -.76
         );
 
-        brow.rotation.z=
-            s*.08;
-
-        group.add(brow);
+        g.add(brow);
 
     }
 
     /* nose */
 
-    const nose =
+    const nose=
         new THREE.Mesh(
             new THREE.ConeGeometry(
-                .10,
+                .1,
                 .28,
                 8
             ),
@@ -1709,19 +1740,20 @@ function createPlayer(
             })
         );
 
-    nose.rotation.x=Math.PI/2;
+    nose.rotation.x=
+        Math.PI/2;
 
     nose.position.set(
         0,
         4.38,
-        -.78
+        -.82
     );
 
-    group.add(nose);
+    g.add(nose);
 
     /* mouth */
 
-    const mouth =
+    const mouth=
         new THREE.Mesh(
             new THREE.TorusGeometry(
                 .18,
@@ -1731,84 +1763,48 @@ function createPlayer(
                 Math.PI
             ),
             new THREE.MeshBasicMaterial({
-                color:0x351313
+                color:0x3a1515
             })
         );
 
-    mouth.rotation.x=Math.PI/2;
+    mouth.rotation.x=
+        Math.PI/2;
 
     mouth.position.set(
         0,
-        4.13,
-        -.73
+        4.12,
+        -.77
     );
 
-    group.add(mouth);
-
-    /* hair */
-
-    const hairColor =
-        isUser ?
-        playerData.hairColor :
-        0x15100d;
-
-    const hair =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .83,
-                24,
-                16,
-                0,
-                Math.PI*2,
-                0,
-                Math.PI*.48
-            ),
-            new THREE.MeshStandardMaterial({
-                color:hairColor
-            })
-        );
-
-    hair.position.y=4.68;
-
-    hair.scale.set(
-        1.03,
-        .8,
-        1.03
-    );
-
-    group.add(hair);
+    g.add(mouth);
 
     /* arms */
 
-    const armGeo =
-        new THREE.CapsuleGeometry(
-            .25,
-            1.25,
-            5,
-            10
-        );
-
     for(let s of [-1,1]){
 
-        const arm =
+        const arm=
             new THREE.Mesh(
-                armGeo,
+                new THREE.CapsuleGeometry(
+                    .25,
+                    1.25,
+                    4,
+                    8
+                ),
                 new THREE.MeshStandardMaterial({
                     color:skin
                 })
             );
 
         arm.position.set(
-            s*1.25,
-            2.65,
+            s*1.1,
+            2.6,
             0
         );
 
-        arm.rotation.z=s*.15;
+        arm.rotation.z=
+            s*.15;
 
-        arm.castShadow=true;
-
-        group.add(arm);
+        g.add(arm);
 
     }
 
@@ -1816,13 +1812,13 @@ function createPlayer(
 
     for(let s of [-1,1]){
 
-        const leg =
+        const leg=
             new THREE.Mesh(
                 new THREE.CapsuleGeometry(
-                    .31,
-                    1.35,
-                    5,
-                    10
+                    .3,
+                    1.3,
+                    4,
+                    8
                 ),
                 new THREE.MeshStandardMaterial({
                     color:skin
@@ -1830,23 +1826,19 @@ function createPlayer(
             );
 
         leg.position.set(
-            s*.52,
+            s*.5,
             .55,
             0
         );
 
-        leg.castShadow=true;
+        g.add(leg);
 
-        group.add(leg);
-
-        /* shoes */
-
-        const shoe =
+        const shoe=
             new THREE.Mesh(
                 new THREE.BoxGeometry(
                     .75,
                     .35,
-                    1.4
+                    1.35
                 ),
                 new THREE.MeshStandardMaterial({
                     color:0xffffff
@@ -1854,94 +1846,25 @@ function createPlayer(
             );
 
         shoe.position.set(
-            s*.52,
+            s*.5,
             -.25,
             -.25
         );
 
-        group.add(shoe);
+        g.add(shoe);
 
     }
 
-    /* jersey number */
-
-    if(isUser){
-
-        const number =
-            makeTextSprite(
-                String(playerData.number)
-            );
-
-        number.position.set(
-            0,
-            2.55,
-            -.97
-        );
-
-        number.scale.set(
-            1.2,
-            1.2,
-            1.2
-        );
-
-        group.add(number);
-
-    }
-
-    group.userData={
+    g.userData={
         team,
+        user,
         index,
-        isUser
+        basketballPlayer:true,
+        homeX:0,
+        homeZ:0
     };
 
-    return group;
-
-}
-
-
-/* =========================================================
-   TEXT SPRITE
-   ========================================================= */
-
-function makeTextSprite(text){
-
-    const canvas =
-        document.createElement("canvas");
-
-    canvas.width=128;
-    canvas.height=128;
-
-    const ctx=
-        canvas.getContext("2d");
-
-    ctx.clearRect(
-        0,
-        0,
-        128,
-        128
-    );
-
-    ctx.fillStyle="white";
-    ctx.font="bold 72px Arial";
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
-
-    ctx.fillText(
-        text,
-        64,
-        64
-    );
-
-    const texture =
-        new THREE.CanvasTexture(canvas);
-
-    const material =
-        new THREE.SpriteMaterial({
-            map:texture,
-            transparent:true
-        });
-
-    return new THREE.Sprite(material);
+    return g;
 
 }
 
@@ -1952,23 +1875,17 @@ function makeTextSprite(text){
 
 function createBall(){
 
-    const geometry =
-        new THREE.SphereGeometry(
-            .38,
-            24,
-            24
-        );
-
-    const material =
-        new THREE.MeshStandardMaterial({
-            color:0xd97820,
-            roughness:.55
-        });
-
-    const b =
+    const b=
         new THREE.Mesh(
-            geometry,
-            material
+            new THREE.SphereGeometry(
+                .38,
+                24,
+                24
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0xd87920,
+                roughness:.6
+            })
         );
 
     b.castShadow=true;
@@ -1981,100 +1898,59 @@ function createBall(){
 
 
 /* =========================================================
-   START GAME
-   ========================================================= */
-
-function startGame(){
-
-    initThree();
-
-    hideScreens();
-
-    document
-        .getElementById("hud")
-        .classList.remove("hidden");
-
-    gameRunning=true;
-    paused=false;
-
-    homeScore=0;
-    awayScore=0;
-
-    quarter=1;
-    timeLeft=180;
-
-    stamina=100;
-
-    setupTeams();
-
-    resetBall();
-
-    updateScore();
-
-    showMessage(
-        gameMode+"v"+gameMode+" — TIP OFF!"
-    );
-
-    updateHUD();
-
-}
-
-
-/* =========================================================
-   TEAMS
+   SETUP TEAMS
    ========================================================= */
 
 function setupTeams(){
 
-    teammates=[];
-    opponents=[];
-
     /* remove old players */
 
     scene.children
-        .filter(obj =>
-            obj.userData &&
-            obj.userData.basketballPlayer
+        .filter(
+            o=>o.userData &&
+            o.userData.basketballPlayer
         )
-        .forEach(obj =>
-            scene.remove(obj)
+        .forEach(
+            o=>scene.remove(o)
         );
 
-    player =
+    teammates=[];
+    opponents=[];
+
+    userPlayer=
         createPlayer(
-            true,
             "home",
+            true,
             0
         );
 
-    player.userData.basketballPlayer=true;
-
-    player.position.set(
+    userPlayer.position.set(
         0,
         0,
-        7
+        8
     );
 
-    scene.add(player);
+    scene.add(userPlayer);
 
     /* teammates */
 
-    for(let i=1;i<gameMode;i++){
+    for(let i=1;i<mode;i++){
 
-        const p =
+        const p=
             createPlayer(
-                false,
                 "home",
+                false,
                 i
             );
 
-        p.userData.basketballPlayer=true;
-
         p.position.set(
-            -8+(i*3),
+            (i-(mode-1)/2)*4,
             0,
-            4+(i%2)*3
+            4
         );
+
+        p.userData.homeX=p.position.x;
+        p.userData.homeZ=p.position.z;
 
         teammates.push(p);
 
@@ -2084,22 +1960,23 @@ function setupTeams(){
 
     /* opponents */
 
-    for(let i=0;i<gameMode;i++){
+    for(let i=0;i<mode;i++){
 
-        const p =
+        const p=
             createPlayer(
-                false,
                 "away",
+                false,
                 i
             );
 
-        p.userData.basketballPlayer=true;
-
         p.position.set(
-            -10+(i*4),
+            (i-(mode-1)/2)*4,
             0,
-            -8-(i%2)*4
+            -7-(i%2)*3
         );
+
+        p.userData.homeX=p.position.x;
+        p.userData.homeZ=p.position.z;
 
         opponents.push(p);
 
@@ -2107,187 +1984,173 @@ function setupTeams(){
 
     }
 
+    if(!ball)
+        ball=createBall();
+
+    resetBall();
+
 }
 
 
 /* =========================================================
-   BALL RESET
+   RESET BALL
    ========================================================= */
 
 function resetBall(){
 
-    if(!ball){
+    ballMode="dribble";
 
-        ball=createBall();
-
-    }
-
-    ballState="dribble";
+    ballVelocity.set(
+        0,
+        0,
+        0
+    );
 
     ball.position.set(
-        player.position.x+.65,
+        userPlayer.position.x+.8,
         1,
-        player.position.z+.2
+        userPlayer.position.z
     );
 
 }
 
 
 /* =========================================================
-   INPUT
+   GAME START
    ========================================================= */
 
-window.addEventListener(
-    "keydown",
-    e=>{
+function startGame(){
 
-        keys[e.key.toLowerCase()]=true;
+    hideAllScreens();
 
-        if(e.key===" "){
+    document
+        .getElementById("hud")
+        .classList.remove("hidden");
 
-            e.preventDefault();
+    gameStarted=true;
+    paused=false;
 
-            if(!paused)
-                startShot();
+    homeScore=0;
+    awayScore=0;
 
-        }
+    quarter=1;
+    quarterTime=180;
 
-        if(e.key.toLowerCase()==="e"){
-            passBall();
-        }
+    stamina=100;
 
-        if(e.key.toLowerCase()==="x"){
-            dunk();
-        }
+    setupTeams();
 
-        if(e.key.toLowerCase()==="c"){
-            layup();
-        }
+    updateScore();
 
-        if(e.key.toLowerCase()==="f"){
-            steal();
-        }
+    showEvent(
+        practice ?
+        "PRACTICE START" :
+        mode+"v"+mode+" TIP OFF!"
+    );
 
-        if(e.key.toLowerCase()==="b"){
-            block();
-        }
+    updateHUD();
 
-        if(e.key.toLowerCase()==="p"){
-
-            if(gameRunning){
-
-                paused=!paused;
-
-                document
-                    .getElementById("pauseScreen")
-                    .classList.toggle(
-                        "hidden",
-                        !paused
-                    );
-
-            }
-
-        }
-
-        if(e.key.toLowerCase()==="t"){
-
-            document
-                .getElementById("chat")
-                .classList.toggle("hidden");
-
-        }
-
-    }
-);
-
-window.addEventListener(
-    "keyup",
-    e=>{
-        keys[e.key.toLowerCase()]=false;
-    }
-);
+}
 
 
 /* =========================================================
-   PLAYER MOVEMENT
+   MODES
    ========================================================= */
 
-function updatePlayer(delta){
+function setMode(n){
 
-    if(!player || paused) return;
+    mode=n;
+    practice=false;
 
-    const direction =
+}
+
+function setPractice(){
+
+    mode=3;
+    practice=true;
+
+}
+
+
+/* =========================================================
+   MOVEMENT
+   ========================================================= */
+
+function updateUser(delta){
+
+    if(!userPlayer || paused)
+        return;
+
+    const dir=
         new THREE.Vector3();
 
-    if(keys["w"])
-        direction.z-=1;
+    if(keys.w) dir.z-=1;
+    if(keys.s) dir.z+=1;
+    if(keys.a) dir.x-=1;
+    if(keys.d) dir.x+=1;
 
-    if(keys["s"])
-        direction.z+=1;
+    if(dir.length()>0){
 
-    if(keys["a"])
-        direction.x-=1;
+        dir.normalize();
 
-    if(keys["d"])
-        direction.x+=1;
-
-    if(direction.length()>0){
-
-        direction.normalize();
-
-        const sprint =
-            keys["shift"] &&
+        const sprint=
+            keys.shift &&
             stamina>0;
 
-        const speed =
-            sprint ? 12 : 7;
+        const speed=
+            sprint ? 11 : 6.5;
 
-        player.position.x +=
-            direction.x*speed*delta;
-
-        player.position.z +=
-            direction.z*speed*delta;
+        userPlayer.position.addScaledVector(
+            dir,
+            speed*delta
+        );
 
         if(sprint)
-            stamina-=25*delta;
-
+            stamina-=28*delta;
         else
-            stamina+=12*delta;
+            stamina+=14*delta;
 
-        player.rotation.y =
+        userPlayer.rotation.y=
             Math.atan2(
-                direction.x,
-                direction.z
+                dir.x,
+                dir.z
             );
 
-        animatePlayer(
-            player,
-            delta,
-            sprint
-        );
+        /* running animation */
+
+        userPlayer.position.y=
+            Math.abs(
+                Math.sin(
+                    performance.now()*.012
+                )
+            )*
+            (sprint?.25:.12);
 
     }else{
 
-        stamina+=15*delta;
+        stamina+=18*delta;
 
     }
 
     stamina=
         Math.max(
             0,
-            Math.min(100,stamina)
+            Math.min(
+                100,
+                stamina
+            )
         );
 
-    player.position.x =
+    userPlayer.position.x=
         THREE.MathUtils.clamp(
-            player.position.x,
-            -12.5,
-            12.5
+            userPlayer.position.x,
+            -12,
+            12
         );
 
-    player.position.z =
+    userPlayer.position.z=
         THREE.MathUtils.clamp(
-            player.position.z,
+            userPlayer.position.z,
             -21,
             21
         );
@@ -2296,55 +2159,31 @@ function updatePlayer(delta){
 
 
 /* =========================================================
-   PLAYER ANIMATION
-   ========================================================= */
-
-function animatePlayer(
-    p,
-    delta,
-    sprint
-){
-
-    const time=
-        performance.now()*.012;
-
-    const amount=
-        sprint ? .55 : .3;
-
-    p.position.y =
-        Math.abs(Math.sin(time))*amount;
-
-}
-
-
-/* =========================================================
-   DRIBBLE
+   DRIBBLING
    ========================================================= */
 
 function updateDribble(){
 
-    if(!player || !ball)
+    if(ballMode!=="dribble")
         return;
 
-    if(ballState!=="dribble")
+    if(!userPlayer)
         return;
 
     const t=
-        performance.now()*.01;
+        performance.now()*.012;
 
-    const bounce=
+    ball.position.x=
+        userPlayer.position.x+.75;
+
+    ball.position.z=
+        userPlayer.position.z+.1;
+
+    ball.position.y=
+        .45+
         Math.abs(
             Math.sin(t)
         )*.8;
-
-    ball.position.x =
-        player.position.x+.75;
-
-    ball.position.z =
-        player.position.z+.25;
-
-    ball.position.y =
-        .7+bounce;
 
 }
 
@@ -2353,51 +2192,53 @@ function updateDribble(){
    SHOOTING
    ========================================================= */
 
-function startShot(){
+function beginShot(){
 
     if(shooting)
         return;
 
-    if(ballState!=="dribble")
+    if(ballMode!=="dribble")
         return;
 
     shooting=true;
 
-    shotPower=0;
+    shotValue=0;
     shotDirection=1;
 
-    const meter =
-        document.getElementById("meterFill");
+    const fill=
+        document.getElementById(
+            "shotFill"
+        );
 
-    const interval =
+    const timer=
         setInterval(()=>{
 
             if(!shooting){
 
-                clearInterval(interval);
+                clearInterval(timer);
                 return;
 
             }
 
-            shotPower +=
-                shotDirection*2.5;
+            shotValue+=
+                shotDirection*3;
 
-            if(shotPower>=100){
+            if(shotValue>=100){
 
-                shotPower=100;
+                shotValue=100;
                 shotDirection=-1;
 
             }
 
-            if(shotPower<=0){
+            if(shotValue<=0){
 
-                shotPower=0;
+                shotValue=0;
                 shotDirection=1;
 
             }
 
-            meter.style.width=
-                shotPower+"%";
+            fill.style.width=
+                shotValue+"%";
 
         },20);
 
@@ -2407,131 +2248,127 @@ function startShot(){
 
             shooting=false;
 
-            clearInterval(interval);
+            clearInterval(timer);
 
-            shootBall();
+            shoot();
 
         }
 
-    },900);
+    },850);
 
 }
 
 
 /* =========================================================
-   SHOOT BALL
+   SHOOT
    ========================================================= */
 
-function shootBall(){
+function shoot(){
 
-    ballState="flight";
+    ballMode="physics";
 
-    const target =
+    const start=
+        ball.position.clone();
+
+    const distance=
+        Math.abs(
+            userPlayer.position.z+23
+        );
+
+    const accuracy=
+        Math.abs(
+            shotValue-72
+        );
+
+    const success=
+        accuracy<23 &&
+        distance<22;
+
+    const target=
         new THREE.Vector3(
-            0,
+            success ?
+            0 :
+            (Math.random()>.5?2.8:-2.8),
             5.8,
             -23
         );
 
-    const start =
-        ball.position.clone();
-
     let t=0;
 
-    const accuracy =
-        Math.abs(
-            shotPower-70
-        );
+    showEvent(
+        "SHOT!"
+    );
 
-    const miss =
-        accuracy > 25;
+    function fly(){
 
-    const targetX =
-        miss ?
-        (Math.random()>.5?3:-3) :
-        0;
-
-    target.x=targetX;
-
-    function animateShot(){
-
-        if(ballState!=="flight")
+        if(ballMode!=="physics")
             return;
 
         t+=.035;
 
-        const x =
+        ball.position.x=
             THREE.MathUtils.lerp(
                 start.x,
                 target.x,
                 t
             );
 
-        const z =
+        ball.position.z=
             THREE.MathUtils.lerp(
                 start.z,
                 target.z,
                 t
             );
 
-        const arc =
-            start.y +
-            7*Math.sin(Math.PI*t);
-
-        ball.position.set(
-            x,
-            arc,
-            z
-        );
+        ball.position.y=
+            THREE.MathUtils.lerp(
+                start.y,
+                target.y,
+                t
+            )+
+            Math.sin(
+                Math.PI*t
+            )*6;
 
         if(t<1){
 
-            requestAnimationFrame(
-                animateShot
-            );
+            requestAnimationFrame(fly);
 
         }else{
 
-            finishShot(!miss);
+            if(success){
+
+                homeScore+=2;
+
+                career.points+=2;
+                career.xp+=20;
+
+                showEvent(
+                    "🔥 BUCKET!"
+                );
+
+            }else{
+
+                showEvent(
+                    "MISS!"
+                );
+
+                reboundBall();
+
+            }
+
+            updateScore();
+
+            saveGame();
+
+            if(success)
+                resetBall();
 
         }
 
     }
 
-    animateShot();
-
-}
-
-
-/* =========================================================
-   FINISH SHOT
-   ========================================================= */
-
-function finishShot(scored){
-
-    ballState="dribble";
-
-    if(scored){
-
-        homeScore+=2;
-
-        showMessage(
-            Math.random()>.6 ?
-            "🔥 BUCKET!" :
-            "🏀 GOOD SHOT!"
-        );
-
-    }else{
-
-        showMessage(
-            "MISS!"
-        );
-
-    }
-
-    updateScore();
-
-    resetBall();
+    fly();
 
 }
 
@@ -2542,36 +2379,38 @@ function finishShot(scored){
 
 function layup(){
 
-    if(ballState!=="dribble")
+    if(ballMode!=="dribble")
         return;
 
-    const nearHoop =
-        player.position.z < -15;
+    const distance=
+        Math.abs(
+            userPlayer.position.z+23
+        );
 
-    if(!nearHoop){
+    if(distance>7){
 
-        showMessage(
-            "Get closer to the basket!"
+        showEvent(
+            "GET CLOSER!"
         );
 
         return;
 
     }
 
-    ballState="flight";
-
-    showMessage(
-        "LAYUP!"
-    );
+    ballMode="physics";
 
     let t=0;
 
     const start=
         ball.position.clone();
 
-    function animateLayup(){
+    showEvent(
+        "🏀 LAYUP!"
+    );
 
-        t+=.06;
+    function fly(){
+
+        t+=.07;
 
         ball.position.x=
             THREE.MathUtils.lerp(
@@ -2589,23 +2428,31 @@ function layup(){
 
         ball.position.y=
             start.y+
-            Math.sin(Math.PI*t)*5;
+            Math.sin(
+                Math.PI*t
+            )*5;
+
+        userPlayer.position.y=
+            Math.sin(
+                Math.PI*t
+            )*1.5;
 
         if(t<1){
 
-            requestAnimationFrame(
-                animateLayup
-            );
+            requestAnimationFrame(fly);
 
         }else{
 
+            userPlayer.position.y=0;
+
             homeScore+=2;
+
+            career.points+=2;
+            career.xp+=20;
 
             updateScore();
 
-            showMessage(
-                "🏀 LAYUP!"
-            );
+            saveGame();
 
             resetBall();
 
@@ -2613,7 +2460,7 @@ function layup(){
 
     }
 
-    animateLayup();
+    fly();
 
 }
 
@@ -2624,60 +2471,65 @@ function layup(){
 
 function dunk(){
 
-    if(ballState!=="dribble")
+    if(ballMode!=="dribble")
         return;
 
-    const distance =
+    const distance=
         Math.abs(
-            player.position.z+23
+            userPlayer.position.z+23
         );
 
-    if(distance>6){
+    if(distance>5){
 
-        showMessage(
-            "TOO FAR FOR A DUNK!"
+        showEvent(
+            "TOO FAR TO DUNK!"
         );
 
         return;
 
     }
 
-    ballState="flight";
-
-    showMessage(
-        "💥 DUNK!"
-    );
+    ballMode="physics";
 
     let t=0;
 
-    function animateDunk(){
+    showEvent(
+        "💥 DUNK!"
+    );
+
+    function animation(){
 
         t+=.06;
 
-        player.position.y =
+        userPlayer.position.y=
             Math.sin(
                 Math.PI*t
             )*4;
 
         ball.position.set(
-            player.position.x,
-            5.7,
+            userPlayer.position.x,
+            5.9,
             -24
         );
 
         if(t<1){
 
             requestAnimationFrame(
-                animateDunk
+                animation
             );
 
         }else{
 
-            player.position.y=0;
+            userPlayer.position.y=0;
 
             homeScore+=2;
 
+            career.points+=2;
+            career.xp+=35;
+
             updateScore();
+
+            saveGame();
 
             resetBall();
 
@@ -2685,66 +2537,66 @@ function dunk(){
 
     }
 
-    animateDunk();
+    animation();
 
 }
 
 
 /* =========================================================
-   PASSING
+   PASS
    ========================================================= */
 
 function passBall(){
 
-    if(ballState!=="dribble")
+    if(ballMode!=="dribble")
         return;
 
     if(teammates.length===0)
         return;
 
-    let closest=
+    let target=
         teammates[0];
 
-    let best=
-        player.position.distanceTo(
-            closest.position
+    let closest=
+        userPlayer.position.distanceTo(
+            target.position
         );
 
     for(const mate of teammates){
 
         const d=
-            player.position.distanceTo(
+            userPlayer.position.distanceTo(
                 mate.position
             );
 
-        if(d<best){
+        if(d<closest){
 
-            best=d;
-            closest=mate;
+            closest=d;
+            target=mate;
 
         }
 
     }
 
-    ballState="pass";
+    ballMode="pass";
 
     const start=
         ball.position.clone();
 
     const end=
-        closest.position.clone();
+        target.position.clone();
 
     end.y+=1.5;
 
     let t=0;
 
-    showMessage(
+    showEvent(
         "PASS!"
     );
 
-    function passAnimation(){
+    function pass(){
 
-        t+=.07;
+        t+=.08;
 
         ball.position.lerpVectors(
             start,
@@ -2752,16 +2604,14 @@ function passBall(){
             t
         );
 
-        ball.position.y +=
+        ball.position.y+=
             Math.sin(
                 Math.PI*t
             )*2;
 
         if(t<1){
 
-            requestAnimationFrame(
-                passAnimation
-            );
+            requestAnimationFrame(pass);
 
         }else{
 
@@ -2774,105 +2624,119 @@ function passBall(){
 
     }
 
-    passAnimation();
+    pass();
 
 }
 
 
 /* =========================================================
-   STEAL
+   DEFENSE
    ========================================================= */
 
 function steal(){
 
-    if(opponents.length===0)
-        return;
+    let closest=null;
+    let distance=999;
 
-    let nearest=
-        opponents[0];
-
-    let dist=
-        player.position.distanceTo(
-            nearest.position
-        );
-
-    for(const o of opponents){
+    for(const enemy of opponents){
 
         const d=
-            player.position.distanceTo(
-                o.position
+            userPlayer.position.distanceTo(
+                enemy.position
             );
 
-        if(d<dist){
+        if(d<distance){
 
-            dist=d;
-            nearest=o;
+            distance=d;
+            closest=enemy;
 
         }
 
     }
 
-    if(dist<3){
+    if(!closest)
+        return;
+
+    if(distance<3){
 
         if(Math.random()<.55){
 
-            showMessage(
+            career.steals++;
+            career.xp+=15;
+
+            showEvent(
                 "🔥 STEAL!"
             );
 
-            ballState="dribble";
-
-            ball.position.copy(
-                player.position
-            );
+            resetBall();
 
         }else{
 
-            showMessage(
+            showEvent(
                 "STEAL MISSED"
             );
 
         }
 
+    }else{
+
+        showEvent(
+            "TOO FAR!"
+
+        );
+
     }
+
+    saveGame();
 
 }
 
-
-/* =========================================================
-   BLOCK
-   ========================================================= */
-
 function block(){
 
-    const nearest=
-        opponents[0];
+    let closest=null;
+    let distance=999;
 
-    if(!nearest)
-        return;
+    for(const enemy of opponents){
 
-    const d=
-        player.position.distanceTo(
-            nearest.position
-        );
+        const d=
+            userPlayer.position.distanceTo(
+                enemy.position
+            );
 
-    if(d<3.5){
+        if(d<distance){
 
-        if(Math.random()<.45){
+            distance=d;
+            closest=enemy;
 
-            showMessage(
+        }
+
+    }
+
+    if(
+        closest &&
+        distance<3.5
+    ){
+
+        if(Math.random()<.5){
+
+            career.blocks++;
+            career.xp+=18;
+
+            showEvent(
                 "🛡️ BLOCK!"
             );
 
         }else{
 
-            showMessage(
+            showEvent(
                 "BLOCK MISSED"
             );
 
         }
 
     }
+
+    saveGame();
 
 }
 
@@ -2881,65 +2745,103 @@ function block(){
    AI
    ========================================================= */
 
+let aiShotTimer=0;
+
 function updateAI(delta){
 
-    for(let i=0;i<opponents.length;i++){
+    if(!userPlayer)
+        return;
 
-        const ai=
-            opponents[i];
+    /* opponents defend */
 
-        const target=
-            player.position;
+    opponents.forEach(
+        (enemy,i)=>{
 
-        const direction=
-            new THREE.Vector3()
-                .subVectors(
-                    target,
-                    ai.position
+            const target=
+                userPlayer.position;
+
+            const dir=
+                new THREE.Vector3()
+                    .subVectors(
+                        target,
+                        enemy.position
+                    );
+
+            const distance=
+                dir.length();
+
+            if(distance>2.5){
+
+                dir.normalize();
+
+                enemy.position.addScaledVector(
+                    dir,
+                    delta*2.2
                 );
 
-        if(direction.length()>2.8){
+                enemy.rotation.y=
+                    Math.atan2(
+                        dir.x,
+                        dir.z
+                    );
 
-            direction.normalize();
+                enemy.position.y=
+                    Math.abs(
+                        Math.sin(
+                            performance.now()*.01+i
+                        )
+                    )*.1;
 
-            ai.position.addScaledVector(
-                direction,
-                delta*2.5
-            );
-
-            ai.rotation.y=
-                Math.atan2(
-                    direction.x,
-                    direction.z
-                );
-
-            animatePlayer(
-                ai,
-                delta,
-                false
-            );
+            }
 
         }
+    );
 
-    }
+    /* teammates spread */
 
-    for(let i=0;i<teammates.length;i++){
+    teammates.forEach(
+        (mate,i)=>{
 
-        const mate=
-            teammates[i];
+            const wantedX=
+                (i-(mode-1)/2)*5;
 
-        const targetZ=
-            1+i*2;
+            const wantedZ=3;
 
-        mate.position.x +=
-            (Math.sin(
-                performance.now()*.0005+i
-            )*.8 -
-            mate.position.x)*delta;
+            mate.position.x +=
+                (
+                    wantedX-
+                    mate.position.x
+                )*delta;
 
-        mate.position.z +=
-            (targetZ-
-            mate.position.z)*delta;
+            mate.position.z +=
+                (
+                    wantedZ-
+                    mate.position.z
+                )*delta;
+
+        }
+    );
+
+    aiShotTimer+=delta;
+
+    if(
+        !practice &&
+        aiShotTimer>6
+    ){
+
+        aiShotTimer=0;
+
+        if(Math.random()<.6){
+
+            awayScore+=2;
+
+            showEvent(
+                "TITANS SCORE"
+            );
+
+            updateScore();
+
+        }
 
     }
 
@@ -2947,31 +2849,136 @@ function updateAI(delta){
 
 
 /* =========================================================
-   AI SCORING
+   REBOUNDS
    ========================================================= */
 
-let aiTimer=0;
+function reboundBall(){
 
-function updateAIScoring(delta){
+    ballMode="loose";
 
-    aiTimer+=delta;
+    ballVelocity.set(
+        (Math.random()-.5)*5,
+        5,
+        3
+    );
 
-    if(aiTimer<7)
-        return;
+    let time=0;
 
-    aiTimer=0;
+    function physics(){
 
-    if(Math.random()<.45){
+        if(ballMode!=="loose")
+            return;
 
-        awayScore+=2;
+        time+=.03;
 
-        showMessage(
-            "TITANS SCORE"
+        ballVelocity.y-=.22;
+
+        ball.position.add(
+            ballVelocity
         );
 
-        updateScore();
+        if(ball.position.y<.4){
+
+            ball.position.y=.4;
+
+            ballVelocity.y*=-.65;
+            ballVelocity.x*=.8;
+            ballVelocity.z*=.8;
+
+        }
+
+        if(time<2){
+
+            requestAnimationFrame(
+                physics
+            );
+
+        }else{
+
+            career.rebounds++;
+
+            saveGame();
+
+            resetBall();
+
+            showEvent(
+                "REBOUND!"
+            );
+
+        }
 
     }
+
+    physics();
+
+}
+
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+
+function updateClock(delta){
+
+    if(
+        !gameStarted ||
+        paused ||
+        practice
+    )
+        return;
+
+    quarterTime-=delta;
+
+    if(quarterTime<=0){
+
+        quarter++;
+
+        if(quarter>4){
+
+            endGame();
+
+            return;
+
+        }
+
+        quarterTime=180;
+
+        showEvent(
+            "QUARTER "+quarter
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   END GAME
+   ========================================================= */
+
+function endGame(){
+
+    gameStarted=false;
+
+    career.games++;
+
+    career.xp+=
+        homeScore>=awayScore ?
+        100 :
+        50;
+
+    saveGame();
+
+    showEvent(
+        homeScore>awayScore ?
+        "🏆 VICTORY!" :
+        "GAME OVER"
+    );
+
+    setTimeout(
+        quitGame,
+        3000
+    );
 
 }
 
@@ -2982,78 +2989,29 @@ function updateAIScoring(delta){
 
 function updateCamera(){
 
-    if(!player)
+    if(!userPlayer)
         return;
 
-    const target=
+    const wanted=
         new THREE.Vector3(
-            player.position.x,
-            player.position.y+6,
-            player.position.z+11
+            userPlayer.position.x,
+            10,
+            userPlayer.position.z+14
         );
 
     camera.position.lerp(
-        target,
-        .07
+        wanted,
+        .06
     );
 
     const look=
         new THREE.Vector3(
-            player.position.x,
-            2,
-            player.position.z-5
+            userPlayer.position.x,
+            2.5,
+            userPlayer.position.z-4
         );
 
-    camera.lookAt(
-        look
-    );
-
-}
-
-
-/* =========================================================
-   CLOCK
-   ========================================================= */
-
-function updateGameClock(delta){
-
-    if(!gameRunning || paused)
-        return;
-
-    timeLeft-=delta;
-
-    if(timeLeft<=0){
-
-        timeLeft=180;
-
-        quarter++;
-
-        if(quarter>4){
-
-            gameRunning=false;
-
-            showMessage(
-                homeScore>awayScore ?
-                "🏆 GAME OVER — LEGENDS WIN!" :
-                homeScore<awayScore ?
-                "GAME OVER — TITANS WIN!" :
-                "GAME OVER — TIE!"
-            );
-
-            setTimeout(
-                quitGame,
-                3500
-            );
-
-            return;
-
-        }
-
-        showMessage(
-            "QUARTER "+quarter
-        );
-
-    }
+    camera.lookAt(look);
 
 }
 
@@ -3076,59 +3034,72 @@ function updateScore(){
 
 function updateHUD(){
 
-    const mins=
-        Math.floor(timeLeft/60);
+    const minutes=
+        Math.floor(
+            quarterTime/60
+        );
 
-    const secs=
-        Math.floor(timeLeft%60);
+    const seconds=
+        Math.floor(
+            quarterTime%60
+        );
 
     document.getElementById(
-        "clockTime"
+        "gameClock"
     ).textContent=
-        String(mins).padStart(2,"0")+
+        String(minutes).padStart(2,"0")+
         ":"+
-        String(secs).padStart(2,"0");
+        String(seconds).padStart(2,"0");
 
     document.getElementById(
-        "quarterText"
+        "period"
     ).textContent=
+        practice ?
+        "PRACTICE" :
         "Q"+quarter;
 
     document.getElementById(
-        "hudPlayer"
+        "hudName"
     ).textContent=
-        username+
-        " • "+
-        playerName;
+        playerInfo.name;
 
     document.getElementById(
-        "staminaText"
+        "stamina"
     ).textContent=
         Math.round(stamina);
 
+    document.getElementById(
+        "hudMode"
+    ).textContent=
+        mode+"v"+mode;
+
 }
 
-function showMessage(text){
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+let eventTimer;
+
+function showEvent(text){
 
     const el=
         document.getElementById(
-            "message"
+            "event"
         );
 
     el.textContent=text;
-
     el.style.opacity="1";
 
-    clearTimeout(
-        showMessage.timer
-    );
+    clearTimeout(eventTimer);
 
-    showMessage.timer=
+    eventTimer=
         setTimeout(
             ()=>{
                 el.style.opacity="0";
             },
-            1600
+            1500
         );
 
 }
@@ -3142,7 +3113,7 @@ function sendChat(){
 
     const input=
         document.getElementById(
-            "chatInput"
+            "chatText"
         );
 
     const text=
@@ -3152,74 +3123,313 @@ function sendChat(){
         return;
 
     addChat(
-        username,
+        playerInfo.username,
         text
     );
 
     input.value="";
 
-    setTimeout(()=>{
+    const replies=[
+        "I'm open!",
+        "Let's go!",
+        "Nice pass!",
+        "Lock them up!",
+        "Take the shot!",
+        "Good defense!",
+        "We got this!"
+    ];
 
-        const replies=[
-            "Let's get this win!",
-            "I'm open!",
-            "Great pass!",
-            "Take the shot!",
-            "Lock them up!",
-            "We got this!"
-        ];
-
-        addChat(
-            "Teammate",
-            replies[
-                Math.floor(
-                    Math.random()*replies.length
-                )
-            ]
-        );
-
-    },500);
+    setTimeout(
+        ()=>{
+            addChat(
+                "Teammate",
+                replies[
+                    Math.floor(
+                        Math.random()*
+                        replies.length
+                    )
+                ]
+            );
+        },
+        500
+    );
 
 }
 
 function addChat(
     name,
-    text
+    message
 ){
 
-    const box=
+    const log=
         document.getElementById(
-            "chatMessages"
+            "chatLog"
         );
 
-    const line=
+    const div=
         document.createElement(
             "div"
         );
 
-    line.className="chatLine";
+    div.className="chatLine";
 
-    line.innerHTML=
-        '<span class="chatName">'+
-        escapeHTML(name)+
-        ':</span> '+
-        escapeHTML(text);
+    div.textContent=
+        name+": "+message;
 
-    box.appendChild(line);
+    log.appendChild(div);
 
-    box.scrollTop=
-        box.scrollHeight;
+    log.scrollTop=
+        log.scrollHeight;
 
 }
 
-function escapeHTML(text){
 
-    return text
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+/* =========================================================
+   CREATOR
+   ========================================================= */
+
+function openCreator(){
+
+    hideAllScreens();
+
+    document
+        .getElementById("creator")
+        .classList.remove("hidden");
+
+    document.getElementById(
+        "username"
+    ).value=playerInfo.username;
+
+    document.getElementById(
+        "playerName"
+    ).value=playerInfo.name;
+
+    document.getElementById(
+        "skin"
+    ).value=playerInfo.skin;
+
+    document.getElementById(
+        "face"
+    ).value=playerInfo.face;
+
+    document.getElementById(
+        "hair"
+    ).value=playerInfo.hair;
+
+    document.getElementById(
+        "hairColor"
+    ).value=playerInfo.hairColor;
+
+    document.getElementById(
+        "eyes"
+    ).value=playerInfo.eyes;
+
+    document.getElementById(
+        "number"
+    ).value=playerInfo.number;
+
+    updatePreview();
+
+}
+
+function savePlayer(){
+
+    playerInfo.username=
+        document.getElementById(
+            "username"
+        ).value ||
+        "Player";
+
+    playerInfo.name=
+        document.getElementById(
+            "playerName"
+        ).value ||
+        "Legend";
+
+    playerInfo.skin=
+        document.getElementById(
+            "skin"
+        ).value;
+
+    playerInfo.face=
+        document.getElementById(
+            "face"
+        ).value;
+
+    playerInfo.hair=
+        document.getElementById(
+            "hair"
+        ).value;
+
+    playerInfo.hairColor=
+        document.getElementById(
+            "hairColor"
+        ).value;
+
+    playerInfo.eyes=
+        document.getElementById(
+            "eyes"
+        ).value;
+
+    playerInfo.number=
+        Number(
+            document.getElementById(
+                "number"
+            ).value
+        )||7;
+
+    saveGame();
+
+    updateMenu();
+
+    closeScreens();
+
+    showEvent(
+        "PLAYER SAVED"
+    );
+
+}
+
+function updatePreview(){
+
+    const head=
+        document.getElementById(
+            "pvHead"
+        );
+
+    const hair=
+        document.getElementById(
+            "pvHair"
+        );
+
+    head.style.background=
+        playerInfo.skin;
+
+    hair.style.background=
+        playerInfo.hairColor;
+
+    if(playerInfo.face==="square")
+        head.style.borderRadius="25px";
+
+    else if(playerInfo.face==="oval")
+        head.style.borderRadius="48%";
+
+    else
+        head.style.borderRadius="50%";
+
+    document.getElementById(
+        "pvNumber"
+    ).textContent=
+        playerInfo.number;
+
+}
+
+
+/* =========================================================
+   MENUS
+   ========================================================= */
+
+function hideAllScreens(){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(
+            s=>s.classList.add("hidden")
+        );
+
+    document
+        .getElementById("hud")
+        .classList.add("hidden");
+
+}
+
+function closeScreens(){
+
+    hideAllScreens();
+
+    document
+        .getElementById("menu")
+        .classList.remove("hidden");
+
+    updateMenu();
+
+}
+
+function updateMenu(){
+
+    document.getElementById(
+        "menuPlayer"
+    ).textContent=
+        playerInfo.name;
+
+    document.getElementById(
+        "menuUser"
+    ).textContent=
+        playerInfo.username;
+
+}
+
+function openModes(){
+
+    hideAllScreens();
+
+    document
+        .getElementById("modes")
+        .classList.remove("hidden");
+
+}
+
+function openTeams(){
+
+    hideAllScreens();
+
+    document
+        .getElementById("teams")
+        .classList.remove("hidden");
+
+}
+
+function openStats(){
+
+    hideAllScreens();
+
+    document
+        .getElementById("stats")
+        .classList.remove("hidden");
+
+    document.getElementById(
+        "careerGames"
+    ).textContent=career.games;
+
+    document.getElementById(
+        "careerPoints"
+    ).textContent=career.points;
+
+    document.getElementById(
+        "careerSteals"
+    ).textContent=career.steals;
+
+    document.getElementById(
+        "careerBlocks"
+    ).textContent=career.blocks;
+
+    document.getElementById(
+        "careerRebounds"
+    ).textContent=career.rebounds;
+
+    document.getElementById(
+        "careerXP"
+    ).textContent=career.xp;
+
+}
+
+function openControls(){
+
+    hideAllScreens();
+
+    document
+        .getElementById("controlsScreen")
+        .classList.remove("hidden");
 
 }
 
@@ -3233,14 +3443,14 @@ function resumeGame(){
     paused=false;
 
     document
-        .getElementById("pauseScreen")
+        .getElementById("pause")
         .classList.add("hidden");
 
 }
 
 function quitGame(){
 
-    gameRunning=false;
+    gameStarted=false;
     paused=false;
 
     document
@@ -3248,14 +3458,172 @@ function quitGame(){
         .classList.add("hidden");
 
     document
-        .getElementById("pauseScreen")
+        .getElementById("pause")
         .classList.add("hidden");
 
     document
-        .getElementById("menuScreen")
+        .getElementById("menu")
         .classList.remove("hidden");
 
+    updateMenu();
+
 }
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+window.addEventListener(
+    "keydown",
+    e=>{
+
+        const key=
+            e.key.toLowerCase();
+
+        keys[key]=true;
+
+        if(key===" "){
+            e.preventDefault();
+
+            if(gameStarted && !paused)
+                beginShot();
+        }
+
+        if(key==="e" && gameStarted)
+            passBall();
+
+        if(key==="c" && gameStarted)
+            layup();
+
+        if(key==="x" && gameStarted)
+            dunk();
+
+        if(key==="f" && gameStarted)
+            steal();
+
+        if(key==="b" && gameStarted)
+            block();
+
+        if(key==="r" && gameStarted){
+
+            userPlayer.position.set(
+                0,
+                0,
+                8
+            );
+
+            resetBall();
+
+        }
+
+        if(key==="t" && gameStarted){
+
+            document
+                .getElementById("chat")
+                .classList.toggle(
+                    "hidden"
+                );
+
+        }
+
+        if(key==="p" && gameStarted){
+
+            paused=!paused;
+
+            document
+                .getElementById("pause")
+                .classList.toggle(
+                    "hidden",
+                    !paused
+                );
+
+        }
+
+    }
+);
+
+window.addEventListener(
+    "keyup",
+    e=>{
+        keys[
+            e.key.toLowerCase()
+        ]=false;
+    }
+);
+
+
+/* =========================================================
+   PREVIEW EVENTS
+   ========================================================= */
+
+[
+    "skin",
+    "face",
+    "hair",
+    "hairColor",
+    "eyes",
+    "number"
+].forEach(
+    id=>{
+        document
+            .getElementById(id)
+            .addEventListener(
+                "input",
+                ()=>{
+                    playerInfo.skin=
+                        document.getElementById(
+                            "skin"
+                        ).value;
+
+                    playerInfo.face=
+                        document.getElementById(
+                            "face"
+                        ).value;
+
+                    playerInfo.hair=
+                        document.getElementById(
+                            "hair"
+                        ).value;
+
+                    playerInfo.hairColor=
+                        document.getElementById(
+                            "hairColor"
+                        ).value;
+
+                    playerInfo.eyes=
+                        document.getElementById(
+                            "eyes"
+                        ).value;
+
+                    playerInfo.number=
+                        Number(
+                            document.getElementById(
+                                "number"
+                            ).value
+                        )||7;
+
+                    updatePreview();
+
+                }
+            );
+    }
+);
+
+
+/* =========================================================
+   CHAT ENTER
+   ========================================================= */
+
+document
+    .getElementById("chatText")
+    .addEventListener(
+        "keydown",
+        e=>{
+            if(e.key==="Enter")
+                sendChat();
+        }
+    );
 
 
 /* =========================================================
@@ -3270,21 +3638,19 @@ function animate(){
 
     const delta=
         Math.min(
-            clock.getDelta(),
+            gameClock.getDelta(),
             .05
         );
 
-    if(gameRunning && !paused){
+    if(gameStarted && !paused){
 
-        updatePlayer(delta);
+        updateUser(delta);
 
         updateDribble();
 
         updateAI(delta);
 
-        updateAIScoring(delta);
-
-        updateGameClock(delta);
+        updateClock(delta);
 
         updateCamera();
 
@@ -3292,14 +3658,10 @@ function animate(){
 
     }
 
-    if(renderer && scene && camera){
-
-        renderer.render(
-            scene,
-            camera
-        );
-
-    }
+    renderer.render(
+        scene,
+        camera
+    );
 
 }
 
@@ -3310,86 +3672,21 @@ function animate(){
 
 function resize(){
 
-    if(!camera || !renderer)
-        return;
-
     camera.aspect=
-        window.innerWidth/
-        window.innerHeight;
+        innerWidth/innerHeight;
 
     camera.updateProjectionMatrix();
 
     renderer.setSize(
-        window.innerWidth,
-        window.innerHeight
+        innerWidth,
+        innerHeight
     );
 
 }
 
 
 /* =========================================================
-   LIVE PREVIEW
-   ========================================================= */
-
-[
-    "skinInput",
-    "hairInput",
-    "hairColorInput",
-    "eyeColorInput",
-    "faceInput",
-    "numberInput"
-].forEach(id=>{
-
-    document
-        .getElementById(id)
-        .addEventListener(
-            "input",
-            ()=>{
-                playerData.skin=
-                    document.getElementById("skinInput").value;
-
-                playerData.hair=
-                    document.getElementById("hairInput").value;
-
-                playerData.hairColor=
-                    document.getElementById("hairColorInput").value;
-
-                playerData.eyeColor=
-                    document.getElementById("eyeColorInput").value;
-
-                playerData.face=
-                    document.getElementById("faceInput").value;
-
-                playerData.number=
-                    Number(
-                        document.getElementById("numberInput").value
-                    )||7;
-
-                updatePreview();
-
-            }
-        );
-
-});
-
-
-/* =========================================================
-   KEYBOARD CHAT
-   ========================================================= */
-
-document
-    .getElementById("chatInput")
-    .addEventListener(
-        "keydown",
-        e=>{
-            if(e.key==="Enter")
-                sendChat();
-        }
-    );
-
-
-/* =========================================================
-   INITIAL PREVIEW
+   INITIAL UI
    ========================================================= */
 
 updatePreview();
