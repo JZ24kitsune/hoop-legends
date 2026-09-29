@@ -1,616 +1,1088 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Hoop Legends 3D</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-body {
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: white;
+body{
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+    background:#111;
+    color:white;
 }
 
-canvas {
-    display: block;
+canvas{
+    display:block;
 }
 
-.screen {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background:
-        linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.75));
+.screen{
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.72);
 }
 
-.screen.active {
-    display: flex;
+.screen.active{
+    display:flex;
 }
 
-.menu {
-    width: min(90%, 600px);
-    padding: 35px;
-    border-radius: 25px;
-    background: rgba(10,10,20,.94);
-    border: 2px solid #ff7b00;
-    box-shadow: 0 0 40px rgba(255,123,0,.35);
-    text-align: center;
+.menu{
+    width:min(94%,650px);
+    max-height:94vh;
+    overflow:auto;
+    padding:30px;
+    border-radius:24px;
+    background:rgba(12,14,24,.97);
+    border:2px solid #ff7b00;
+    box-shadow:0 0 35px rgba(255,120,0,.3);
+    text-align:center;
 }
 
-h1 {
-    font-size: 48px;
-    margin-bottom: 8px;
-    color: #ff8c00;
-    text-shadow: 0 0 15px #ff4500;
+h1{
+    font-size:48px;
+    color:#ff8c00;
+    margin-bottom:8px;
 }
 
-h2 {
-    margin-bottom: 20px;
+h2{
+    margin-bottom:18px;
 }
 
-.subtitle {
-    color: #bbb;
-    margin-bottom: 25px;
+.subtitle{
+    color:#bbb;
+    margin-bottom:25px;
 }
 
-button {
-    width: 100%;
-    padding: 14px;
-    margin: 7px 0;
-    border: none;
-    border-radius: 12px;
-    background: #ff7200;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: .15s;
+button{
+    width:100%;
+    padding:13px;
+    margin:6px 0;
+    border:0;
+    border-radius:12px;
+    background:#ff7200;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-button:hover {
-    background: #ff9a3c;
-    transform: scale(1.02);
+button:hover{
+    background:#ff9c42;
 }
 
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 7px 0 15px;
-    border-radius: 10px;
-    border: 1px solid #555;
-    background: #222;
-    color: white;
-    font-size: 16px;
+button.secondary{
+    background:#333b4a;
 }
 
-label {
-    display: block;
-    text-align: left;
-    color: #ccc;
-    margin-top: 8px;
+button.green{
+    background:#238b45;
 }
 
-#hud {
-    position: fixed;
-    z-index: 5;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 380px;
-    padding: 12px 20px;
-    border-radius: 15px;
-    background: rgba(0,0,0,.8);
-    text-align: center;
-    display: none;
+button.red{
+    background:#a83232;
 }
 
-.score {
-    font-size: 25px;
-    font-weight: bold;
+input,select{
+    width:100%;
+    padding:12px;
+    margin:6px 0 12px;
+    border-radius:10px;
+    border:1px solid #555;
+    background:#222;
+    color:white;
+    font-size:16px;
 }
 
-.clock {
-    font-size: 20px;
-    color: #ff9d3c;
+label{
+    display:block;
+    text-align:left;
+    color:#ccc;
+    margin-top:7px;
 }
 
-#message {
-    margin-top: 5px;
-    color: #ddd;
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
 }
 
-#controls {
-    position: fixed;
-    z-index: 5;
-    bottom: 15px;
-    left: 15px;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(0,0,0,.7);
-    color: #ddd;
-    line-height: 1.6;
-    display: none;
+#hud{
+    position:fixed;
+    z-index:8;
+    top:12px;
+    left:50%;
+    transform:translateX(-50%);
+    min-width:390px;
+    padding:10px 18px;
+    background:rgba(0,0,0,.82);
+    border-radius:15px;
+    text-align:center;
+    display:none;
 }
 
-#shotMeter {
-    position: fixed;
-    z-index: 6;
-    left: 50%;
-    bottom: 40px;
-    transform: translateX(-50%);
-    width: 250px;
-    height: 22px;
-    border: 2px solid white;
-    border-radius: 20px;
-    overflow: hidden;
-    display: none;
-    background: #222;
+.score{
+    font-size:24px;
+    font-weight:bold;
 }
 
-#shotFill {
-    height: 100%;
-    width: 0%;
-    background: #39e75f;
+.clock{
+    color:#ff9d3c;
+    margin-top:3px;
 }
 
-.card {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 15px;
+#message{
+    color:#ddd;
+    margin-top:4px;
 }
 
-.small {
-    font-size: 14px;
-    color: #aaa;
+#controls{
+    position:fixed;
+    z-index:8;
+    left:12px;
+    bottom:12px;
+    background:rgba(0,0,0,.72);
+    padding:12px;
+    border-radius:12px;
+    line-height:1.6;
+    display:none;
+    font-size:13px;
 }
 
-#creatorPreview {
-    font-size: 70px;
-    margin: 10px;
+#shotMeter{
+    position:fixed;
+    z-index:9;
+    left:50%;
+    bottom:35px;
+    transform:translateX(-50%);
+    width:280px;
+    height:25px;
+    background:#222;
+    border:2px solid white;
+    border-radius:20px;
+    overflow:hidden;
+    display:none;
 }
 
-#gameInfo {
-    margin: 15px 0;
-    padding: 12px;
-    background: rgba(255,255,255,.05);
-    border-radius: 12px;
+#shotFill{
+    width:0%;
+    height:100%;
+    background:#35db5d;
 }
 
-@media(max-width:600px) {
-    h1 {
-        font-size: 35px;
-    }
-
-    #hud {
-        min-width: 280px;
-    }
-
-    #controls {
-        font-size: 12px;
-    }
+#chat{
+    position:fixed;
+    z-index:9;
+    right:15px;
+    bottom:15px;
+    width:280px;
+    max-height:230px;
+    overflow:auto;
+    padding:10px;
+    background:rgba(0,0,0,.75);
+    border-radius:14px;
+    display:none;
 }
+
+.chatLine{
+    margin:5px 0;
+    padding:7px 9px;
+    background:rgba(255,255,255,.08);
+    border-radius:8px;
+    font-size:13px;
+}
+
+#chatInput{
+    width:calc(100% - 65px);
+    margin:0;
+}
+
+#chatSend{
+    width:55px;
+    margin-left:5px;
+    padding:10px;
+}
+
+#chatForm{
+    display:flex;
+    margin-top:7px;
+}
+
+#creatorFace{
+    width:130px;
+    height:150px;
+    margin:10px auto 20px;
+    position:relative;
+}
+
+.faceHead{
+    width:100px;
+    height:115px;
+    position:absolute;
+    left:15px;
+    top:15px;
+    border-radius:45% 45% 48% 48%;
+    background:#b8794f;
+}
+
+.eye{
+    position:absolute;
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    background:#351d12;
+    top:55px;
+}
+
+.eye.left{
+    left:38px;
+}
+
+.eye.right{
+    right:38px;
+}
+
+.brow{
+    position:absolute;
+    width:20px;
+    height:4px;
+    background:#111;
+    top:46px;
+}
+
+.brow.left{
+    left:33px;
+}
+
+.brow.right{
+    right:33px;
+}
+
+.mouth{
+    position:absolute;
+    width:25px;
+    height:8px;
+    border-bottom:3px solid #522;
+    border-radius:50%;
+    left:38px;
+    top:83px;
+}
+
+.hair{
+    position:absolute;
+    left:10px;
+    top:4px;
+    width:110px;
+    height:50px;
+    border-radius:50% 50% 20% 20%;
+    background:#17120f;
+}
+
+.statBox{
+    background:rgba(255,255,255,.06);
+    padding:10px;
+    border-radius:10px;
+    margin:8px 0;
+    text-align:left;
+}
+
+.small{
+    color:#aaa;
+    font-size:13px;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- ========================= -->
+
+<!-- ========================================================= -->
 <!-- MAIN MENU -->
-<!-- ========================= -->
+<!-- ========================================================= -->
 
 <div id="menuScreen" class="screen active">
 
-    <div class="menu">
+<div class="menu">
 
-        <h1>🏀 HOOP LEGENDS</h1>
+<h1>🏀 HOOP LEGENDS</h1>
 
-        <div class="subtitle">
-            3D Basketball
-        </div>
-
-        <button onclick="startGame()">PLAY NOW</button>
-        <button onclick="openCreator()">👤 MY PLAYER</button>
-        <button onclick="openTeams()">👥 MY TEAM</button>
-        <button onclick="openControls()">🎮 CONTROLS</button>
-
-        <div id="gameInfo">
-            <div>Player: <b id="menuPlayerName">Rookie</b></div>
-            <div>Team: <b id="menuTeamName">Legends</b></div>
-        </div>
-
-        <div class="small">
-            Your progress is saved in your browser.
-        </div>
-
-    </div>
+<div class="subtitle">
+3D Basketball
 </div>
 
-<!-- ========================= -->
+<button onclick="startGame()">
+PLAY NOW
+</button>
+
+<button onclick="openCreator()">
+👤 MY PLAYER
+</button>
+
+<button onclick="openTeams()">
+👥 MY TEAM
+</button>
+
+<button onclick="openModes()">
+🏀 GAME MODE
+</button>
+
+<button onclick="openControls()">
+🎮 CONTROLS
+</button>
+
+<div class="statBox">
+
+Player:
+<b id="menuPlayerName">Rookie</b>
+
+<br>
+
+Team:
+<b id="menuTeamName">Legends</b>
+
+<br>
+
+Mode:
+<b id="menuMode">3v3</b>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ========================================================= -->
 <!-- PLAYER CREATOR -->
-<!-- ========================= -->
+<!-- ========================================================= -->
 
 <div id="creatorScreen" class="screen">
 
-    <div class="menu">
+<div class="menu">
 
-        <h2>👤 CREATE YOUR PLAYER</h2>
+<h2>👤 CREATE YOUR PLAYER</h2>
 
-        <div id="creatorPreview">🏀</div>
+<div id="creatorFace">
 
-        <label>Username</label>
-        <input id="usernameInput" placeholder="Your username">
+<div class="faceHead">
 
-        <label>Player Name</label>
-        <input id="playerNameInput" placeholder="Player name">
+<div class="hair"></div>
 
-        <div class="card">
+<div class="brow left"></div>
+<div class="brow right"></div>
 
-            <div>
-                <label>Skin</label>
-                <select id="skinInput">
-                    <option value="#b8794f">Tan</option>
-                    <option value="#8d5524">Brown</option>
-                    <option value="#f1c27d">Light</option>
-                    <option value="#ffdbac">Fair</option>
-                </select>
-            </div>
+<div class="eye left"></div>
+<div class="eye right"></div>
 
-            <div>
-                <label>Hair</label>
-                <select id="hairInput">
-                    <option>Short</option>
-                    <option>Curly</option>
-                    <option>Buzz</option>
-                    <option>Long</option>
-                </select>
-            </div>
+<div class="mouth"></div>
 
-            <div>
-                <label>Eyes</label>
-                <select id="eyesInput">
-                    <option>Brown</option>
-                    <option>Blue</option>
-                    <option>Green</option>
-                    <option>Black</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Face</label>
-                <select id="faceInput">
-                    <option>Round</option>
-                    <option>Oval</option>
-                    <option>Square</option>
-                </select>
-            </div>
-
-        </div>
-
-        <label>Jersey Number</label>
-        <input id="numberInput" type="number" min="0" max="99" value="7">
-
-        <button onclick="savePlayer()">SAVE PLAYER</button>
-        <button onclick="showScreen('menuScreen')">BACK</button>
-
-    </div>
 </div>
 
-<!-- ========================= -->
-<!-- TEAM SCREEN -->
-<!-- ========================= -->
+</div>
+
+<label>Username</label>
+
+<input
+id="usernameInput"
+placeholder="Your username"
+>
+
+<label>Player Name</label>
+
+<input
+id="playerNameInput"
+placeholder="Player name"
+>
+
+<div class="grid">
+
+<div>
+
+<label>Skin</label>
+
+<select id="skinInput">
+
+<option value="#8d5524">
+Brown
+</option>
+
+<option value="#b8794f">
+Tan
+</option>
+
+<option value="#f1c27d">
+Light
+</option>
+
+<option value="#ffdbac">
+Fair
+</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Hair</label>
+
+<select id="hairInput">
+
+<option>Short</option>
+<option>Curly</option>
+<option>Buzz</option>
+<option>Long</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Eyes</label>
+
+<select id="eyesInput">
+
+<option>Brown</option>
+<option>Blue</option>
+<option>Green</option>
+<option>Black</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Face</label>
+
+<select id="faceInput">
+
+<option>Round</option>
+<option>Oval</option>
+<option>Square</option>
+
+</select>
+
+</div>
+
+</div>
+
+<label>Jersey Number</label>
+
+<input
+id="numberInput"
+type="number"
+min="0"
+max="99"
+value="7"
+>
+
+<button onclick="savePlayer()">
+SAVE PLAYER
+</button>
+
+<button
+class="secondary"
+onclick="showScreen('menuScreen')"
+>
+BACK
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- TEAMS -->
+<!-- ========================================================= -->
 
 <div id="teamScreen" class="screen">
 
-    <div class="menu">
+<div class="menu">
 
-        <h2>👥 CHOOSE YOUR TEAM</h2>
+<h2>👥 CHOOSE YOUR TEAM</h2>
 
-        <button onclick="chooseTeam('Legends')">🔥 LEGENDS</button>
-        <button onclick="chooseTeam('Titans')">💪 TITANS</button>
-        <button onclick="chooseTeam('Falcons')">🦅 FALCONS</button>
-        <button onclick="chooseTeam('Wolves')">🐺 WOLVES</button>
+<button onclick="chooseTeam('Legends')">
+🔥 LEGENDS
+</button>
 
-        <button onclick="showScreen('menuScreen')">BACK</button>
+<button onclick="chooseTeam('Titans')">
+💪 TITANS
+</button>
 
-    </div>
+<button onclick="chooseTeam('Falcons')">
+🦅 FALCONS
+</button>
+
+<button onclick="chooseTeam('Wolves')">
+🐺 WOLVES
+</button>
+
+<button
+class="secondary"
+onclick="showScreen('menuScreen')"
+>
+BACK
+</button>
+
 </div>
 
-<!-- ========================= -->
+</div>
+
+
+<!-- ========================================================= -->
+<!-- GAME MODES -->
+<!-- ========================================================= -->
+
+<div id="modeScreen" class="screen">
+
+<div class="menu">
+
+<h2>🏀 GAME MODE</h2>
+
+<button onclick="chooseMode(3)">
+3v3
+</button>
+
+<button onclick="chooseMode(5)">
+5v5
+</button>
+
+<div class="statBox">
+
+<b>3v3</b>
+
+<br>
+
+3 players per team.
+Fast-paced street/pro style match.
+
+<br><br>
+
+<b>5v5</b>
+
+<br>
+
+Full team basketball with more AI players.
+
+</div>
+
+<button
+class="secondary"
+onclick="showScreen('menuScreen')"
+>
+BACK
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ========================================================= -->
 <!-- CONTROLS -->
-<!-- ========================= -->
+<!-- ========================================================= -->
 
 <div id="controlsScreen" class="screen">
 
-    <div class="menu">
+<div class="menu">
 
-        <h2>🎮 CONTROLS</h2>
+<h2>🎮 CONTROLS</h2>
 
-        <p>W A S D — Move</p>
-        <p>SHIFT — Sprint</p>
-        <p>SPACE — Shoot</p>
-        <p>E — Pass</p>
-        <p>F — Steal</p>
-        <p>P — Pause</p>
+<div class="statBox">
 
-        <br>
+<b>W A S D</b> — Move
 
-        <button onclick="showScreen('menuScreen')">
-            BACK
-        </button>
+<br>
 
-    </div>
+<b>SHIFT</b> — Sprint
+
+<br>
+
+<b>SPACE</b> — Shoot
+
+<br>
+
+<b>E</b> — Pass
+
+<br>
+
+<b>F</b> — Steal
+
+<br>
+
+<b>R</b> — Rebound
+
+<br>
+
+<b>D</b> near basket — Dunk/Layup
+
+<br>
+
+<b>P</b> — Pause
+
+<br>
+
+<b>ENTER</b> — Chat
+
 </div>
 
-<!-- ========================= -->
+<button
+class="secondary"
+onclick="showScreen('menuScreen')"
+>
+BACK
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ========================================================= -->
 <!-- PAUSE -->
-<!-- ========================= -->
+<!-- ========================================================= -->
 
 <div id="pauseScreen" class="screen">
 
-    <div class="menu">
+<div class="menu">
 
-        <h2>⏸️ PAUSED</h2>
+<h2>⏸️ PAUSED</h2>
 
-        <button onclick="resumeGame()">
-            RESUME
-        </button>
+<button onclick="resumeGame()">
+RESUME
+</button>
 
-        <button onclick="quitGame()">
-            QUIT GAME
-        </button>
+<button
+class="red"
+onclick="quitGame()"
+>
+QUIT GAME
+</button>
 
-    </div>
 </div>
 
-<!-- ========================= -->
+</div>
+
+
+<!-- ========================================================= -->
 <!-- HUD -->
-<!-- ========================= -->
+<!-- ========================================================= -->
 
 <div id="hud">
 
-    <div class="score">
-        <span id="homeTeam">LEGENDS</span>
-        <span id="homeScore">0</span>
-        -
-        <span id="awayScore">0</span>
-        <span id="awayTeam">TITANS</span>
-    </div>
+<div class="score">
 
-    <div class="clock">
-        Q<span id="quarter">1</span>
-        |
-        <span id="clock">2:00</span>
-    </div>
+<span id="homeTeam">
+LEGENDS
+</span>
 
-    <div id="message">
-        Get ready!
-    </div>
+<span id="homeScore">
+0
+</span>
+
+-
+
+<span id="awayScore">
+0
+</span>
+
+<span id="awayTeam">
+TITANS
+</span>
 
 </div>
+
+<div class="clock">
+
+Q<span id="quarter">1</span>
+
+|
+
+<span id="clock">
+2:00
+</span>
+
+</div>
+
+<div id="message">
+GAME READY
+</div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CONTROLS HUD -->
+<!-- ========================================================= -->
 
 <div id="controls">
-    <b>WASD</b> Move<br>
-    <b>SHIFT</b> Sprint<br>
-    <b>SPACE</b> Shoot<br>
-    <b>E</b> Pass<br>
-    <b>F</b> Steal<br>
-    <b>P</b> Pause
+
+<b>WASD</b> Move<br>
+<b>SHIFT</b> Sprint<br>
+<b>SPACE</b> Shoot<br>
+<b>E</b> Pass<br>
+<b>F</b> Steal<br>
+<b>D</b> Dunk/Layup<br>
+<b>P</b> Pause<br>
+<b>ENTER</b> Chat
+
 </div>
+
+
+<!-- ========================================================= -->
+<!-- SHOT METER -->
+<!-- ========================================================= -->
 
 <div id="shotMeter">
-    <div id="shotFill"></div>
+
+<div id="shotFill"></div>
+
 </div>
 
-<!-- ========================= -->
-<!-- THREE.JS -->
-<!-- ========================= -->
+
+<!-- ========================================================= -->
+<!-- CHAT -->
+<!-- ========================================================= -->
+
+<div id="chat">
+
+<b>💬 TEAM CHAT</b>
+
+<div id="chatMessages">
+
+<div class="chatLine">
+Coach: Let's get this win!
+</div>
+
+</div>
+
+<form id="chatForm">
+
+<input
+id="chatInput"
+placeholder="Talk to your team..."
+autocomplete="off"
+>
+
+<button id="chatSend">
+➤
+</button>
+
+</form>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- GAME -->
+<!-- ========================================================= -->
 
 <script type="module">
 
 import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 
-/* =========================================
+
+/* ============================================================
+   DATA
+============================================================ */
+
+let playerData = {
+
+    username:"Rookie",
+
+    name:"Rookie",
+
+    skin:"#b8794f",
+
+    hair:"Short",
+
+    eyes:"Brown",
+
+    face:"Round",
+
+    number:7,
+
+    team:"Legends",
+
+    mode:3
+
+};
+
+let saved =
+localStorage.getItem(
+"hoopLegendsPlayer"
+);
+
+if(saved){
+
+    try{
+
+        playerData =
+        JSON.parse(saved);
+
+    }catch(e){}
+
+}
+
+
+/* ============================================================
    GAME VARIABLES
-========================================= */
+============================================================ */
 
 let scene;
+
 let camera;
+
 let renderer;
 
 let player;
-let opponent;
 
 let ball;
 
-let keys = {};
+let playerParts={};
 
-let shooting = false;
-let shotTime = 0;
+let opponents=[];
 
-let gameRunning = false;
-let paused = false;
+let teammates=[];
 
-let scoreHome = 0;
-let scoreAway = 0;
+let courtObjects=[];
 
-let quarter = 1;
+let keys={};
 
-let gameSeconds = 120;
+let gameRunning=false;
 
-let clockTimer = null;
+let paused=false;
 
-let playerData = {
-    username: "Rookie",
-    name: "Rookie",
-    skin: "#b8794f",
-    hair: "Short",
-    eyes: "Brown",
-    face: "Round",
-    number: 7,
-    team: "Legends"
-};
+let shooting=false;
 
-/* =========================================
-   SAVE / LOAD
-========================================= */
+let shotType="shot";
 
-function loadData() {
+let shotTime=0;
 
-    const saved =
-        localStorage.getItem("hoopLegendsPlayer");
+let shotPower=0;
 
-    if (saved) {
+let scoreHome=0;
 
-        playerData =
-            JSON.parse(saved);
+let scoreAway=0;
 
-    }
+let quarter=1;
 
-    document.getElementById(
-        "menuPlayerName"
-    ).textContent =
-        playerData.name;
+let gameSeconds=120;
 
-    document.getElementById(
-        "menuTeamName"
-    ).textContent =
-        playerData.team;
-}
+let gameTimer;
 
-loadData();
+let stamina=100;
 
-/* =========================================
-   SCREEN SYSTEM
-========================================= */
+let fouls=0;
 
-window.showScreen = function(id) {
+let rebounds=0;
+
+let steals=0;
+
+let blocks=0;
+
+let lastBallHolder=null;
+
+let ballVelocity=
+new THREE.Vector3();
+
+let ballMode="dribble";
+
+let dunking=false;
+
+let dunkTime=0;
+
+let chatOpen=false;
+
+let gameMode=3;
+
+let aiShotTimer=0;
+
+
+/* ============================================================
+   SCREEN
+============================================================ */
+
+window.showScreen=function(id){
 
     document
-        .querySelectorAll(".screen")
-        .forEach(s => s.classList.remove("active"));
+    .querySelectorAll(".screen")
+    .forEach(s=>{
+        s.classList.remove("active");
+    });
 
-    document
+    if(id!=="none"){
+
+        document
         .getElementById(id)
         .classList.add("active");
 
+    }
+
 };
 
-window.openCreator = function() {
 
-    document.getElementById("usernameInput").value =
-        playerData.username;
+/* ============================================================
+   MENU
+============================================================ */
 
-    document.getElementById("playerNameInput").value =
-        playerData.name;
+window.openCreator=function(){
 
-    document.getElementById("numberInput").value =
-        playerData.number;
+    document
+    .getElementById("usernameInput")
+    .value=
+    playerData.username;
 
-    document.getElementById("skinInput").value =
-        playerData.skin;
+    document
+    .getElementById("playerNameInput")
+    .value=
+    playerData.name;
 
-    document.getElementById("hairInput").value =
-        playerData.hair;
+    document
+    .getElementById("numberInput")
+    .value=
+    playerData.number;
 
-    document.getElementById("eyesInput").value =
-        playerData.eyes;
+    document
+    .getElementById("skinInput")
+    .value=
+    playerData.skin;
 
-    document.getElementById("faceInput").value =
-        playerData.face;
+    document
+    .getElementById("hairInput")
+    .value=
+    playerData.hair;
+
+    document
+    .getElementById("eyesInput")
+    .value=
+    playerData.eyes;
+
+    updateCreatorFace();
 
     showScreen("creatorScreen");
+
 };
 
-window.openTeams = function() {
+
+window.openTeams=function(){
 
     showScreen("teamScreen");
 
 };
 
-window.openControls = function() {
+
+window.openModes=function(){
+
+    showScreen("modeScreen");
+
+};
+
+
+window.openControls=function(){
 
     showScreen("controlsScreen");
 
 };
 
-/* =========================================
-   SAVE PLAYER
-========================================= */
 
-window.savePlayer = function() {
+/* ============================================================
+   CREATOR
+============================================================ */
 
-    playerData.username =
-        document.getElementById("usernameInput").value
-        || "Rookie";
+function updateCreatorFace(){
 
-    playerData.name =
-        document.getElementById("playerNameInput").value
-        || "Rookie";
+    const head=
+    document.querySelector(".faceHead");
 
-    playerData.number =
-        Number(
-            document.getElementById("numberInput").value
-        );
+    head.style.background=
+    playerData.skin;
 
-    playerData.skin =
-        document.getElementById("skinInput").value;
+    const eyes=
+    document.querySelectorAll(".eye");
 
-    playerData.hair =
-        document.getElementById("hairInput").value;
+    let eyeColor="#351d12";
 
-    playerData.eyes =
-        document.getElementById("eyesInput").value;
+    if(playerData.eyes==="Blue")
+        eyeColor="#2166dd";
 
-    playerData.face =
-        document.getElementById("faceInput").value;
+    if(playerData.eyes==="Green")
+        eyeColor="#229944";
 
-    localStorage.setItem(
-        "hoopLegendsPlayer",
-        JSON.stringify(playerData)
-    );
+    if(playerData.eyes==="Black")
+        eyeColor="#050505";
 
-    updateMenu();
-
-    alert("Player saved!");
-
-    showScreen("menuScreen");
-
-};
-
-function updateMenu() {
-
-    document.getElementById(
-        "menuPlayerName"
-    ).textContent =
-        playerData.name;
-
-    document.getElementById(
-        "menuTeamName"
-    ).textContent =
-        playerData.team;
+    eyes.forEach(e=>{
+        e.style.background=
+        eyeColor;
+    });
 
 }
 
-/* =========================================
-   TEAM SELECTION
-========================================= */
 
-window.chooseTeam = function(team) {
+window.savePlayer=function(){
 
-    playerData.team = team;
+    playerData.username=
+    document
+    .getElementById("usernameInput")
+    .value
+    .trim()
+    ||
+    "Rookie";
+
+    playerData.name=
+    document
+    .getElementById("playerNameInput")
+    .value
+    .trim()
+    ||
+    "Rookie";
+
+    playerData.number=
+    Math.max(
+        0,
+        Math.min(
+            99,
+            Number(
+                document
+                .getElementById("numberInput")
+                .value
+            )||7
+        )
+    );
+
+    playerData.skin=
+    document
+    .getElementById("skinInput")
+    .value;
+
+    playerData.hair=
+    document
+    .getElementById("hairInput")
+    .value;
+
+    playerData.eyes=
+    document
+    .getElementById("eyesInput")
+    .value;
 
     localStorage.setItem(
         "hoopLegendsPlayer",
@@ -623,49 +1095,113 @@ window.chooseTeam = function(team) {
 
 };
 
-/* =========================================
-   THREE.JS SETUP
-========================================= */
 
-function setupThree() {
+function updateMenu(){
 
-    scene = new THREE.Scene();
+    document
+    .getElementById("menuPlayerName")
+    .textContent=
+    playerData.name;
 
-    scene.background =
-        new THREE.Color(0x79bce8);
+    document
+    .getElementById("menuTeamName")
+    .textContent=
+    playerData.team;
 
-    camera =
-        new THREE.PerspectiveCamera(
-            70,
-            window.innerWidth /
-            window.innerHeight,
-            0.1,
-            1000
-        );
+    document
+    .getElementById("menuMode")
+    .textContent=
+    playerData.mode+"v"+playerData.mode;
 
-    renderer =
-        new THREE.WebGLRenderer({
-            antialias: true
-        });
+}
+
+
+window.chooseTeam=function(team){
+
+    playerData.team=team;
+
+    localStorage.setItem(
+        "hoopLegendsPlayer",
+        JSON.stringify(playerData)
+    );
+
+    updateMenu();
+
+    showScreen("menuScreen");
+
+};
+
+
+window.chooseMode=function(mode){
+
+    playerData.mode=mode;
+
+    gameMode=mode;
+
+    localStorage.setItem(
+        "hoopLegendsPlayer",
+        JSON.stringify(playerData)
+    );
+
+    updateMenu();
+
+    showScreen("menuScreen");
+
+};
+
+updateMenu();
+
+
+/* ============================================================
+   THREE JS SETUP
+============================================================ */
+
+function setupGame(){
+
+    scene=
+    new THREE.Scene();
+
+    scene.background=
+    new THREE.Color(0x78b9df);
+
+
+    camera=
+    new THREE.PerspectiveCamera(
+        68,
+        window.innerWidth/
+        window.innerHeight,
+        .1,
+        1000
+    );
+
+
+    renderer=
+    new THREE.WebGLRenderer({
+        antialias:true
+    });
 
     renderer.setSize(
         window.innerWidth,
         window.innerHeight
     );
 
-    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.enabled=true;
+
+    renderer.shadowMap.type=
+    THREE.PCFSoftShadowMap;
 
     document.body.appendChild(
         renderer.domElement
     );
 
+
     /* LIGHT */
 
-    const sun =
-        new THREE.DirectionalLight(
-            0xffffff,
-            2
-        );
+    const sun=
+    new THREE.DirectionalLight(
+        0xffffff,
+        2.2
+    );
 
     sun.position.set(
         10,
@@ -673,19 +1209,21 @@ function setupThree() {
         10
     );
 
-    sun.castShadow = true;
+    sun.castShadow=true;
 
     scene.add(sun);
 
-    const ambient =
-        new THREE.AmbientLight(
-            0xffffff,
-            .7
-        );
+
+    const ambient=
+    new THREE.AmbientLight(
+        0xffffff,
+        .7
+    );
 
     scene.add(ambient);
 
-    createCourt();
+
+    createArena();
 
     createHoop(23);
 
@@ -693,9 +1231,10 @@ function setupThree() {
 
     createPlayer();
 
-    createOpponent();
+    createTeams();
 
     createBall();
+
 
     camera.position.set(
         0,
@@ -703,67 +1242,62 @@ function setupThree() {
         18
     );
 
+
     animate();
 
 }
 
-/* =========================================
-   COURT
-========================================= */
 
-function createCourt() {
+/* ============================================================
+   ARENA
+============================================================ */
 
-    const floor =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                28,
-                .3,
-                50
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0xb97842
-            })
-        );
+function createArena(){
 
-    floor.position.y = -.15;
+    const floor=
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            28,
+            .3,
+            50
+        ),
+        new THREE.MeshStandardMaterial({
+            color:0xb97842
+        })
+    );
 
-    floor.receiveShadow = true;
+    floor.position.y=-.15;
+
+    floor.receiveShadow=true;
 
     scene.add(floor);
 
-    /* COURT LINES */
 
-    function makeLine(
+    function line(
         x1,
         z1,
         x2,
         z2
-    ) {
+    ){
 
-        const points = [
+        const geometry=
+        new THREE.BufferGeometry()
+        .setFromPoints([
 
             new THREE.Vector3(
-                x1,
-                .03,
-                z1
+                x1,.04,z1
             ),
 
             new THREE.Vector3(
-                x2,
-                .03,
-                z2
+                x2,.04,z2
             )
 
-        ];
+        ]);
 
-        const geometry =
-            new THREE.BufferGeometry()
-                .setFromPoints(points);
-
-        const material =
-            new THREE.LineBasicMaterial({
-                color: 0xffffff
-            });
+        const material=
+        new THREE.LineBasicMaterial({
+            color:0xffffff
+        });
 
         scene.add(
             new THREE.Line(
@@ -774,53 +1308,96 @@ function createCourt() {
 
     }
 
-    makeLine(-14,-25,14,-25);
-    makeLine(-14,25,14,25);
-    makeLine(-14,-25,-14,25);
-    makeLine(14,-25,14,25);
 
-    makeLine(-14,0,14,0);
+    line(-14,-25,14,-25);
 
-    const circle =
-        new THREE.Mesh(
-            new THREE.RingGeometry(
-                3.9,
-                4,
-                64
-            ),
-            new THREE.MeshBasicMaterial({
-                color: 0xffffff,
-                side: THREE.DoubleSide
-            })
-        );
+    line(-14,25,14,25);
 
-    circle.rotation.x =
-        -Math.PI / 2;
+    line(-14,-25,-14,25);
 
-    circle.position.y =
-        .03;
+    line(14,-25,14,25);
 
-    scene.add(circle);
+    line(-14,0,14,0);
+
+
+    const center=
+    new THREE.Mesh(
+        new THREE.RingGeometry(
+            3.9,
+            4,
+            64
+        ),
+        new THREE.MeshBasicMaterial({
+            color:0xffffff,
+            side:THREE.DoubleSide
+        })
+    );
+
+    center.rotation.x=
+    -Math.PI/2;
+
+    center.position.y=.04;
+
+    scene.add(center);
+
+
+    /* KEY AREAS */
+
+    const keyMaterial=
+    new THREE.MeshBasicMaterial({
+        color:0xffffff,
+        transparent:true,
+        opacity:.05,
+        side:THREE.DoubleSide
+    });
+
+
+    const key1=
+    new THREE.Mesh(
+        new THREE.PlaneGeometry(
+            10,
+            8
+        ),
+        keyMaterial
+    );
+
+    key1.rotation.x=
+    -Math.PI/2;
+
+    key1.position.set(
+        0,.05,21
+    );
+
+    scene.add(key1);
+
+
+    const key2=
+    key1.clone();
+
+    key2.position.z=-21;
+
+    scene.add(key2);
 
 }
 
-/* =========================================
+
+/* ============================================================
    HOOPS
-========================================= */
+============================================================ */
 
-function createHoop(z) {
+function createHoop(z){
 
-    const board =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                6,
-                3.5,
-                .25
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0xffffff
-            })
-        );
+    const board=
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            6,
+            3.5,
+            .25
+        ),
+        new THREE.MeshStandardMaterial({
+            color:0xffffff
+        })
+    );
 
     board.position.set(
         0,
@@ -828,210 +1405,83 @@ function createHoop(z) {
         z
     );
 
+    board.castShadow=true;
+
     scene.add(board);
 
-    const rim =
-        new THREE.Mesh(
-            new THREE.TorusGeometry(
-                .75,
-                .08,
-                12,
-                32
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0xff4500
-            })
-        );
 
-    rim.rotation.x =
-        Math.PI / 2;
+    const rim=
+    new THREE.Mesh(
+        new THREE.TorusGeometry(
+            .75,
+            .08,
+            12,
+            32
+        ),
+        new THREE.MeshStandardMaterial({
+            color:0xff4500
+        })
+    );
+
+    rim.rotation.x=
+    Math.PI/2;
 
     rim.position.set(
         0,
         3.6,
-        z > 0
-            ? z - .8
-            : z + .8
+        z>0
+        ?z-.8
+        :z+.8
     );
 
     scene.add(rim);
 
+
+    /* NET */
+
+    const net=
+    new THREE.Mesh(
+        new THREE.CylinderGeometry(
+            .72,
+            .55,
+            .9,
+            20,
+            1,
+            true
+        ),
+        new THREE.MeshBasicMaterial({
+            color:0xffffff,
+            wireframe:true,
+            transparent:true,
+            opacity:.65
+        })
+    );
+
+    net.position.set(
+        0,
+        3.15,
+        z>0
+        ?z-.8
+        :z+.8
+    );
+
+    scene.add(net);
+
 }
 
-/* =========================================
-   PLAYER
-========================================= */
 
-function createPlayer() {
+/* ============================================================
+   PLAYER CREATION
+============================================================ */
 
-    player =
-        new THREE.Group();
+function createPlayer(){
 
-    const body =
-        new THREE.Mesh(
-            new THREE.CylinderGeometry(
-                .65,
-                .8,
-                1.8,
-                16
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0x0066ff
-            })
-        );
-
-    body.position.y =
-        1.4;
-
-    body.castShadow = true;
-
-    player.add(body);
-
-    const head =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .48,
-                24,
-                24
-            ),
-            new THREE.MeshStandardMaterial({
-                color: playerData.skin
-            })
-        );
-
-    head.position.y =
-        2.65;
-
-    head.castShadow = true;
-
-    player.add(head);
-
-    /* EYES */
-
-    const eyeMaterial =
-        new THREE.MeshStandardMaterial({
-            color:
-                playerData.eyes === "Blue"
-                    ? 0x2255ff
-                    : playerData.eyes === "Green"
-                        ? 0x229944
-                        : 0x331a0b
-        });
-
-    const eye1 =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .07,
-                10,
-                10
-            ),
-            eyeMaterial
-        );
-
-    eye1.position.set(
-        -.17,
-        2.72,
-        -.43
+    player=
+    buildPlayer(
+        playerData.skin,
+        0x0866ff,
+        true
     );
-
-    player.add(eye1);
-
-    const eye2 =
-        eye1.clone();
-
-    eye2.position.x =
-        .17;
-
-    player.add(eye2);
-
-    /* HAIR */
-
-    const hair =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .5,
-                20,
-                20,
-                0,
-                Math.PI * 2,
-                0,
-                Math.PI / 2
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0x111111
-            })
-        );
-
-    hair.position.y =
-        2.92;
-
-    player.add(hair);
-
-    /* LEGS */
-
-    const legMaterial =
-        new THREE.MeshStandardMaterial({
-            color: 0x222222
-        });
-
-    const leg1 =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                .35,
-                1.4,
-                .35
-            ),
-            legMaterial
-        );
-
-    leg1.position.set(
-        -.35,
-        .55,
-        0
-    );
-
-    player.add(leg1);
-
-    const leg2 =
-        leg1.clone();
-
-    leg2.position.x =
-        .35;
-
-    player.add(leg2);
-
-    /* ARMS */
-
-    const armMaterial =
-        new THREE.MeshStandardMaterial({
-            color: playerData.skin
-        });
-
-    const arm1 =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                .3,
-                1.3,
-                .3
-            ),
-            armMaterial
-        );
-
-    arm1.position.set(
-        -.9,
-        1.45,
-        0
-    );
-
-    player.add(arm1);
-
-    const arm2 =
-        arm1.clone();
-
-    arm2.position.x =
-        .9;
-
-    player.add(arm2);
 
     player.position.set(
         0,
@@ -1043,500 +1493,1725 @@ function createPlayer() {
 
 }
 
-/* =========================================
-   AI PLAYER
-========================================= */
 
-function createOpponent() {
+/* ============================================================
+   PLAYER MODEL
+============================================================ */
 
-    opponent =
-        new THREE.Group();
+function buildPlayer(
+    skinColor,
+    jerseyColor,
+    mainPlayer=false
+){
 
-    const body =
-        new THREE.Mesh(
-            new THREE.CylinderGeometry(
-                .65,
-                .8,
-                1.8,
-                16
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0xdd2222
-            })
-        );
+    const group=
+    new THREE.Group();
 
-    body.position.y =
-        1.4;
 
-    opponent.add(body);
+    /* BODY */
 
-    const head =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .48,
-                20,
-                20
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0x9b633f
-            })
-        );
-
-    head.position.y =
-        2.65;
-
-    opponent.add(head);
-
-    opponent.position.set(
-        0,
-        0,
-        -10
+    const body=
+    new THREE.Mesh(
+        new THREE.CylinderGeometry(
+            .62,
+            .78,
+            1.7,
+            16
+        ),
+        new THREE.MeshStandardMaterial({
+            color:jerseyColor
+        })
     );
 
-    scene.add(opponent);
+    body.position.y=1.4;
+
+    body.castShadow=true;
+
+    group.add(body);
+
+
+    /* HEAD */
+
+    const head=
+    new THREE.Mesh(
+        new THREE.SphereGeometry(
+            .48,
+            24,
+            24
+        ),
+        new THREE.MeshStandardMaterial({
+            color:skinColor
+        })
+    );
+
+    head.position.y=2.62;
+
+    head.castShadow=true;
+
+    group.add(head);
+
+
+    /* EYES */
+
+    const eyeColor=
+    mainPlayer
+    ? getEyeColor()
+    :0x22140e;
+
+
+    const eyeMat=
+    new THREE.MeshStandardMaterial({
+        color:eyeColor
+    });
+
+
+    const eyeL=
+    new THREE.Mesh(
+        new THREE.SphereGeometry(
+            .065,
+            10,
+            10
+        ),
+        eyeMat
+    );
+
+    eyeL.position.set(
+        -.17,
+        2.7,
+        -.43
+    );
+
+    group.add(eyeL);
+
+
+    const eyeR=
+    eyeL.clone();
+
+    eyeR.position.x=.17;
+
+    group.add(eyeR);
+
+
+    /* EYEBROWS */
+
+    const browMat=
+    new THREE.MeshStandardMaterial({
+        color:0x17110e
+    });
+
+
+    const browL=
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            .19,
+            .035,
+            .035
+        ),
+        browMat
+    );
+
+    browL.position.set(
+        -.17,
+        2.83,
+        -.44
+    );
+
+    group.add(browL);
+
+
+    const browR=
+    browL.clone();
+
+    browR.position.x=.17;
+
+    group.add(browR);
+
+
+    /* NOSE */
+
+    const nose=
+    new THREE.Mesh(
+        new THREE.ConeGeometry(
+            .06,
+            .16,
+            8
+        ),
+        new THREE.MeshStandardMaterial({
+            color:skinColor
+        })
+    );
+
+    nose.rotation.x=
+    Math.PI/2;
+
+    nose.position.set(
+        0,
+        2.6,
+        -.47
+    );
+
+    group.add(nose);
+
+
+    /* MOUTH */
+
+    const mouth=
+    new THREE.Mesh(
+        new THREE.TorusGeometry(
+            .11,
+            .025,
+            8,
+            16,
+            Math.PI
+        ),
+        new THREE.MeshBasicMaterial({
+            color:0x552222
+        })
+    );
+
+    mouth.rotation.x=
+    Math.PI/2;
+
+    mouth.position.set(
+        0,
+        2.42,
+        -.45
+    );
+
+    group.add(mouth);
+
+
+    /* HAIR */
+
+    const hair=
+    new THREE.Mesh(
+        new THREE.SphereGeometry(
+            .51,
+            20,
+            20,
+            0,
+            Math.PI*2,
+            0,
+            Math.PI/2
+        ),
+        new THREE.MeshStandardMaterial({
+            color:
+            mainPlayer
+            ?0x17120f
+            :0x111111
+        })
+    );
+
+    hair.position.y=2.91;
+
+    group.add(hair);
+
+
+    /* ARMS */
+
+    const armMat=
+    new THREE.MeshStandardMaterial({
+        color:skinColor
+    });
+
+
+    const armL=
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            .28,
+            1.25,
+            .28
+        ),
+        armMat
+    );
+
+    armL.position.set(
+        -.87,
+        1.45,
+        0
+    );
+
+    group.add(armL);
+
+
+    const armR=
+    armL.clone();
+
+    armR.position.x=.87;
+
+    group.add(armR);
+
+
+    /* LEGS */
+
+    const legMat=
+    new THREE.MeshStandardMaterial({
+        color:0x222222
+    });
+
+
+    const legL=
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            .35,
+            1.35,
+            .35
+        ),
+        legMat
+    );
+
+    legL.position.set(
+        -.34,
+        .55,
+        0
+    );
+
+    group.add(legL);
+
+
+    const legR=
+    legL.clone();
+
+    legR.position.x=.34;
+
+    group.add(legR);
+
+
+    group.userData={
+        body,
+        head,
+        armL,
+        armR,
+        legL,
+        legR,
+        baseY:0,
+        phase:Math.random()*10,
+        speed:0
+    };
+
+
+    return group;
 
 }
 
-/* =========================================
-   BALL
-========================================= */
 
-function createBall() {
+function getEyeColor(){
 
-    ball =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .35,
-                24,
-                24
-            ),
-            new THREE.MeshStandardMaterial({
-                color: 0xd96b27
-            })
+    if(playerData.eyes==="Blue")
+        return 0x2255ff;
+
+    if(playerData.eyes==="Green")
+        return 0x229944;
+
+    if(playerData.eyes==="Black")
+        return 0x050505;
+
+    return 0x351d12;
+
+}
+
+
+/* ============================================================
+   TEAMS
+============================================================ */
+
+function createTeams(){
+
+    teammates=[];
+
+    opponents=[];
+
+
+    const count=
+    gameMode===5
+    ?4
+    :2;
+
+
+    for(let i=0;i<count;i++){
+
+        const mate=
+        buildPlayer(
+            "#b8794f",
+            0x0866ff
         );
 
-    ball.castShadow = true;
+        mate.position.set(
+            -5+(i*3),
+            0,
+            5-i*3
+        );
+
+        scene.add(mate);
+
+        teammates.push(mate);
+
+
+        const enemy=
+        buildPlayer(
+            "#9b633f",
+            0xdd2222
+        );
+
+        enemy.position.set(
+            -5+(i*3),
+            0,
+            -8-i*3
+        );
+
+        scene.add(enemy);
+
+        opponents.push(enemy);
+
+    }
+
+}
+
+
+/* ============================================================
+   BALL
+============================================================ */
+
+function createBall(){
+
+    ball=
+    new THREE.Mesh(
+        new THREE.SphereGeometry(
+            .34,
+            24,
+            24
+        ),
+        new THREE.MeshStandardMaterial({
+            color:0xd86b22,
+            roughness:.65
+        })
+    );
+
+    ball.castShadow=true;
+
+    ball.position.set(
+        .9,
+        .45,
+        10
+    );
 
     scene.add(ball);
 
 }
 
-/* =========================================
+
+/* ============================================================
    KEYBOARD
-========================================= */
+============================================================ */
 
 document.addEventListener(
-    "keydown",
-    event => {
+"keydown",
+e=>{
 
-        keys[event.key.toLowerCase()] =
-            true;
-
-        if (
-            event.code === "Space" &&
-            gameRunning &&
-            !paused
-        ) {
-
-            shoot();
-
-        }
-
-        if (
-            event.key.toLowerCase() === "p"
-        ) {
-
-            togglePause();
-
-        }
-
-    }
-);
-
-document.addEventListener(
-    "keyup",
-    event => {
-
-        keys[event.key.toLowerCase()] =
-            false;
-
-    }
-);
-
-/* =========================================
-   MOVEMENT
-========================================= */
-
-function updatePlayer() {
-
-    if (!gameRunning || paused)
+    if(
+        e.target.tagName==="INPUT"||
+        e.target.tagName==="SELECT"
+    )
         return;
 
-    const speed =
+
+    keys[e.key.toLowerCase()]=true;
+
+
+    if(e.code==="Space"){
+
+        e.preventDefault();
+
+        if(gameRunning&&!paused)
+            beginShot();
+
+    }
+
+
+    if(e.key.toLowerCase()==="p"){
+
+        togglePause();
+
+    }
+
+
+    if(e.key.toLowerCase()==="e"){
+
+        if(gameRunning&&!paused)
+            passBall();
+
+    }
+
+
+    if(e.key.toLowerCase()==="f"){
+
+        if(gameRunning&&!paused)
+            steal();
+
+    }
+
+
+    if(e.key.toLowerCase()==="d"){
+
+        if(gameRunning&&!paused)
+            attemptDunk();
+
+    }
+
+
+    if(e.key==="Enter"){
+
+        toggleChat();
+
+    }
+
+});
+
+
+document.addEventListener(
+"keyup",
+e=>{
+
+    keys[e.key.toLowerCase()]=false;
+
+});
+
+
+/* ============================================================
+   PLAYER MOVEMENT
+============================================================ */
+
+function updatePlayer(){
+
+    if(!gameRunning||paused)
+        return;
+
+
+    let dx=0;
+
+    let dz=0;
+
+
+    if(keys["w"]) dz-=1;
+
+    if(keys["s"]) dz+=1;
+
+    if(keys["a"]) dx-=1;
+
+    if(keys["d"]) dx+=1;
+
+
+    const moving=
+    dx!==0||
+    dz!==0;
+
+
+    if(moving){
+
+        const len=
+        Math.sqrt(
+            dx*dx+dz*dz
+        );
+
+        dx/=len;
+
+        dz/=len;
+
+
+        let speed=
         keys["shift"]
-            ? .18
-            : .10;
+        ?0.18
+        :0.10;
 
-    if (keys["w"])
-        player.position.z -= speed;
 
-    if (keys["s"])
-        player.position.z += speed;
+        if(stamina<=0)
+            speed=.075;
 
-    if (keys["a"])
-        player.position.x -= speed;
 
-    if (keys["d"])
-        player.position.x += speed;
+        if(keys["shift"])
+            stamina-=.35;
+        else
+            stamina+=.18;
 
-    player.position.x =
+
+        stamina=
         THREE.MathUtils.clamp(
-            player.position.x,
-            -13,
-            13
+            stamina,
+            0,
+            100
         );
 
-    player.position.z =
-        THREE.MathUtils.clamp(
-            player.position.z,
-            -24,
-            24
+
+        player.position.x+=
+        dx*speed;
+
+        player.position.z+=
+        dz*speed;
+
+
+        animatePlayer(
+            player,
+            true
         );
 
-}
+    }
+    else{
 
-/* =========================================
-   DRIBBLING
-========================================= */
+        animatePlayer(
+            player,
+            false
+        );
 
-let dribbleTime = 0;
+    }
 
-function updateBall() {
 
-    if (!gameRunning || paused)
-        return;
+    player.position.x=
+    THREE.MathUtils.clamp(
+        player.position.x,
+        -13,
+        13
+    );
 
-    if (shooting)
-        return;
-
-    dribbleTime += .12;
-
-    ball.position.x =
-        player.position.x + .9;
-
-    ball.position.z =
-        player.position.z;
-
-    ball.position.y =
-        .45 +
-        Math.abs(
-            Math.sin(dribbleTime)
-        ) * .8;
+    player.position.z=
+    THREE.MathUtils.clamp(
+        player.position.z,
+        -24,
+        24
+    );
 
 }
 
-/* =========================================
-   SHOOTING
-========================================= */
 
-function shoot() {
+/* ============================================================
+   PLAYER ANIMATION
+============================================================ */
 
-    if (shooting)
-        return;
+function animatePlayer(
+    p,
+    moving
+){
 
-    shooting = true;
+    const data=
+    p.userData;
 
-    shotTime = 0;
+    data.phase+=
+    moving?.28:.08;
 
-    document.getElementById(
-        "message"
-    ).textContent =
-        "🏀 SHOOTING!";
 
-}
+    const swing=
+    Math.sin(data.phase)*
+    (moving?.45:.03);
 
-function updateShot() {
 
-    if (!shooting)
-        return;
+    data.armL.rotation.x=
+    swing;
 
-    shotTime += .025;
+    data.armR.rotation.x=
+    -swing;
 
-    ball.position.x =
-        player.position.x + .9;
+    data.legL.rotation.x=
+    -swing;
 
-    ball.position.z =
-        player.position.z -
-        shotTime * 18;
+    data.legR.rotation.x=
+    swing;
 
-    ball.position.y =
-        1.5 +
+
+    if(dunking&&p===player){
+
+        p.position.y=
         Math.sin(
-            Math.min(
-                shotTime,
-                1
-            ) * Math.PI
-        ) * 6;
+            dunkTime*Math.PI
+        )*2;
 
-    if (shotTime >= 1) {
+    }
+    else{
 
-        shooting = false;
+        p.position.y=
+        0;
 
-        /* SIMPLE SCORING */
+    }
 
-        const distance =
-            Math.abs(
-                player.position.z + 23
-            );
+}
 
-        if (distance < 15) {
 
-            scoreHome += 2;
+/* ============================================================
+   DRIBBLING + BALL PHYSICS
+============================================================ */
+
+let dribbleClock=0;
+
+function updateBall(){
+
+    if(!gameRunning||paused)
+        return;
+
+
+    if(
+        shooting||
+        ballMode==="pass"||
+        ballMode==="loose"
+    ){
+
+        updatePhysics();
+
+        return;
+
+    }
+
+
+    dribbleClock+=.15;
+
+
+    ball.position.x=
+    player.position.x+.85;
+
+    ball.position.z=
+    player.position.z;
+
+
+    ball.position.y=
+    .4+
+    Math.abs(
+        Math.sin(dribbleClock)
+    )*.72;
+
+
+    ball.rotation.x+=.12;
+
+    ball.rotation.z+=.1;
+
+}
+
+
+/* ============================================================
+   PHYSICS
+============================================================ */
+
+function updatePhysics(){
+
+    ballVelocity.y-=.025;
+
+    ball.position.add(
+        ballVelocity
+    );
+
+
+    /* FLOOR BOUNCE */
+
+    if(ball.position.y<.35){
+
+        ball.position.y=.35;
+
+        ballVelocity.y=
+        Math.abs(
+            ballVelocity.y
+        )*.55;
+
+        ballVelocity.x*=.86;
+
+        ballVelocity.z*=.86;
+
+        if(
+            ballVelocity.length()<.05
+        ){
+
+            ballMode="loose";
+
+        }
+
+    }
+
+
+    /* COURT WALLS */
+
+    if(
+        Math.abs(ball.position.x)>13.7
+    ){
+
+        ballVelocity.x*=-.7;
+
+    }
+
+
+    if(
+        Math.abs(ball.position.z)>24.7
+    ){
+
+        ballVelocity.z*=-.7;
+
+    }
+
+}
+
+
+/* ============================================================
+   SHOOTING
+============================================================ */
+
+function beginShot(){
+
+    if(shooting||
+       dunking||
+       ballMode!=="dribble")
+        return;
+
+
+    shooting=true;
+
+    shotType=
+    getShotType();
+
+
+    shotTime=0;
+
+    shotPower=0;
+
+
+    document
+    .getElementById("shotMeter")
+    .style.display="block";
+
+
+    document
+    .getElementById("message")
+    .textContent=
+    shotType==="layup"
+    ?"🏀 LAYUP!"
+    :"🎯 SHOOT!";
+
+}
+
+
+function getShotType(){
+
+    const distance=
+    player.position.distanceTo(
+        new THREE.Vector3(
+            0,
+            0,
+            -23
+        )
+    );
+
+
+    if(distance<8)
+        return "layup";
+
+    return "shot";
+
+}
+
+
+function updateShot(){
+
+    if(!shooting)
+        return;
+
+
+    shotTime+=.025;
+
+
+    shotPower=
+    Math.abs(
+        Math.sin(
+            shotTime*3
+        )
+    );
+
+
+    document
+    .getElementById("shotFill")
+    .style.width=
+    (shotPower*100)+"%";
+
+
+    const targetZ=
+    -23;
+
+
+    ball.position.x=
+    player.position.x+
+    .8;
+
+
+    ball.position.z=
+    player.position.z-
+    shotTime*20;
+
+
+    ball.position.y=
+    1.4+
+    Math.sin(
+        Math.min(
+            shotTime,
+            1
+        )*Math.PI
+    )*
+    (
+        shotType==="layup"
+        ?2.5
+        :6
+    );
+
+
+    ball.rotation.x+=.25;
+
+
+    if(shotTime>=1){
+
+        finishShot();
+
+    }
+
+}
+
+
+function finishShot(){
+
+    shooting=false;
+
+    document
+    .getElementById("shotMeter")
+    .style.display="none";
+
+
+    const perfect=
+    shotPower>.75;
+
+
+    let chance=
+    perfect
+    ?.85
+    :.48;
+
+
+    if(
+        shotType==="layup"
+    )
+        chance=.72;
+
+
+    const defender=
+    nearestOpponent();
+
+
+    if(
+        defender &&
+        defender.position.distanceTo(
+            player.position
+        )<2.2
+    ){
+
+        chance-=.25;
+
+    }
+
+
+    if(Math.random()<chance){
+
+        scoreHome+=
+        shotType==="layup"
+        ?2
+        :2;
+
+
+        updateScore();
+
+
+        document
+        .getElementById("message")
+        .textContent=
+        perfect
+        ?"🔥 PERFECT!"
+        :"🏀 BUCKET!";
+
+
+        teamChat(
+        shotType==="layup"
+        ?"Nice finish!"
+        :"Great shot!"
+        );
+
+
+    }
+    else{
+
+        document
+        .getElementById("message")
+        .textContent=
+        "❌ MISS! Rebound!";
+
+
+        ballMode="loose";
+
+        ballVelocity.set(
+            (Math.random()-.5)*.3,
+            .35,
+            .8
+        );
+
+    }
+
+
+    ball.position.y=.8;
+
+}
+
+
+/* ============================================================
+   DUNK
+============================================================ */
+
+function attemptDunk(){
+
+    if(
+        dunking||
+        shooting
+    )
+        return;
+
+
+    const hoop=
+    new THREE.Vector3(
+        0,
+        0,
+        -23
+    );
+
+
+    const distance=
+    player.position.distanceTo(
+        hoop
+    );
+
+
+    if(distance>7){
+
+        document
+        .getElementById("message")
+        .textContent=
+        "Get closer to the basket!";
+
+        return;
+
+    }
+
+
+    dunking=true;
+
+    dunkTime=0;
+
+    ballMode="dunk";
+
+
+    document
+    .getElementById("message")
+    .textContent=
+    "💥 DUNK ATTEMPT!";
+
+
+}
+
+
+function updateDunk(){
+
+    if(!dunking)
+        return;
+
+
+    dunkTime+=.035;
+
+
+    player.position.y=
+    Math.sin(
+        Math.min(
+            dunkTime,
+            1
+        )*Math.PI
+    )*2;
+
+
+    ball.position.set(
+        player.position.x,
+        player.position.y+2.2,
+        player.position.z-.7
+    );
+
+
+    if(dunkTime>=1){
+
+        dunking=false;
+
+        player.position.y=0;
+
+        ballMode="dribble";
+
+
+        const success=
+        Math.random()<.82;
+
+
+        if(success){
+
+            scoreHome+=2;
 
             updateScore();
 
-            document.getElementById(
-                "message"
-            ).textContent =
-                "🔥 BUCKET! +2";
+            document
+            .getElementById("message")
+            .textContent=
+            "🔥🔥 MONSTER DUNK!";
 
-        } else {
 
-            document.getElementById(
-                "message"
-            ).textContent =
-                "MISS!";
-
-        }
-
-        ball.position.set(
-            player.position.x + .9,
-            .45,
-            player.position.z
-        );
-
-    }
-
-}
-
-/* =========================================
-   PASSING
-========================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key.toLowerCase() === "e" &&
-            gameRunning &&
-            !paused
-        ) {
-
-            document.getElementById(
-                "message"
-            ).textContent =
-                "🏀 PASS!";
-
-            ball.position.set(
-                opponent.position.x,
-                1.5,
-                opponent.position.z
+            teamChat(
+            "WHAT A DUNK!"
             );
 
-            setTimeout(() => {
+        }
+        else{
 
-                if (!shooting) {
+            document
+            .getElementById("message")
+            .textContent=
+            "😱 DUNK MISSED!";
 
-                    ball.position.set(
-                        player.position.x + .9,
-                        .45,
-                        player.position.z
-                    );
+            ballMode="loose";
 
-                }
-
-            }, 500);
+            ballVelocity.set(
+                .3,
+                .4,
+                -.4
+            );
 
         }
 
     }
-);
 
-/* =========================================
-   STEAL
-========================================= */
+}
 
-document.addEventListener(
-    "keydown",
-    event => {
 
-        if (
-            event.key.toLowerCase() === "f" &&
-            gameRunning &&
-            !paused
-        ) {
+/* ============================================================
+   PASSING
+============================================================ */
 
-            const distance =
-                player.position.distanceTo(
-                    opponent.position
-                );
+function passBall(){
 
-            if (distance < 4) {
-
-                document.getElementById(
-                    "message"
-                ).textContent =
-                    "🛡️ STEAL!";
-
-            } else {
-
-                document.getElementById(
-                    "message"
-                ).textContent =
-                    "Too far away!";
-
-            }
-
-        }
-
-    }
-);
-
-/* =========================================
-   AI
-========================================= */
-
-function updateAI() {
-
-    if (!gameRunning || paused)
+    if(
+        ballMode!=="dribble"||
+        dunking||
+        shooting
+    )
         return;
 
-    const targetX =
-        player.position.x;
 
-    opponent.position.x +=
-        (targetX -
-        opponent.position.x) *
-        .01;
+    if(teammates.length===0)
+        return;
 
-    opponent.position.x =
-        THREE.MathUtils.clamp(
-            opponent.position.x,
-            -13,
-            13
+
+    let target=
+    teammates[0];
+
+    let best=
+    player.position.distanceTo(
+        target.position
+    );
+
+
+    teammates.forEach(t=>{
+
+        const d=
+        player.position.distanceTo(
+            t.position
         );
 
-}
+        if(d<best){
 
-/* =========================================
-   SCORE
-========================================= */
+            best=d;
 
-function updateScore() {
+            target=t;
 
-    document.getElementById(
-        "homeScore"
-    ).textContent =
-        scoreHome;
+        }
 
-    document.getElementById(
-        "awayScore"
-    ).textContent =
-        scoreAway;
+    });
 
-}
 
-/* =========================================
-   GAME CLOCK
-========================================= */
+    ballMode="pass";
 
-function startClock() {
+    ballVelocity.set(
+        (target.position.x-
+        player.position.x)*.06,
 
-    clearInterval(clockTimer);
+        .18,
 
-    clockTimer =
-        setInterval(() => {
+        (target.position.z-
+        player.position.z)*.06
+    );
 
-            if (
-                !gameRunning ||
-                paused
-            )
-                return;
 
-            gameSeconds--;
+    document
+    .getElementById("message")
+    .textContent=
+    "🏀 PASS!";
 
-            updateClock();
 
-            if (gameSeconds <= 0) {
+    setTimeout(()=>{
 
-                if (quarter < 4) {
+        if(ballMode==="pass"){
 
-                    quarter++;
+            ballMode="dribble";
 
-                    gameSeconds = 120;
+        }
 
-                    document.getElementById(
-                        "message"
-                    ).textContent =
-                        "Quarter " +
-                        quarter;
-
-                } else {
-
-                    endGame();
-
-                }
-
-            }
-
-        }, 1000);
+    },700);
 
 }
 
-function updateClock() {
 
-    const minutes =
-        Math.floor(
-            gameSeconds / 60
+/* ============================================================
+   DEFENSE
+============================================================ */
+
+function steal(){
+
+    const enemy=
+    nearestOpponent();
+
+    if(!enemy)
+        return;
+
+
+    const distance=
+    player.position.distanceTo(
+        enemy.position
+    );
+
+
+    if(distance<2.3){
+
+        steals++;
+
+        document
+        .getElementById("message")
+        .textContent=
+        "🛡️ STEAL!";
+
+
+        ballMode="dribble";
+
+
+        teamChat(
+        "Great steal!"
         );
 
-    const seconds =
-        gameSeconds % 60;
 
-    document.getElementById(
-        "clock"
-    ).textContent =
-        minutes +
-        ":" +
-        String(seconds)
-            .padStart(2,"0");
+    }
+    else{
 
-    document.getElementById(
-        "quarter"
-    ).textContent =
-        quarter;
-
-}
-
-/* =========================================
-   START GAME
-========================================= */
-
-window.startGame = function() {
-
-    if (!scene) {
-
-        setupThree();
+        document
+        .getElementById("message")
+        .textContent=
+        "Too far away!";
 
     }
 
-    scoreHome = 0;
-    scoreAway = 0;
+}
 
-    quarter = 1;
 
-    gameSeconds = 120;
+function block(){
+
+    const enemy=
+    nearestOpponent();
+
+    if(!enemy)
+        return;
+
+
+    const distance=
+    player.position.distanceTo(
+        enemy.position
+    );
+
+
+    if(
+        distance<2.5 &&
+        Math.random()<.55
+    ){
+
+        blocks++;
+
+        document
+        .getElementById("message")
+        .textContent=
+        "🚫 BLOCK!";
+
+
+        ballMode="loose";
+
+        ballVelocity.set(
+            .4,
+            .7,
+            .4
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   AI
+============================================================ */
+
+function updateAI(){
+
+    if(!gameRunning||paused)
+        return;
+
+
+    aiShotTimer+=.016;
+
+
+    teammates.forEach(
+    (mate,index)=>{
+
+        const targetX=
+        player.position.x+
+        Math.sin(
+            Date.now()/1000+
+            index
+        )*3;
+
+
+        const targetZ=
+        player.position.z-
+        4+
+        index*2;
+
+
+        moveAI(
+            mate,
+            targetX,
+            targetZ
+        );
+
+    });
+
+
+    opponents.forEach(
+    (enemy,index)=>{
+
+        let target;
+
+
+        if(index===0){
+
+            target=
+            player.position;
+
+        }
+        else{
+
+            target=
+            teammates[
+                (index-1)%
+                teammates.length
+            ];
+
+        }
+
+
+        moveAI(
+            enemy,
+            target.position.x,
+            target.position.z
+        );
+
+
+        const distance=
+        enemy.position.distanceTo(
+            target.position
+        );
+
+
+        if(
+            distance<2 &&
+            Math.random()<.002
+        ){
+
+            block();
+
+        }
+
+    });
+
+
+    /* AI SHOTS */
+
+    if(
+        aiShotTimer>5
+    ){
+
+        aiShotTimer=0;
+
+        if(
+            Math.random()<.35
+        ){
+
+            scoreAway+=
+            Math.random()<.55
+            ?2
+            :3;
+
+            updateScore();
+
+            teamChat(
+            "They scored. Stay focused!"
+            );
+
+        }
+
+    }
+
+}
+
+
+function moveAI(
+    ai,
+    targetX,
+    targetZ
+){
+
+    const dx=
+    targetX-
+    ai.position.x;
+
+    const dz=
+    targetZ-
+    ai.position.z;
+
+
+    const distance=
+    Math.sqrt(
+        dx*dx+
+        dz*dz
+    );
+
+
+    if(distance>.7){
+
+        ai.position.x+=
+        (dx/distance)*.035;
+
+        ai.position.z+=
+        (dz/distance)*.035;
+
+        animatePlayer(
+            ai,
+            true
+        );
+
+    }
+    else{
+
+        animatePlayer(
+            ai,
+            false
+        );
+
+    }
+
+
+    ai.position.x=
+    THREE.MathUtils.clamp(
+        ai.position.x,
+        -13,
+        13
+    );
+
+    ai.position.z=
+    THREE.MathUtils.clamp(
+        ai.position.z,
+        -24,
+        24
+    );
+
+}
+
+
+/* ============================================================
+   REBOUND
+============================================================ */
+
+function checkRebound(){
+
+    if(ballMode!=="loose")
+        return;
+
+
+    const all=[
+        player,
+        ...teammates,
+        ...opponents
+    ];
+
+
+    all.forEach(p=>{
+
+        const distance=
+        p.position.distanceTo(
+            ball.position
+        );
+
+
+        if(distance<1.4){
+
+            if(
+                p===player||
+                teammates.includes(p)
+            ){
+
+                rebounds++;
+
+                ballMode="dribble";
+
+                ballVelocity.set(
+                    0,
+                    0,
+                    0
+                );
+
+
+                document
+                .getElementById("message")
+                .textContent=
+                "🏀 REBOUND!";
+
+            }
+
+        }
+
+    });
+
+}
+
+
+/* ============================================================
+   FOULS
+============================================================ */
+
+function checkFouls(){
+
+    const enemy=
+    nearestOpponent();
+
+
+    if(!enemy)
+        return;
+
+
+    const distance=
+    player.position.distanceTo(
+        enemy.position
+    );
+
+
+    if(
+        distance<1.1 &&
+        (keys["shift"]||
+        keys["f"]) &&
+        Math.random()<.001
+    ){
+
+        fouls++;
+
+        document
+        .getElementById("message")
+        .textContent=
+        "⚠️ FOUL!";
+
+        teamChat(
+        "Watch the fouls!"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   NEAREST OPPONENT
+============================================================ */
+
+function nearestOpponent(){
+
+    let nearest=null;
+
+    let best=Infinity;
+
+
+    opponents.forEach(enemy=>{
+
+        const d=
+        player.position.distanceTo(
+            enemy.position
+        );
+
+
+        if(d<best){
+
+            best=d;
+
+            nearest=enemy;
+
+        }
+
+    });
+
+
+    return nearest;
+
+}
+
+
+/* ============================================================
+   CLOCK
+============================================================ */
+
+function startClock(){
+
+    clearInterval(gameTimer);
+
+
+    gameTimer=
+    setInterval(()=>{
+
+        if(
+            !gameRunning||
+            paused
+        )
+            return;
+
+
+        gameSeconds--;
+
+        updateClock();
+
+
+        if(
+            gameSeconds<=0
+        ){
+
+            if(
+                quarter<4
+            ){
+
+                quarter++;
+
+                gameSeconds=120;
+
+
+                document
+                .getElementById("message")
+                .textContent=
+                "🏀 QUARTER "+
+                quarter;
+
+            }
+            else{
+
+                endGame();
+
+            }
+
+        }
+
+    },1000);
+
+}
+
+
+function updateClock(){
+
+    const min=
+    Math.floor(
+        gameSeconds/60
+    );
+
+    const sec=
+    gameSeconds%60;
+
+
+    document
+    .getElementById("clock")
+    .textContent=
+    min+
+    ":"+
+    String(sec)
+    .padStart(2,"0");
+
+
+    document
+    .getElementById("quarter")
+    .textContent=
+    quarter;
+
+}
+
+
+/* ============================================================
+   SCORE
+============================================================ */
+
+function updateScore(){
+
+    document
+    .getElementById("homeScore")
+    .textContent=
+    scoreHome;
+
+    document
+    .getElementById("awayScore")
+    .textContent=
+    scoreAway;
+
+}
+
+
+/* ============================================================
+   START GAME
+============================================================ */
+
+window.startGame=function(){
+
+    gameMode=
+    playerData.mode||3;
+
+
+    if(!scene){
+
+        setupGame();
+
+    }
+
+
+    scoreHome=0;
+
+    scoreAway=0;
+
+    quarter=1;
+
+    gameSeconds=120;
+
+    fouls=0;
+
+    rebounds=0;
+
+    steals=0;
+
+    blocks=0;
+
+    stamina=100;
+
 
     player.position.set(
         0,
@@ -1544,73 +3219,123 @@ window.startGame = function() {
         10
     );
 
-    opponent.position.set(
-        0,
-        0,
-        -10
-    );
 
-    shooting = false;
+    opponents.forEach(
+    (enemy,index)=>{
 
-    gameRunning = true;
+        enemy.position.set(
+            -5+
+            index*3,
+            0,
+            -8-
+            index*2
+        );
 
-    paused = false;
+    });
+
+
+    teammates.forEach(
+    (mate,index)=>{
+
+        mate.position.set(
+            -5+
+            index*3,
+            0,
+            5-
+            index*2
+        );
+
+    });
+
+
+    ballMode="dribble";
+
+    shooting=false;
+
+    dunking=false;
+
+
+    gameRunning=true;
+
+    paused=false;
+
 
     updateScore();
 
     updateClock();
 
-    document.getElementById(
-        "hud"
-    ).style.display = "block";
 
-    document.getElementById(
-        "controls"
-    ).style.display = "block";
+    document
+    .getElementById("hud")
+    .style.display="block";
 
-    document.getElementById(
-        "shotMeter"
-    ).style.display = "block";
 
-    document.getElementById(
-        "homeTeam"
-    ).textContent =
-        playerData.team.toUpperCase();
+    document
+    .getElementById("controls")
+    .style.display="block";
 
-    document.getElementById(
-        "awayTeam"
-    ).textContent =
-        "TITANS";
 
-    document.getElementById(
-        "message"
-    ).textContent =
-        "🏀 GAME START!";
+    document
+    .getElementById("chat")
+    .style.display="block";
+
+
+    document
+    .getElementById("homeTeam")
+    .textContent=
+    playerData.team
+    .toUpperCase();
+
+
+    document
+    .getElementById("awayTeam")
+    .textContent=
+    "TITANS";
+
+
+    document
+    .getElementById("message")
+    .textContent=
+    gameMode+
+    "v"+
+    gameMode+
+    " GAME START!";
+
 
     showScreen("none");
 
+
     startClock();
+
+
+    teamChat(
+    "Let's play!"
+    );
 
 };
 
-/* =========================================
+
+/* ============================================================
    PAUSE
-========================================= */
+============================================================ */
 
-function togglePause() {
+function togglePause(){
 
-    if (!gameRunning)
+    if(!gameRunning)
         return;
 
-    paused = !paused;
 
-    if (paused) {
+    paused=!paused;
+
+
+    if(paused){
 
         showScreen(
             "pauseScreen"
         );
 
-    } else {
+    }
+    else{
 
         showScreen("none");
 
@@ -1618,93 +3343,298 @@ function togglePause() {
 
 }
 
-window.resumeGame = function() {
 
-    paused = false;
+window.resumeGame=function(){
+
+    paused=false;
 
     showScreen("none");
 
 };
 
-window.quitGame = function() {
 
-    gameRunning = false;
+window.quitGame=function(){
 
-    clearInterval(clockTimer);
+    gameRunning=false;
 
-    document.getElementById(
-        "hud"
-    ).style.display = "none";
+    clearInterval(gameTimer);
 
-    document.getElementById(
-        "controls"
-    ).style.display = "none";
 
-    document.getElementById(
-        "shotMeter"
-    ).style.display = "none";
+    document
+    .getElementById("hud")
+    .style.display="none";
+
+
+    document
+    .getElementById("controls")
+    .style.display="none";
+
+
+    document
+    .getElementById("chat")
+    .style.display="none";
+
 
     showScreen("menuScreen");
 
 };
 
-/* =========================================
+
+/* ============================================================
    END GAME
-========================================= */
+============================================================ */
 
-function endGame() {
+function endGame(){
 
-    gameRunning = false;
+    gameRunning=false;
 
-    clearInterval(clockTimer);
+    clearInterval(gameTimer);
 
-    document.getElementById(
-        "message"
-    ).textContent =
-        "🏆 FINAL SCORE: " +
-        scoreHome +
-        " - " +
-        scoreAway;
 
-    alert(
-        "Game Over!\n\n" +
-        playerData.team +
-        ": " +
-        scoreHome +
-        "\nTitans: " +
-        scoreAway
+    document
+    .getElementById("message")
+    .textContent=
+    "🏆 FINAL SCORE "+
+    scoreHome+
+    " - "+
+    scoreAway;
+
+
+    setTimeout(()=>{
+
+        alert(
+            "🏀 FINAL SCORE\n\n"+
+            playerData.team+
+            ": "+
+            scoreHome+
+            "\n"+
+            "Titans: "+
+            scoreAway+
+            "\n\n"+
+            "Rebounds: "+
+            rebounds+
+            "\n"+
+            "Steals: "+
+            steals+
+            "\n"+
+            "Blocks: "+
+            blocks+
+            "\n"+
+            "Fouls: "+
+            fouls
+        );
+
+    },100);
+
+}
+
+
+/* ============================================================
+   CHAT
+============================================================ */
+
+function toggleChat(){
+
+    chatOpen=!chatOpen;
+
+
+    document
+    .getElementById("chat")
+    .style.display=
+    chatOpen
+    ?"block"
+    :"block";
+
+
+    if(chatOpen){
+
+        document
+        .getElementById("chatInput")
+        .focus();
+
+    }
+
+}
+
+
+function addChat(
+    sender,
+    message
+){
+
+    const box=
+    document
+    .getElementById(
+        "chatMessages"
+    );
+
+
+    const line=
+    document.createElement(
+        "div"
+    );
+
+    line.className=
+    "chatLine";
+
+
+    line.textContent=
+    sender+
+    ": "+
+    message;
+
+
+    box.appendChild(line);
+
+
+    box.scrollTop=
+    box.scrollHeight;
+
+
+    while(
+        box.children.length>10
+    ){
+
+        box.removeChild(
+            box.firstChild
+        );
+
+    }
+
+}
+
+
+function teamChat(message){
+
+    const names=[
+        "Alex",
+        "Jay",
+        "Marcus",
+        "Coach"
+    ];
+
+
+    const name=
+    names[
+        Math.floor(
+            Math.random()*
+            names.length
+        )
+    ];
+
+
+    addChat(
+        name,
+        message
     );
 
 }
 
-/* =========================================
-   CAMERA
-========================================= */
 
-function updateCamera() {
+document
+.getElementById("chatForm")
+.addEventListener(
+"submit",
+e=>{
 
-    if (!player)
+    e.preventDefault();
+
+
+    const input=
+    document
+    .getElementById(
+        "chatInput"
+    );
+
+
+    const text=
+    input.value.trim();
+
+
+    if(!text)
         return;
 
-    const targetX =
-        player.position.x;
 
-    const targetZ =
-        player.position.z + 9;
+    addChat(
+        playerData.username,
+        text
+    );
 
-    camera.position.x +=
-        (
-            targetX -
-            camera.position.x
-        ) * .08;
 
-    camera.position.z +=
-        (
-            targetZ -
-            camera.position.z
-        ) * .08;
+    input.value="";
 
-    camera.position.y = 7;
+
+    setTimeout(()=>{
+
+        const replies=[
+
+            "Got you!",
+
+            "Let's go!",
+
+            "Pass it here!",
+
+            "I'm open!",
+
+            "Good play!",
+
+            "Watch the defender!",
+
+            "Take the shot!",
+
+            "We got this!"
+
+        ];
+
+
+        teamChat(
+            replies[
+                Math.floor(
+                    Math.random()*
+                    replies.length
+                )
+            ]
+        );
+
+    },500);
+
+});
+
+
+/* ============================================================
+   CAMERA
+============================================================ */
+
+function updateCamera(){
+
+    if(!player)
+        return;
+
+
+    const targetX=
+    player.position.x;
+
+    const targetZ=
+    player.position.z+8;
+
+
+    camera.position.x+=
+    (
+        targetX-
+        camera.position.x
+    )*.08;
+
+
+    camera.position.z+=
+    (
+        targetZ-
+        camera.position.z
+    )*.08;
+
+
+    camera.position.y=
+    7;
+
 
     camera.lookAt(
         player.position.x,
@@ -1714,27 +3644,47 @@ function updateCamera() {
 
 }
 
-/* =========================================
-   ANIMATION
-========================================= */
 
-function animate() {
+/* ============================================================
+   MAIN ANIMATION LOOP
+============================================================ */
+
+function animate(){
 
     requestAnimationFrame(
         animate
     );
 
-    updatePlayer();
 
-    updateBall();
+    if(
+        gameRunning&&
+        !paused
+    ){
 
-    updateShot();
+        updatePlayer();
 
-    updateAI();
+        updateBall();
 
-    updateCamera();
+        updateShot();
 
-    if (renderer && scene && camera) {
+        updateDunk();
+
+        updateAI();
+
+        checkRebound();
+
+        checkFouls();
+
+        updateCamera();
+
+    }
+
+
+    if(
+        renderer&&
+        scene&&
+        camera
+    ){
 
         renderer.render(
             scene,
@@ -1745,30 +3695,75 @@ function animate() {
 
 }
 
-/* =========================================
+
+/* ============================================================
    RESIZE
-========================================= */
+============================================================ */
 
 window.addEventListener(
-    "resize",
-    () => {
+"resize",
+()=>{
 
-        if (!camera || !renderer)
-            return;
+    if(
+        !camera||
+        !renderer
+    )
+        return;
 
-        camera.aspect =
-            window.innerWidth /
-            window.innerHeight;
 
-        camera.updateProjectionMatrix();
+    camera.aspect=
+    window.innerWidth/
+    window.innerHeight;
 
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
 
-    }
-);
+    camera.updateProjectionMatrix();
+
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+});
+
+
+/* ============================================================
+   CREATOR LIVE UPDATE
+============================================================ */
+
+document
+.getElementById("skinInput")
+.addEventListener(
+"change",
+e=>{
+
+    playerData.skin=
+    e.target.value;
+
+    updateCreatorFace();
+
+});
+
+
+document
+.getElementById("eyesInput")
+.addEventListener(
+"change",
+e=>{
+
+    playerData.eyes=
+    e.target.value;
+
+    updateCreatorFace();
+
+});
+
+
+/* ============================================================
+   STARTUP
+============================================================ */
+
+updateCreatorFace();
 
 </script>
 
