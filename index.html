@@ -1,408 +1,1776 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hoop Legends 3D</title>
 
-    <title>Hoop Legends 3D</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    <link rel="stylesheet" href="style.css">
+body {
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+}
+
+canvas {
+    display: block;
+}
+
+.screen {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.75));
+}
+
+.screen.active {
+    display: flex;
+}
+
+.menu {
+    width: min(90%, 600px);
+    padding: 35px;
+    border-radius: 25px;
+    background: rgba(10,10,20,.94);
+    border: 2px solid #ff7b00;
+    box-shadow: 0 0 40px rgba(255,123,0,.35);
+    text-align: center;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 8px;
+    color: #ff8c00;
+    text-shadow: 0 0 15px #ff4500;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    color: #bbb;
+    margin-bottom: 25px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin: 7px 0;
+    border: none;
+    border-radius: 12px;
+    background: #ff7200;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .15s;
+}
+
+button:hover {
+    background: #ff9a3c;
+    transform: scale(1.02);
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0 15px;
+    border-radius: 10px;
+    border: 1px solid #555;
+    background: #222;
+    color: white;
+    font-size: 16px;
+}
+
+label {
+    display: block;
+    text-align: left;
+    color: #ccc;
+    margin-top: 8px;
+}
+
+#hud {
+    position: fixed;
+    z-index: 5;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 380px;
+    padding: 12px 20px;
+    border-radius: 15px;
+    background: rgba(0,0,0,.8);
+    text-align: center;
+    display: none;
+}
+
+.score {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.clock {
+    font-size: 20px;
+    color: #ff9d3c;
+}
+
+#message {
+    margin-top: 5px;
+    color: #ddd;
+}
+
+#controls {
+    position: fixed;
+    z-index: 5;
+    bottom: 15px;
+    left: 15px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(0,0,0,.7);
+    color: #ddd;
+    line-height: 1.6;
+    display: none;
+}
+
+#shotMeter {
+    position: fixed;
+    z-index: 6;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    width: 250px;
+    height: 22px;
+    border: 2px solid white;
+    border-radius: 20px;
+    overflow: hidden;
+    display: none;
+    background: #222;
+}
+
+#shotFill {
+    height: 100%;
+    width: 0%;
+    background: #39e75f;
+}
+
+.card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.small {
+    font-size: 14px;
+    color: #aaa;
+}
+
+#creatorPreview {
+    font-size: 70px;
+    margin: 10px;
+}
+
+#gameInfo {
+    margin: 15px 0;
+    padding: 12px;
+    background: rgba(255,255,255,.05);
+    border-radius: 12px;
+}
+
+@media(max-width:600px) {
+    h1 {
+        font-size: 35px;
+    }
+
+    #hud {
+        min-width: 280px;
+    }
+
+    #controls {
+        font-size: 12px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <!-- ==============================
-         MAIN MENU
-    =============================== -->
+<!-- ========================= -->
+<!-- MAIN MENU -->
+<!-- ========================= -->
 
-    <div id="mainMenu" class="screen active">
+<div id="menuScreen" class="screen active">
 
-        <div class="menu-container">
+    <div class="menu">
 
-            <h1>HOOP LEGENDS</h1>
+        <h1>🏀 HOOP LEGENDS</h1>
 
-            <p class="subtitle">
-                3D Basketball
-            </p>
+        <div class="subtitle">
+            3D Basketball
+        </div>
 
-            <button id="playNowButton">
-                PLAY NOW
-            </button>
+        <button onclick="startGame()">PLAY NOW</button>
+        <button onclick="openCreator()">👤 MY PLAYER</button>
+        <button onclick="openTeams()">👥 MY TEAM</button>
+        <button onclick="openControls()">🎮 CONTROLS</button>
 
-            <button id="createPlayerButton">
-                MY PLAYER
-            </button>
+        <div id="gameInfo">
+            <div>Player: <b id="menuPlayerName">Rookie</b></div>
+            <div>Team: <b id="menuTeamName">Legends</b></div>
+        </div>
 
-            <button id="teamsButton">
-                MY TEAM
-            </button>
-
-            <button id="practiceButton">
-                PRACTICE
-            </button>
-
-            <button id="controlsButton">
-                CONTROLS
-            </button>
-
+        <div class="small">
+            Your progress is saved in your browser.
         </div>
 
     </div>
+</div>
 
+<!-- ========================= -->
+<!-- PLAYER CREATOR -->
+<!-- ========================= -->
 
-    <!-- ==============================
-         PLAYER CREATOR
-    =============================== -->
+<div id="creatorScreen" class="screen">
 
-    <div id="creatorScreen" class="screen">
+    <div class="menu">
 
-        <div class="creator-container">
+        <h2>👤 CREATE YOUR PLAYER</h2>
 
-            <div class="creator-preview">
+        <div id="creatorPreview">🏀</div>
 
-                <h2>PLAYER PREVIEW</h2>
+        <label>Username</label>
+        <input id="usernameInput" placeholder="Your username">
 
-                <div id="playerPreview">
-                    🏀
-                </div>
+        <label>Player Name</label>
+        <input id="playerNameInput" placeholder="Player name">
 
+        <div class="card">
+
+            <div>
+                <label>Skin</label>
+                <select id="skinInput">
+                    <option value="#b8794f">Tan</option>
+                    <option value="#8d5524">Brown</option>
+                    <option value="#f1c27d">Light</option>
+                    <option value="#ffdbac">Fair</option>
+                </select>
             </div>
 
+            <div>
+                <label>Hair</label>
+                <select id="hairInput">
+                    <option>Short</option>
+                    <option>Curly</option>
+                    <option>Buzz</option>
+                    <option>Long</option>
+                </select>
+            </div>
 
-            <div class="creator-controls">
+            <div>
+                <label>Eyes</label>
+                <select id="eyesInput">
+                    <option>Brown</option>
+                    <option>Blue</option>
+                    <option>Green</option>
+                    <option>Black</option>
+                </select>
+            </div>
 
-                <h1>CREATE YOUR PLAYER</h1>
-
-                <label>
-                    Username
-                    <input
-                        id="usernameInput"
-                        maxlength="16"
-                        value="Player"
-                    >
-                </label>
-
-
-                <label>
-                    Player Name
-                    <input
-                        id="playerNameInput"
-                        maxlength="20"
-                        value="My Player"
-                    >
-                </label>
-
-
-                <label>
-                    Skin
-                    <select id="skinInput">
-
-                        <option value="#f2bd91">
-                            Light
-                        </option>
-
-                        <option value="#c9865d">
-                            Medium
-                        </option>
-
-                        <option value="#985d3d">
-                            Tan
-                        </option>
-
-                        <option value="#633a29">
-                            Dark
-                        </option>
-
-                    </select>
-                </label>
-
-
-                <label>
-                    Hair
-                    <select id="hairInput">
-
-                        <option value="short">
-                            Short
-                        </option>
-
-                        <option value="curly">
-                            Curly
-                        </option>
-
-                        <option value="fade">
-                            Fade
-                        </option>
-
-                        <option value="none">
-                            None
-                        </option>
-
-                    </select>
-                </label>
-
-
-                <label>
-                    Hair Colour
-                    <select id="hairColorInput">
-
-                        <option value="#171717">
-                            Black
-                        </option>
-
-                        <option value="#4d2d1f">
-                            Brown
-                        </option>
-
-                        <option value="#8b633d">
-                            Light Brown
-                        </option>
-
-                        <option value="#d5b36a">
-                            Blonde
-                        </option>
-
-                    </select>
-                </label>
-
-
-                <label>
-                    Eyes
-                    <select id="eyeInput">
-
-                        <option value="#26170f">
-                            Brown
-                        </option>
-
-                        <option value="#3e7198">
-                            Blue
-                        </option>
-
-                        <option value="#48754d">
-                            Green
-                        </option>
-
-                        <option value="#777777">
-                            Grey
-                        </option>
-
-                    </select>
-                </label>
-
-
-                <label>
-                    Face Shape
-                    <select id="faceInput">
-
-                        <option value="round">
-                            Round
-                        </option>
-
-                        <option value="oval">
-                            Oval
-                        </option>
-
-                        <option value="square">
-                            Square
-                        </option>
-
-                    </select>
-                </label>
-
-
-                <label>
-                    Jersey Number
-                    <input
-                        id="numberInput"
-                        type="number"
-                        min="0"
-                        max="99"
-                        value="7"
-                    >
-                </label>
-
-
-                <button id="savePlayerButton">
-                    SAVE PLAYER
-                </button>
-
-                <button id="creatorBackButton">
-                    BACK
-                </button>
-
+            <div>
+                <label>Face</label>
+                <select id="faceInput">
+                    <option>Round</option>
+                    <option>Oval</option>
+                    <option>Square</option>
+                </select>
             </div>
 
         </div>
+
+        <label>Jersey Number</label>
+        <input id="numberInput" type="number" min="0" max="99" value="7">
+
+        <button onclick="savePlayer()">SAVE PLAYER</button>
+        <button onclick="showScreen('menuScreen')">BACK</button>
 
     </div>
+</div>
 
+<!-- ========================= -->
+<!-- TEAM SCREEN -->
+<!-- ========================= -->
 
-    <!-- ==============================
-         TEAM SCREEN
-    =============================== -->
+<div id="teamScreen" class="screen">
 
-    <div id="teamScreen" class="screen">
+    <div class="menu">
 
-        <div class="team-container">
+        <h2>👥 CHOOSE YOUR TEAM</h2>
 
-            <h1>MY TEAM</h1>
+        <button onclick="chooseTeam('Legends')">🔥 LEGENDS</button>
+        <button onclick="chooseTeam('Titans')">💪 TITANS</button>
+        <button onclick="chooseTeam('Falcons')">🦅 FALCONS</button>
+        <button onclick="chooseTeam('Wolves')">🐺 WOLVES</button>
 
-            <p>
-                Choose your team.
-            </p>
-
-            <button class="team-choice" data-team="Legends">
-                LEGENDS
-            </button>
-
-            <button class="team-choice" data-team="Titans">
-                TITANS
-            </button>
-
-            <button class="team-choice" data-team="Falcons">
-                FALCONS
-            </button>
-
-            <button class="team-choice" data-team="Wolves">
-                WOLVES
-            </button>
-
-            <button id="teamBackButton">
-                BACK
-            </button>
-
-        </div>
+        <button onclick="showScreen('menuScreen')">BACK</button>
 
     </div>
+</div>
 
+<!-- ========================= -->
+<!-- CONTROLS -->
+<!-- ========================= -->
 
-    <!-- ==============================
-         GAME
-    =============================== -->
+<div id="controlsScreen" class="screen">
 
-    <div id="gameScreen" class="screen">
+    <div class="menu">
 
-        <canvas id="gameCanvas"></canvas>
+        <h2>🎮 CONTROLS</h2>
 
+        <p>W A S D — Move</p>
+        <p>SHIFT — Sprint</p>
+        <p>SPACE — Shoot</p>
+        <p>E — Pass</p>
+        <p>F — Steal</p>
+        <p>P — Pause</p>
 
-        <div id="gameHUD">
+        <br>
 
-            <div class="scoreboard">
-
-                <div>
-
-                    <small id="homeTeamName">
-                        LEGENDS
-                    </small>
-
-                    <strong id="homeScore">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="game-time">
-
-                    <strong id="gameClock">
-                        04:00
-                    </strong>
-
-                    <small>
-                        Q<span id="quarter">
-                            1
-                        </span>
-                    </small>
-
-                </div>
-
-
-                <div>
-
-                    <small>
-                        TITANS
-                    </small>
-
-                    <strong id="awayScore">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div id="gameMessage">
-                GET READY!
-            </div>
-
-        </div>
-
-
-        <button
-            id="pauseButton"
-            class="pause-button"
-        >
-            II
+        <button onclick="showScreen('menuScreen')">
+            BACK
         </button>
 
+    </div>
+</div>
 
-        <div id="shotMeter">
+<!-- ========================= -->
+<!-- PAUSE -->
+<!-- ========================= -->
 
-            <div id="shotMeterFill"></div>
+<div id="pauseScreen" class="screen">
 
-        </div>
+    <div class="menu">
 
+        <h2>⏸️ PAUSED</h2>
 
-        <div id="controlsHelp">
+        <button onclick="resumeGame()">
+            RESUME
+        </button>
 
-            <b>WASD</b> Move
-            &nbsp; | &nbsp;
-
-            <b>SPACE</b> Shoot
-            &nbsp; | &nbsp;
-
-            <b>E</b> Pass
-            &nbsp; | &nbsp;
-
-            <b>F</b> Steal
-
-        </div>
+        <button onclick="quitGame()">
+            QUIT GAME
+        </button>
 
     </div>
+</div>
 
+<!-- ========================= -->
+<!-- HUD -->
+<!-- ========================= -->
 
-    <!-- ==============================
-         PAUSE
-    =============================== -->
+<div id="hud">
 
-    <div id="pauseScreen" class="screen">
-
-        <div class="pause-container">
-
-            <h1>PAUSED</h1>
-
-            <button id="resumeButton">
-                RESUME
-            </button>
-
-            <button id="restartButton">
-                RESTART
-            </button>
-
-            <button id="pauseMenuButton">
-                MAIN MENU
-            </button>
-
-        </div>
-
+    <div class="score">
+        <span id="homeTeam">LEGENDS</span>
+        <span id="homeScore">0</span>
+        -
+        <span id="awayScore">0</span>
+        <span id="awayTeam">TITANS</span>
     </div>
 
+    <div class="clock">
+        Q<span id="quarter">1</span>
+        |
+        <span id="clock">2:00</span>
+    </div>
 
-    <!-- ==============================
-         JAVASCRIPT
-    =============================== -->
+    <div id="message">
+        Get ready!
+    </div>
 
-    <script type="module" src="js/main.js"></script>
+</div>
+
+<div id="controls">
+    <b>WASD</b> Move<br>
+    <b>SHIFT</b> Sprint<br>
+    <b>SPACE</b> Shoot<br>
+    <b>E</b> Pass<br>
+    <b>F</b> Steal<br>
+    <b>P</b> Pause
+</div>
+
+<div id="shotMeter">
+    <div id="shotFill"></div>
+</div>
+
+<!-- ========================= -->
+<!-- THREE.JS -->
+<!-- ========================= -->
+
+<script type="module">
+
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+/* =========================================
+   GAME VARIABLES
+========================================= */
+
+let scene;
+let camera;
+let renderer;
+
+let player;
+let opponent;
+
+let ball;
+
+let keys = {};
+
+let shooting = false;
+let shotTime = 0;
+
+let gameRunning = false;
+let paused = false;
+
+let scoreHome = 0;
+let scoreAway = 0;
+
+let quarter = 1;
+
+let gameSeconds = 120;
+
+let clockTimer = null;
+
+let playerData = {
+    username: "Rookie",
+    name: "Rookie",
+    skin: "#b8794f",
+    hair: "Short",
+    eyes: "Brown",
+    face: "Round",
+    number: 7,
+    team: "Legends"
+};
+
+/* =========================================
+   SAVE / LOAD
+========================================= */
+
+function loadData() {
+
+    const saved =
+        localStorage.getItem("hoopLegendsPlayer");
+
+    if (saved) {
+
+        playerData =
+            JSON.parse(saved);
+
+    }
+
+    document.getElementById(
+        "menuPlayerName"
+    ).textContent =
+        playerData.name;
+
+    document.getElementById(
+        "menuTeamName"
+    ).textContent =
+        playerData.team;
+}
+
+loadData();
+
+/* =========================================
+   SCREEN SYSTEM
+========================================= */
+
+window.showScreen = function(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(s => s.classList.remove("active"));
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+};
+
+window.openCreator = function() {
+
+    document.getElementById("usernameInput").value =
+        playerData.username;
+
+    document.getElementById("playerNameInput").value =
+        playerData.name;
+
+    document.getElementById("numberInput").value =
+        playerData.number;
+
+    document.getElementById("skinInput").value =
+        playerData.skin;
+
+    document.getElementById("hairInput").value =
+        playerData.hair;
+
+    document.getElementById("eyesInput").value =
+        playerData.eyes;
+
+    document.getElementById("faceInput").value =
+        playerData.face;
+
+    showScreen("creatorScreen");
+};
+
+window.openTeams = function() {
+
+    showScreen("teamScreen");
+
+};
+
+window.openControls = function() {
+
+    showScreen("controlsScreen");
+
+};
+
+/* =========================================
+   SAVE PLAYER
+========================================= */
+
+window.savePlayer = function() {
+
+    playerData.username =
+        document.getElementById("usernameInput").value
+        || "Rookie";
+
+    playerData.name =
+        document.getElementById("playerNameInput").value
+        || "Rookie";
+
+    playerData.number =
+        Number(
+            document.getElementById("numberInput").value
+        );
+
+    playerData.skin =
+        document.getElementById("skinInput").value;
+
+    playerData.hair =
+        document.getElementById("hairInput").value;
+
+    playerData.eyes =
+        document.getElementById("eyesInput").value;
+
+    playerData.face =
+        document.getElementById("faceInput").value;
+
+    localStorage.setItem(
+        "hoopLegendsPlayer",
+        JSON.stringify(playerData)
+    );
+
+    updateMenu();
+
+    alert("Player saved!");
+
+    showScreen("menuScreen");
+
+};
+
+function updateMenu() {
+
+    document.getElementById(
+        "menuPlayerName"
+    ).textContent =
+        playerData.name;
+
+    document.getElementById(
+        "menuTeamName"
+    ).textContent =
+        playerData.team;
+
+}
+
+/* =========================================
+   TEAM SELECTION
+========================================= */
+
+window.chooseTeam = function(team) {
+
+    playerData.team = team;
+
+    localStorage.setItem(
+        "hoopLegendsPlayer",
+        JSON.stringify(playerData)
+    );
+
+    updateMenu();
+
+    showScreen("menuScreen");
+
+};
+
+/* =========================================
+   THREE.JS SETUP
+========================================= */
+
+function setupThree() {
+
+    scene = new THREE.Scene();
+
+    scene.background =
+        new THREE.Color(0x79bce8);
+
+    camera =
+        new THREE.PerspectiveCamera(
+            70,
+            window.innerWidth /
+            window.innerHeight,
+            0.1,
+            1000
+        );
+
+    renderer =
+        new THREE.WebGLRenderer({
+            antialias: true
+        });
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    renderer.shadowMap.enabled = true;
+
+    document.body.appendChild(
+        renderer.domElement
+    );
+
+    /* LIGHT */
+
+    const sun =
+        new THREE.DirectionalLight(
+            0xffffff,
+            2
+        );
+
+    sun.position.set(
+        10,
+        30,
+        10
+    );
+
+    sun.castShadow = true;
+
+    scene.add(sun);
+
+    const ambient =
+        new THREE.AmbientLight(
+            0xffffff,
+            .7
+        );
+
+    scene.add(ambient);
+
+    createCourt();
+
+    createHoop(23);
+
+    createHoop(-23);
+
+    createPlayer();
+
+    createOpponent();
+
+    createBall();
+
+    camera.position.set(
+        0,
+        7,
+        18
+    );
+
+    animate();
+
+}
+
+/* =========================================
+   COURT
+========================================= */
+
+function createCourt() {
+
+    const floor =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                28,
+                .3,
+                50
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xb97842
+            })
+        );
+
+    floor.position.y = -.15;
+
+    floor.receiveShadow = true;
+
+    scene.add(floor);
+
+    /* COURT LINES */
+
+    function makeLine(
+        x1,
+        z1,
+        x2,
+        z2
+    ) {
+
+        const points = [
+
+            new THREE.Vector3(
+                x1,
+                .03,
+                z1
+            ),
+
+            new THREE.Vector3(
+                x2,
+                .03,
+                z2
+            )
+
+        ];
+
+        const geometry =
+            new THREE.BufferGeometry()
+                .setFromPoints(points);
+
+        const material =
+            new THREE.LineBasicMaterial({
+                color: 0xffffff
+            });
+
+        scene.add(
+            new THREE.Line(
+                geometry,
+                material
+            )
+        );
+
+    }
+
+    makeLine(-14,-25,14,-25);
+    makeLine(-14,25,14,25);
+    makeLine(-14,-25,-14,25);
+    makeLine(14,-25,14,25);
+
+    makeLine(-14,0,14,0);
+
+    const circle =
+        new THREE.Mesh(
+            new THREE.RingGeometry(
+                3.9,
+                4,
+                64
+            ),
+            new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide
+            })
+        );
+
+    circle.rotation.x =
+        -Math.PI / 2;
+
+    circle.position.y =
+        .03;
+
+    scene.add(circle);
+
+}
+
+/* =========================================
+   HOOPS
+========================================= */
+
+function createHoop(z) {
+
+    const board =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                6,
+                3.5,
+                .25
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xffffff
+            })
+        );
+
+    board.position.set(
+        0,
+        5,
+        z
+    );
+
+    scene.add(board);
+
+    const rim =
+        new THREE.Mesh(
+            new THREE.TorusGeometry(
+                .75,
+                .08,
+                12,
+                32
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xff4500
+            })
+        );
+
+    rim.rotation.x =
+        Math.PI / 2;
+
+    rim.position.set(
+        0,
+        3.6,
+        z > 0
+            ? z - .8
+            : z + .8
+    );
+
+    scene.add(rim);
+
+}
+
+/* =========================================
+   PLAYER
+========================================= */
+
+function createPlayer() {
+
+    player =
+        new THREE.Group();
+
+    const body =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                .65,
+                .8,
+                1.8,
+                16
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0x0066ff
+            })
+        );
+
+    body.position.y =
+        1.4;
+
+    body.castShadow = true;
+
+    player.add(body);
+
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .48,
+                24,
+                24
+            ),
+            new THREE.MeshStandardMaterial({
+                color: playerData.skin
+            })
+        );
+
+    head.position.y =
+        2.65;
+
+    head.castShadow = true;
+
+    player.add(head);
+
+    /* EYES */
+
+    const eyeMaterial =
+        new THREE.MeshStandardMaterial({
+            color:
+                playerData.eyes === "Blue"
+                    ? 0x2255ff
+                    : playerData.eyes === "Green"
+                        ? 0x229944
+                        : 0x331a0b
+        });
+
+    const eye1 =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .07,
+                10,
+                10
+            ),
+            eyeMaterial
+        );
+
+    eye1.position.set(
+        -.17,
+        2.72,
+        -.43
+    );
+
+    player.add(eye1);
+
+    const eye2 =
+        eye1.clone();
+
+    eye2.position.x =
+        .17;
+
+    player.add(eye2);
+
+    /* HAIR */
+
+    const hair =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .5,
+                20,
+                20,
+                0,
+                Math.PI * 2,
+                0,
+                Math.PI / 2
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0x111111
+            })
+        );
+
+    hair.position.y =
+        2.92;
+
+    player.add(hair);
+
+    /* LEGS */
+
+    const legMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x222222
+        });
+
+    const leg1 =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                .35,
+                1.4,
+                .35
+            ),
+            legMaterial
+        );
+
+    leg1.position.set(
+        -.35,
+        .55,
+        0
+    );
+
+    player.add(leg1);
+
+    const leg2 =
+        leg1.clone();
+
+    leg2.position.x =
+        .35;
+
+    player.add(leg2);
+
+    /* ARMS */
+
+    const armMaterial =
+        new THREE.MeshStandardMaterial({
+            color: playerData.skin
+        });
+
+    const arm1 =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                .3,
+                1.3,
+                .3
+            ),
+            armMaterial
+        );
+
+    arm1.position.set(
+        -.9,
+        1.45,
+        0
+    );
+
+    player.add(arm1);
+
+    const arm2 =
+        arm1.clone();
+
+    arm2.position.x =
+        .9;
+
+    player.add(arm2);
+
+    player.position.set(
+        0,
+        0,
+        10
+    );
+
+    scene.add(player);
+
+}
+
+/* =========================================
+   AI PLAYER
+========================================= */
+
+function createOpponent() {
+
+    opponent =
+        new THREE.Group();
+
+    const body =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                .65,
+                .8,
+                1.8,
+                16
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xdd2222
+            })
+        );
+
+    body.position.y =
+        1.4;
+
+    opponent.add(body);
+
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .48,
+                20,
+                20
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0x9b633f
+            })
+        );
+
+    head.position.y =
+        2.65;
+
+    opponent.add(head);
+
+    opponent.position.set(
+        0,
+        0,
+        -10
+    );
+
+    scene.add(opponent);
+
+}
+
+/* =========================================
+   BALL
+========================================= */
+
+function createBall() {
+
+    ball =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .35,
+                24,
+                24
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xd96b27
+            })
+        );
+
+    ball.castShadow = true;
+
+    scene.add(ball);
+
+}
+
+/* =========================================
+   KEYBOARD
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        keys[event.key.toLowerCase()] =
+            true;
+
+        if (
+            event.code === "Space" &&
+            gameRunning &&
+            !paused
+        ) {
+
+            shoot();
+
+        }
+
+        if (
+            event.key.toLowerCase() === "p"
+        ) {
+
+            togglePause();
+
+        }
+
+    }
+);
+
+document.addEventListener(
+    "keyup",
+    event => {
+
+        keys[event.key.toLowerCase()] =
+            false;
+
+    }
+);
+
+/* =========================================
+   MOVEMENT
+========================================= */
+
+function updatePlayer() {
+
+    if (!gameRunning || paused)
+        return;
+
+    const speed =
+        keys["shift"]
+            ? .18
+            : .10;
+
+    if (keys["w"])
+        player.position.z -= speed;
+
+    if (keys["s"])
+        player.position.z += speed;
+
+    if (keys["a"])
+        player.position.x -= speed;
+
+    if (keys["d"])
+        player.position.x += speed;
+
+    player.position.x =
+        THREE.MathUtils.clamp(
+            player.position.x,
+            -13,
+            13
+        );
+
+    player.position.z =
+        THREE.MathUtils.clamp(
+            player.position.z,
+            -24,
+            24
+        );
+
+}
+
+/* =========================================
+   DRIBBLING
+========================================= */
+
+let dribbleTime = 0;
+
+function updateBall() {
+
+    if (!gameRunning || paused)
+        return;
+
+    if (shooting)
+        return;
+
+    dribbleTime += .12;
+
+    ball.position.x =
+        player.position.x + .9;
+
+    ball.position.z =
+        player.position.z;
+
+    ball.position.y =
+        .45 +
+        Math.abs(
+            Math.sin(dribbleTime)
+        ) * .8;
+
+}
+
+/* =========================================
+   SHOOTING
+========================================= */
+
+function shoot() {
+
+    if (shooting)
+        return;
+
+    shooting = true;
+
+    shotTime = 0;
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        "🏀 SHOOTING!";
+
+}
+
+function updateShot() {
+
+    if (!shooting)
+        return;
+
+    shotTime += .025;
+
+    ball.position.x =
+        player.position.x + .9;
+
+    ball.position.z =
+        player.position.z -
+        shotTime * 18;
+
+    ball.position.y =
+        1.5 +
+        Math.sin(
+            Math.min(
+                shotTime,
+                1
+            ) * Math.PI
+        ) * 6;
+
+    if (shotTime >= 1) {
+
+        shooting = false;
+
+        /* SIMPLE SCORING */
+
+        const distance =
+            Math.abs(
+                player.position.z + 23
+            );
+
+        if (distance < 15) {
+
+            scoreHome += 2;
+
+            updateScore();
+
+            document.getElementById(
+                "message"
+            ).textContent =
+                "🔥 BUCKET! +2";
+
+        } else {
+
+            document.getElementById(
+                "message"
+            ).textContent =
+                "MISS!";
+
+        }
+
+        ball.position.set(
+            player.position.x + .9,
+            .45,
+            player.position.z
+        );
+
+    }
+
+}
+
+/* =========================================
+   PASSING
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key.toLowerCase() === "e" &&
+            gameRunning &&
+            !paused
+        ) {
+
+            document.getElementById(
+                "message"
+            ).textContent =
+                "🏀 PASS!";
+
+            ball.position.set(
+                opponent.position.x,
+                1.5,
+                opponent.position.z
+            );
+
+            setTimeout(() => {
+
+                if (!shooting) {
+
+                    ball.position.set(
+                        player.position.x + .9,
+                        .45,
+                        player.position.z
+                    );
+
+                }
+
+            }, 500);
+
+        }
+
+    }
+);
+
+/* =========================================
+   STEAL
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key.toLowerCase() === "f" &&
+            gameRunning &&
+            !paused
+        ) {
+
+            const distance =
+                player.position.distanceTo(
+                    opponent.position
+                );
+
+            if (distance < 4) {
+
+                document.getElementById(
+                    "message"
+                ).textContent =
+                    "🛡️ STEAL!";
+
+            } else {
+
+                document.getElementById(
+                    "message"
+                ).textContent =
+                    "Too far away!";
+
+            }
+
+        }
+
+    }
+);
+
+/* =========================================
+   AI
+========================================= */
+
+function updateAI() {
+
+    if (!gameRunning || paused)
+        return;
+
+    const targetX =
+        player.position.x;
+
+    opponent.position.x +=
+        (targetX -
+        opponent.position.x) *
+        .01;
+
+    opponent.position.x =
+        THREE.MathUtils.clamp(
+            opponent.position.x,
+            -13,
+            13
+        );
+
+}
+
+/* =========================================
+   SCORE
+========================================= */
+
+function updateScore() {
+
+    document.getElementById(
+        "homeScore"
+    ).textContent =
+        scoreHome;
+
+    document.getElementById(
+        "awayScore"
+    ).textContent =
+        scoreAway;
+
+}
+
+/* =========================================
+   GAME CLOCK
+========================================= */
+
+function startClock() {
+
+    clearInterval(clockTimer);
+
+    clockTimer =
+        setInterval(() => {
+
+            if (
+                !gameRunning ||
+                paused
+            )
+                return;
+
+            gameSeconds--;
+
+            updateClock();
+
+            if (gameSeconds <= 0) {
+
+                if (quarter < 4) {
+
+                    quarter++;
+
+                    gameSeconds = 120;
+
+                    document.getElementById(
+                        "message"
+                    ).textContent =
+                        "Quarter " +
+                        quarter;
+
+                } else {
+
+                    endGame();
+
+                }
+
+            }
+
+        }, 1000);
+
+}
+
+function updateClock() {
+
+    const minutes =
+        Math.floor(
+            gameSeconds / 60
+        );
+
+    const seconds =
+        gameSeconds % 60;
+
+    document.getElementById(
+        "clock"
+    ).textContent =
+        minutes +
+        ":" +
+        String(seconds)
+            .padStart(2,"0");
+
+    document.getElementById(
+        "quarter"
+    ).textContent =
+        quarter;
+
+}
+
+/* =========================================
+   START GAME
+========================================= */
+
+window.startGame = function() {
+
+    if (!scene) {
+
+        setupThree();
+
+    }
+
+    scoreHome = 0;
+    scoreAway = 0;
+
+    quarter = 1;
+
+    gameSeconds = 120;
+
+    player.position.set(
+        0,
+        0,
+        10
+    );
+
+    opponent.position.set(
+        0,
+        0,
+        -10
+    );
+
+    shooting = false;
+
+    gameRunning = true;
+
+    paused = false;
+
+    updateScore();
+
+    updateClock();
+
+    document.getElementById(
+        "hud"
+    ).style.display = "block";
+
+    document.getElementById(
+        "controls"
+    ).style.display = "block";
+
+    document.getElementById(
+        "shotMeter"
+    ).style.display = "block";
+
+    document.getElementById(
+        "homeTeam"
+    ).textContent =
+        playerData.team.toUpperCase();
+
+    document.getElementById(
+        "awayTeam"
+    ).textContent =
+        "TITANS";
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        "🏀 GAME START!";
+
+    showScreen("none");
+
+    startClock();
+
+};
+
+/* =========================================
+   PAUSE
+========================================= */
+
+function togglePause() {
+
+    if (!gameRunning)
+        return;
+
+    paused = !paused;
+
+    if (paused) {
+
+        showScreen(
+            "pauseScreen"
+        );
+
+    } else {
+
+        showScreen("none");
+
+    }
+
+}
+
+window.resumeGame = function() {
+
+    paused = false;
+
+    showScreen("none");
+
+};
+
+window.quitGame = function() {
+
+    gameRunning = false;
+
+    clearInterval(clockTimer);
+
+    document.getElementById(
+        "hud"
+    ).style.display = "none";
+
+    document.getElementById(
+        "controls"
+    ).style.display = "none";
+
+    document.getElementById(
+        "shotMeter"
+    ).style.display = "none";
+
+    showScreen("menuScreen");
+
+};
+
+/* =========================================
+   END GAME
+========================================= */
+
+function endGame() {
+
+    gameRunning = false;
+
+    clearInterval(clockTimer);
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        "🏆 FINAL SCORE: " +
+        scoreHome +
+        " - " +
+        scoreAway;
+
+    alert(
+        "Game Over!\n\n" +
+        playerData.team +
+        ": " +
+        scoreHome +
+        "\nTitans: " +
+        scoreAway
+    );
+
+}
+
+/* =========================================
+   CAMERA
+========================================= */
+
+function updateCamera() {
+
+    if (!player)
+        return;
+
+    const targetX =
+        player.position.x;
+
+    const targetZ =
+        player.position.z + 9;
+
+    camera.position.x +=
+        (
+            targetX -
+            camera.position.x
+        ) * .08;
+
+    camera.position.z +=
+        (
+            targetZ -
+            camera.position.z
+        ) * .08;
+
+    camera.position.y = 7;
+
+    camera.lookAt(
+        player.position.x,
+        1.5,
+        player.position.z
+    );
+
+}
+
+/* =========================================
+   ANIMATION
+========================================= */
+
+function animate() {
+
+    requestAnimationFrame(
+        animate
+    );
+
+    updatePlayer();
+
+    updateBall();
+
+    updateShot();
+
+    updateAI();
+
+    updateCamera();
+
+    if (renderer && scene && camera) {
+
+        renderer.render(
+            scene,
+            camera
+        );
+
+    }
+
+}
+
+/* =========================================
+   RESIZE
+========================================= */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        if (!camera || !renderer)
+            return;
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+
+    }
+);
+
+</script>
 
 </body>
 </html>
