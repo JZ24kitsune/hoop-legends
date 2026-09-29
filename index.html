@@ -2,943 +2,317 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Hoop Legends 3D</title>
 
 <style>
 *{box-sizing:border-box}
-
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#05070d;
-    color:white;
-    font-family:Arial,Helvetica,sans-serif;
+body{
+  margin:0;
+  overflow:hidden;
+  font-family:Arial,sans-serif;
+  background:#080b12;
+  color:white;
 }
-
-button,input,select{font:inherit}
-
 button{
-    cursor:pointer;
-    border:0;
+  border:0;
+  border-radius:10px;
+  padding:12px 20px;
+  margin:6px;
+  background:#ff7a00;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
 }
-
+button:hover{transform:scale(1.04)}
+input,select{
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #555;
+  margin:5px;
+  background:#151923;
+  color:white;
+}
+.screen{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:20;
+  background:linear-gradient(135deg,#080b12,#172033);
+}
+.panel{
+  width:min(900px,94%);
+  max-height:90vh;
+  overflow:auto;
+  padding:30px;
+  border-radius:20px;
+  background:rgba(15,20,32,.96);
+  box-shadow:0 0 40px rgba(0,0,0,.7);
+  text-align:center;
+}
+h1{
+  font-size:52px;
+  margin:5px;
+}
+h2{margin-top:5px}
 .hidden{display:none!important}
 
-#app{
-    position:fixed;
-    inset:0;
+#game{
+  position:fixed;
+  inset:0;
 }
-
-#loading{
-    position:fixed;
-    inset:0;
-    z-index:1000;
-    background:#05070d;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-}
-
-.loader{
-    width:min(600px,90vw);
-    padding:35px;
-    background:#0e1422;
-    border:1px solid #293550;
-    border-radius:22px;
-}
-
-.loader h1{
-    font-size:42px;
-    margin:0 0 10px;
-}
-
-.loader p{
-    color:#9aa8c2;
-}
-
-#loadError{
-    color:#ff7272;
-    margin-top:15px;
-}
-
-/* MENU */
-
-.screen{
-    position:fixed;
-    inset:0;
-    z-index:50;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:rgba(3,5,10,.82);
-    backdrop-filter:blur(8px);
-}
-
-.panel{
-    width:min(950px,94vw);
-    max-height:92vh;
-    overflow:auto;
-    padding:34px;
-    border-radius:25px;
-    background:linear-gradient(145deg,#11192a,#080c15);
-    border:1px solid #293550;
-    box-shadow:0 30px 100px #000;
-}
-
-.logo{
-    font-size:54px;
-    font-weight:1000;
-    letter-spacing:4px;
-    text-align:center;
-    text-shadow:0 0 30px #286dff;
-}
-
-.tagline{
-    text-align:center;
-    color:#8491aa;
-    margin:8px 0 30px;
-}
-
-.menuGrid{
-    max-width:650px;
-    margin:auto;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:13px;
-}
-
-.btn{
-    padding:17px;
-    border-radius:13px;
-    color:white;
-    font-weight:bold;
-    background:linear-gradient(135deg,#1768ff,#7040ff);
-    transition:.15s;
-}
-
-.btn:hover{
-    transform:translateY(-2px);
-    filter:brightness(1.15);
-}
-
-.btn.dark{
-    background:#171f31;
-}
-
-.btn.red{
-    background:linear-gradient(135deg,#d93655,#8d2140);
-}
-
-.small{
-    color:#65728b;
-    font-size:12px;
-    text-align:center;
-    margin-top:25px;
-}
-
-/* CREATOR */
-
-.creatorGrid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-}
-
-.preview{
-    height:440px;
-    border-radius:20px;
-    background:
-        radial-gradient(circle at 50% 30%,#304d82,#121a2b 50%,#070a11);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.previewPlayer{
-    position:relative;
-    width:180px;
-    height:360px;
-}
-
-.pHead{
-    position:absolute;
-    width:105px;
-    height:115px;
-    left:38px;
-    top:10px;
-    background:#9b633d;
-    border-radius:50%;
-    border:3px solid #222;
-}
-
-.pHair{
-    position:absolute;
-    width:118px;
-    height:58px;
-    left:31px;
-    top:0;
-    border-radius:60px 60px 20px 20px;
-    background:#17110d;
-    z-index:4;
-}
-
-.pEye{
-    position:absolute;
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    background:#24150d;
-    top:53px;
-    z-index:5;
-}
-
-.pEye:after{
-    content:"";
-    position:absolute;
-    width:5px;
-    height:5px;
-    border-radius:50%;
-    background:white;
-    left:4px;
-    top:4px;
-}
-
-.pEye.l{left:26px}
-.pEye.r{right:26px}
-
-.pNose{
-    position:absolute;
-    width:9px;
-    height:20px;
-    border-left:3px solid #6e422a;
-    top:65px;
-    left:48px;
-}
-
-.pMouth{
-    position:absolute;
-    width:30px;
-    height:9px;
-    border-bottom:3px solid #451515;
-    border-radius:50%;
-    top:88px;
-    left:37px;
-}
-
-.pBody{
-    position:absolute;
-    top:117px;
-    left:27px;
-    width:125px;
-    height:140px;
-    border-radius:25px 25px 12px 12px;
-    background:#1769ff;
-}
-
-.pNum{
-    text-align:center;
-    font-size:45px;
-    font-weight:1000;
-    padding-top:43px;
-}
-
-.pLeg{
-    position:absolute;
-    top:245px;
-    width:40px;
-    height:105px;
-    background:#252d3b;
-}
-
-.pLeg.l{left:43px}
-.pLeg.r{right:43px}
-
-.form{
-    display:grid;
-    gap:10px;
-}
-
-.form label{
-    color:#9ba8bf;
-    font-size:13px;
-}
-
-.form input,
-.form select{
-    width:100%;
-    padding:11px;
-    color:white;
-    background:#151e30;
-    border:1px solid #2a3854;
-    border-radius:9px;
-}
-
-/* HUD */
-
 #hud{
-    position:fixed;
-    inset:0;
-    z-index:20;
-    pointer-events:none;
+  position:fixed;
+  top:15px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  min-width:360px;
+  text-align:center;
+  pointer-events:none;
 }
-
 .scoreboard{
-    position:absolute;
-    top:14px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    align-items:center;
-    gap:18px;
-    padding:10px 18px;
-    border-radius:15px;
-    background:rgba(5,8,15,.9);
-    border:1px solid #29344a;
+  display:inline-block;
+  padding:10px 20px;
+  border-radius:14px;
+  background:rgba(5,8,14,.88);
+  font-size:24px;
+  font-weight:bold;
 }
-
-.team{
-    font-weight:900;
-    font-size:13px;
+#gameMessage{
+  margin-top:8px;
+  font-size:18px;
+  font-weight:bold;
 }
-
-.score{
-    font-size:31px;
-    font-weight:1000;
+#meterBox{
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  width:260px;
+  height:22px;
+  border:2px solid white;
+  border-radius:15px;
+  background:#222;
+  overflow:hidden;
 }
-
-.timeBox{
-    text-align:center;
-    min-width:80px;
+#meter{
+  width:0%;
+  height:100%;
+  background:#39ff75;
 }
-
-#gameClock{
-    font-size:22px;
-    font-weight:900;
-}
-
-#period{
-    color:#8996ae;
-    font-size:11px;
-}
-
-#event{
-    position:absolute;
-    top:95px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:26px;
-    font-weight:1000;
-    text-shadow:0 4px 20px black;
-}
-
-#shotMeter{
-    position:absolute;
-    bottom:30px;
-    left:50%;
-    transform:translateX(-50%);
-    width:260px;
-    height:20px;
-    border:2px solid white;
-    border-radius:20px;
-    overflow:hidden;
-    background:#101522;
-}
-
-#shotFill{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#ef3434,#f5d83a,#39e66b);
-}
-
-#playerStats{
-    position:absolute;
-    left:15px;
-    bottom:15px;
-    background:rgba(5,8,15,.85);
-    border:1px solid #29344a;
-    border-radius:12px;
-    padding:11px 15px;
-    font-size:12px;
-}
-
 #controls{
-    position:absolute;
-    right:15px;
-    bottom:15px;
-    padding:12px;
-    background:rgba(5,8,15,.82);
-    border:1px solid #29344a;
-    border-radius:12px;
-    color:#a8b4ca;
-    font-size:11px;
-    line-height:1.55;
+  position:fixed;
+  bottom:15px;
+  left:15px;
+  padding:12px;
+  border-radius:12px;
+  background:rgba(0,0,0,.7);
+  font-size:13px;
+  z-index:10;
 }
-
-#chat{
-    position:absolute;
-    right:15px;
-    top:90px;
-    width:290px;
-    pointer-events:auto;
-    background:rgba(5,8,15,.95);
-    border:1px solid #29344a;
-    border-radius:14px;
-    padding:12px;
+#stamina{
+  position:fixed;
+  bottom:75px;
+  left:50%;
+  transform:translateX(-50%);
+  width:180px;
+  height:10px;
+  background:#333;
+  border-radius:10px;
+  overflow:hidden;
 }
-
-#chatLog{
-    height:160px;
-    overflow:auto;
-    font-size:12px;
-    margin-bottom:8px;
+#staminaFill{
+  width:100%;
+  height:100%;
+  background:#4fc3ff;
 }
-
-.chatLine{
-    margin-bottom:7px;
-}
-
-.chatInput{
-    display:flex;
-    gap:5px;
-}
-
-.chatInput input{
-    min-width:0;
-    flex:1;
-    color:white;
-    background:#131c2d;
-    border:1px solid #2a3854;
-    border-radius:7px;
-    padding:8px;
-}
-
-.chatInput button{
-    color:white;
-    background:#286cff;
-    border-radius:7px;
-    padding:8px 11px;
-}
-
-/* INFO */
-
-.infoGrid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-}
-
-.card{
-    background:#121a2a;
-    border:1px solid #293650;
-    border-radius:14px;
-    padding:18px;
-}
-
-.card h3{
-    margin-top:0;
-}
-
-.card p{
-    color:#9ca8bd;
-    line-height:1.6;
-}
-
-@media(max-width:700px){
-    .creatorGrid,
-    .infoGrid{
-        grid-template-columns:1fr;
-    }
-
-    .menuGrid{
-        grid-template-columns:1fr;
-    }
-
-    .logo{
-        font-size:36px;
-    }
-
-    #controls{
-        display:none;
-    }
-
-    .scoreboard{
-        gap:7px;
-        padding:8px 10px;
-    }
+.stat{
+  display:inline-block;
+  min-width:100px;
+  margin:8px;
+  padding:12px;
+  background:#202737;
+  border-radius:12px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="app"></div>
-
-<!-- LOADING -->
-
-<div id="loading">
-    <div class="loader">
-        <h1>HOOP LEGENDS 3D</h1>
-        <p id="loadText">Loading 3D engine...</p>
-        <div id="loadError"></div>
-    </div>
-</div>
-
 <!-- MAIN MENU -->
+<div id="menu" class="screen">
+  <div class="panel">
+    <h1>🏀 HOOP LEGENDS</h1>
+    <p>Original 3D basketball game</p>
 
-<div id="menu" class="screen hidden">
-    <div class="panel">
+    <button onclick="openCreator()">👤 My Player</button>
+    <button onclick="chooseMode()">🏀 Play</button>
+    <button onclick="openTeam()">👥 My Team</button>
+    <button onclick="openStats()">📊 Stats</button>
+    <button onclick="openControls()">🎮 Controls</button>
 
-        <div class="logo">HOOP LEGENDS</div>
-        <div class="tagline">
-            ORIGINAL 3D BASKETBALL EXPERIENCE
-        </div>
-
-        <div class="menuGrid">
-
-            <button class="btn" onclick="startGame()">
-                PLAY NOW
-            </button>
-
-            <button class="btn" onclick="openCreator()">
-                MY PLAYER
-            </button>
-
-            <button class="btn dark" onclick="openModes()">
-                GAME MODES
-            </button>
-
-            <button class="btn dark" onclick="openTeams()">
-                MY TEAM
-            </button>
-
-            <button class="btn dark" onclick="openStats()">
-                STATS & CAREER
-            </button>
-
-            <button class="btn dark" onclick="openControls()">
-                CONTROLS
-            </button>
-
-        </div>
-
-        <div class="small">
-            Player: <b id="menuPlayer">Legend</b>
-            • Username: <b id="menuUser">Player</b>
-        </div>
-
-    </div>
+    <p id="savedUser"></p>
+  </div>
 </div>
 
 <!-- CREATOR -->
-
 <div id="creator" class="screen hidden">
-    <div class="panel">
+  <div class="panel">
+    <h2>👤 Create Your Player</h2>
 
-        <h1>MY PLAYER</h1>
+    <input id="username" placeholder="Username">
+    <input id="playerName" placeholder="Player name">
 
-        <div class="creatorGrid">
+    <br>
 
-            <div class="preview">
+    <label>Skin</label>
+    <select id="skin">
+      <option value="#8d5524">Skin 1</option>
+      <option value="#c68642">Skin 2</option>
+      <option value="#e0ac69">Skin 3</option>
+      <option value="#f1c27d">Skin 4</option>
+    </select>
 
-                <div class="previewPlayer">
+    <label>Hair</label>
+    <select id="hair">
+      <option value="black">Black</option>
+      <option value="brown">Brown</option>
+      <option value="blonde">Blonde</option>
+      <option value="none">None</option>
+    </select>
 
-                    <div id="pvHair" class="pHair"></div>
+    <label>Eyes</label>
+    <select id="eyes">
+      <option value="brown">Brown</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+    </select>
 
-                    <div id="pvHead" class="pHead">
-                        <div class="pEye l"></div>
-                        <div class="pEye r"></div>
-                        <div class="pNose"></div>
-                        <div class="pMouth"></div>
-                    </div>
+    <br>
 
-                    <div class="pBody">
-                        <div id="pvNumber" class="pNum">
-                            7
-                        </div>
-                    </div>
+    <label>Face</label>
+    <select id="face">
+      <option value="round">Round</option>
+      <option value="square">Square</option>
+      <option value="oval">Oval</option>
+    </select>
 
-                    <div class="pLeg l"></div>
-                    <div class="pLeg r"></div>
+    <input id="jersey" type="number" min="0" max="99" value="7">
 
-                </div>
+    <br><br>
 
-            </div>
-
-            <div class="form">
-
-                <label>Username</label>
-                <input id="username" placeholder="Your username">
-
-                <label>Player Name</label>
-                <input id="playerName" placeholder="Player name">
-
-                <label>Skin</label>
-                <select id="skin">
-                    <option value="#6b3f29">Deep</option>
-                    <option value="#9b633d" selected>Brown</option>
-                    <option value="#c88758">Tan</option>
-                    <option value="#e1aa7b">Light</option>
-                    <option value="#f1c39c">Fair</option>
-                </select>
-
-                <label>Face</label>
-                <select id="face">
-                    <option value="round">Round</option>
-                    <option value="oval">Oval</option>
-                    <option value="square">Square</option>
-                </select>
-
-                <label>Hair Style</label>
-                <select id="hair">
-                    <option value="short">Short</option>
-                    <option value="curly">Curly</option>
-                    <option value="fade">Fade</option>
-                    <option value="buzz">Buzz</option>
-                    <option value="long">Long</option>
-                </select>
-
-                <label>Hair Colour</label>
-                <select id="hairColor">
-                    <option value="#111111">Black</option>
-                    <option value="#4b2a16">Brown</option>
-                    <option value="#8c5b2c">Light Brown</option>
-                    <option value="#d6d6d6">Silver</option>
-                </select>
-
-                <label>Eyes</label>
-                <select id="eyes">
-                    <option value="#21140d">Brown</option>
-                    <option value="#245ca8">Blue</option>
-                    <option value="#31834c">Green</option>
-                    <option value="#111111">Black</option>
-                </select>
-
-                <label>Jersey Number</label>
-                <input id="number" type="number" min="0" max="99" value="7">
-
-                <div style="display:flex;gap:10px;margin-top:10px">
-                    <button class="btn" onclick="savePlayer()">
-                        SAVE
-                    </button>
-
-                    <button class="btn dark" onclick="closeScreens()">
-                        BACK
-                    </button>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+    <button onclick="savePlayer()">💾 Save Player</button>
+    <button onclick="showMenu()">⬅ Back</button>
+  </div>
 </div>
 
-<!-- MODES -->
-
+<!-- MODE -->
 <div id="modes" class="screen hidden">
-    <div class="panel">
+  <div class="panel">
+    <h2>🏀 Choose Game Mode</h2>
 
-        <h1>GAME MODES</h1>
+    <button onclick="startGame(3)">3v3</button>
+    <button onclick="startGame(5)">5v5</button>
+    <button onclick="startPractice()">Practice</button>
 
-        <div class="infoGrid">
-
-            <div class="card">
-                <h3>Quick Match</h3>
-                <p>
-                    Fast competitive basketball with your custom player.
-                </p>
-                <button class="btn" onclick="setMode(5);startGame()">
-                    5v5
-                </button>
-            </div>
-
-            <div class="card">
-                <h3>3v3</h3>
-                <p>
-                    Smaller court-style game with more space.
-                </p>
-                <button class="btn" onclick="setMode(3);startGame()">
-                    PLAY 3v3
-                </button>
-            </div>
-
-            <div class="card">
-                <h3>Practice</h3>
-                <p>
-                    Work on shooting, passing, layups and dunks.
-                </p>
-                <button class="btn" onclick="setPractice();startGame()">
-                    PRACTICE
-                </button>
-            </div>
-
-            <div class="card">
-                <h3>Season</h3>
-                <p>
-                    Play games, earn points and build your career.
-                </p>
-                <button class="btn" onclick="setMode(5);startGame()">
-                    START SEASON
-                </button>
-            </div>
-
-        </div>
-
-        <br>
-
-        <button class="btn dark" onclick="closeScreens()">
-            BACK
-        </button>
-
-    </div>
+    <br>
+    <button onclick="showMenu()">⬅ Back</button>
+  </div>
 </div>
 
 <!-- TEAM -->
-
-<div id="teams" class="screen hidden">
-    <div class="panel">
-
-        <h1>MY TEAM</h1>
-
-        <div class="infoGrid">
-
-            <div class="card">
-                <h3>Legends</h3>
-                <p>Blue • Fast offense • Balanced</p>
-            </div>
-
-            <div class="card">
-                <h3>Titans</h3>
-                <p>Red • Physical defense • Rebounding</p>
-            </div>
-
-            <div class="card">
-                <h3>Falcons</h3>
-                <p>Gold • Speed • Perimeter play</p>
-            </div>
-
-            <div class="card">
-                <h3>Wolves</h3>
-                <p>Purple • Defense • Transition</p>
-            </div>
-
-        </div>
-
-        <br>
-
-        <button class="btn dark" onclick="closeScreens()">
-            BACK
-        </button>
-
-    </div>
+<div id="team" class="screen hidden">
+  <div class="panel">
+    <h2>👥 My Team</h2>
+    <div class="stat">LEGENDS</div>
+    <div class="stat">FALCONS</div>
+    <div class="stat">WOLVES</div>
+    <div class="stat">TITANS</div>
+    <p>Create your own team in a future update.</p>
+    <button onclick="showMenu()">⬅ Back</button>
+  </div>
 </div>
 
 <!-- STATS -->
-
 <div id="stats" class="screen hidden">
-    <div class="panel">
-
-        <h1>CAREER</h1>
-
-        <div class="infoGrid">
-
-            <div class="card">
-                <h3>Games</h3>
-                <p id="careerGames">0</p>
-            </div>
-
-            <div class="card">
-                <h3>Points</h3>
-                <p id="careerPoints">0</p>
-            </div>
-
-            <div class="card">
-                <h3>Steals</h3>
-                <p id="careerSteals">0</p>
-            </div>
-
-            <div class="card">
-                <h3>Blocks</h3>
-                <p id="careerBlocks">0</p>
-            </div>
-
-            <div class="card">
-                <h3>Rebounds</h3>
-                <p id="careerRebounds">0</p>
-            </div>
-
-            <div class="card">
-                <h3>XP</h3>
-                <p id="careerXP">0</p>
-            </div>
-
-        </div>
-
-        <br>
-
-        <button class="btn dark" onclick="closeScreens()">
-            BACK
-        </button>
-
-    </div>
+  <div class="panel">
+    <h2>📊 Career Stats</h2>
+    <div class="stat">Points<br><b id="statPoints">0</b></div>
+    <div class="stat">Assists<br><b id="statAssists">0</b></div>
+    <div class="stat">Steals<br><b id="statSteals">0</b></div>
+    <div class="stat">Games<br><b id="statGames">0</b></div>
+    <br>
+    <button onclick="showMenu()">⬅ Back</button>
+  </div>
 </div>
 
 <!-- CONTROLS -->
-
-<div id="controlsScreen" class="screen hidden">
-    <div class="panel">
-
-        <h1>CONTROLS</h1>
-
-        <div class="infoGrid">
-
-            <div class="card">
-                <h3>Movement</h3>
-                <p>
-                    W A S D — Move<br>
-                    SHIFT — Sprint<br>
-                    SPACE — Shoot<br>
-                    E — Pass
-                </p>
-            </div>
-
-            <div class="card">
-                <h3>Moves</h3>
-                <p>
-                    C — Layup<br>
-                    X — Dunk<br>
-                    F — Steal<br>
-                    B — Block
-                </p>
-            </div>
-
-            <div class="card">
-                <h3>Game</h3>
-                <p>
-                    P — Pause<br>
-                    T — Team Chat<br>
-                    R — Reset Position
-                </p>
-            </div>
-
-            <div class="card">
-                <h3>Tip</h3>
-                <p>
-                    Move toward the basket before attempting a layup or dunk.
-                </p>
-            </div>
-
-        </div>
-
-        <br>
-
-        <button class="btn dark" onclick="closeScreens()">
-            BACK
-        </button>
-
-    </div>
+<div id="controlScreen" class="screen hidden">
+  <div class="panel">
+    <h2>🎮 Controls</h2>
+    <p><b>W A S D</b> — Move</p>
+    <p><b>SHIFT</b> — Sprint</p>
+    <p><b>SPACE</b> — Shoot</p>
+    <p><b>C</b> — Layup</p>
+    <p><b>X</b> — Dunk</p>
+    <p><b>E</b> — Pass</p>
+    <p><b>F</b> — Steal</p>
+    <p><b>B</b> — Block</p>
+    <p><b>R</b> — Reset ball</p>
+    <p><b>P</b> — Pause</p>
+    <button onclick="showMenu()">⬅ Back</button>
+  </div>
 </div>
 
-<!-- HUD -->
+<!-- GAME -->
+<div id="game"></div>
 
 <div id="hud" class="hidden">
-
-    <div class="scoreboard">
-
-        <div class="team">LEGENDS</div>
-        <div id="homeScore" class="score">0</div>
-
-        <div class="timeBox">
-            <div id="gameClock">03:00</div>
-            <div id="period">Q1</div>
-        </div>
-
-        <div id="awayScore" class="score">0</div>
-        <div class="team">TITANS</div>
-
-    </div>
-
-    <div id="event"></div>
-
-    <div id="shotMeter">
-        <div id="shotFill"></div>
-    </div>
-
-    <div id="playerStats">
-        <b id="hudName">Legend</b><br>
-        Stamina: <span id="stamina">100</span><br>
-        Mode: <span id="hudMode">5v5</span>
-    </div>
-
-    <div id="controls">
-        W A S D Move<br>
-        SHIFT Sprint<br>
-        SPACE Shoot<br>
-        E Pass<br>
-        C Layup<br>
-        X Dunk<br>
-        F Steal<br>
-        B Block<br>
-        P Pause<br>
-        T Chat<br>
-        R Reset
-    </div>
-
-    <div id="chat" class="hidden">
-
-        <b>TEAM CHAT</b>
-
-        <div id="chatLog"></div>
-
-        <div class="chatInput">
-            <input id="chatText" placeholder="Message team...">
-            <button onclick="sendChat()">SEND</button>
-        </div>
-
-    </div>
-
+  <div class="scoreboard">
+    <span id="homeScore">0</span>
+    -
+    <span id="awayScore">0</span>
+    <br>
+    <small>
+      Q<span id="quarter">1</span>
+      &nbsp; | &nbsp;
+      <span id="clock">03:00</span>
+    </small>
+  </div>
+  <div id="gameMessage">Get ready!</div>
 </div>
 
-<!-- PAUSE -->
-
-<div id="pause" class="screen hidden">
-    <div class="panel" style="max-width:400px;text-align:center">
-
-        <h1>PAUSED</h1>
-
-        <button class="btn" onclick="resumeGame()">
-            RESUME
-        </button>
-
-        <br><br>
-
-        <button class="btn dark" onclick="quitGame()">
-            QUIT MATCH
-        </button>
-
-    </div>
+<div id="meterBox" class="hidden">
+  <div id="meter"></div>
 </div>
 
-<!-- THREE -->
+<div id="stamina" class="hidden">
+  <div id="staminaFill"></div>
+</div>
+
+<div id="controls" class="hidden">
+  WASD Move • Shift Sprint • Space Shoot • E Pass<br>
+  C Layup • X Dunk • F Steal • B Block • P Pause
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
-
 /* =========================================================
-   GLOBAL GAME STATE
+   HOOP LEGENDS 3D
+   SINGLE FILE
    ========================================================= */
 
 let scene;
 let camera;
 let renderer;
-let gameClock;
+let clock;
 
-let userPlayer;
+let player;
 let ball;
 
 let teammates=[];
@@ -946,2750 +320,1448 @@ let opponents=[];
 
 let keys={};
 
-let gameStarted=false;
+let modePlayers=5;
+let running=false;
 let paused=false;
-let practice=false;
-
-let mode=5;
 
 let homeScore=0;
 let awayScore=0;
 
 let quarter=1;
-let quarterTime=180;
+let gameTime=180;
 
-let stamina=100;
-
-let ballMode="dribble";
-
-let shooting=false;
-let shotValue=0;
-let shotDirection=1;
-
-let ballVelocity=
-    new THREE.Vector3();
-
-let career={
-    games:0,
-    points:0,
-    steals:0,
-    blocks:0,
-    rebounds:0,
-    xp:0
-};
+let shotCharging=false;
+let shotPower=0;
 
 let playerInfo={
-    username:"Player",
-    name:"Legend",
-    skin:"#9b633d",
-    face:"round",
-    hair:"short",
-    hairColor:"#111111",
-    eyes:"#21140d",
-    number:7
+  username:"Player",
+  name:"Legend",
+  skin:"#8d5524",
+  hair:"black",
+  eyes:"brown",
+  face:"round",
+  jersey:7
 };
 
+let stats={
+  points:0,
+  assists:0,
+  steals:0,
+  games:0
+};
 
-/* =========================================================
-   STARTUP
-   ========================================================= */
+/* ---------- STORAGE ---------- */
 
-window.addEventListener(
-    "load",
-    ()=>{
-        loadSave();
-
-        if(typeof THREE==="undefined"){
-
-            document.getElementById(
-                "loadText"
-            ).textContent=
-                "3D engine failed to load.";
-
-            document.getElementById(
-                "loadError"
-            ).textContent=
-                "Check your internet connection, then refresh the page.";
-
-            return;
-
-        }
-
-        init();
-
-        document.getElementById(
-            "loading"
-        ).classList.add("hidden");
-
-        document.getElementById(
-            "menu"
-        ).classList.remove("hidden");
-
-        updateMenu();
-
-    }
-);
-
-
-/* =========================================================
-   SAVE
-   ========================================================= */
-
-function loadSave(){
-
-    try{
-
-        const saved=
-            JSON.parse(
-                localStorage.getItem(
-                    "hoopLegendsSave"
-                )
-            );
-
-        if(saved){
-
-            playerInfo={
-                ...playerInfo,
-                ...(saved.playerInfo||{})
-            };
-
-            career={
-                ...career,
-                ...(saved.career||{})
-            };
-
-        }
-
-    }catch(e){
-
-        console.log("Save unavailable");
-
-    }
-
+function saveData(){
+  localStorage.setItem("hoopPlayer",JSON.stringify(playerInfo));
+  localStorage.setItem("hoopStats",JSON.stringify(stats));
 }
 
-function saveGame(){
+function loadData(){
+  try{
+    const p=JSON.parse(localStorage.getItem("hoopPlayer"));
+    const s=JSON.parse(localStorage.getItem("hoopStats"));
 
-    try{
-
-        localStorage.setItem(
-            "hoopLegendsSave",
-            JSON.stringify({
-                playerInfo,
-                career
-            })
-        );
-
-    }catch(e){}
-
+    if(p) playerInfo={...playerInfo,...p};
+    if(s) stats={...stats,...s};
+  }catch(e){}
 }
 
+/* ---------- SCREENS ---------- */
 
-/* =========================================================
-   THREE INIT
-   ========================================================= */
+function hideScreens(){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.add("hidden"));
+}
 
-function init(){
+function showMenu(){
+  hideScreens();
 
-    scene=
-        new THREE.Scene();
+  document.getElementById("menu").classList.remove("hidden");
 
-    scene.background=
-        new THREE.Color(0x060912);
+  document.getElementById("savedUser").textContent =
+    "Player: "+playerInfo.username;
+}
 
-    scene.fog=
-        new THREE.Fog(
-            0x060912,
-            55,
-            130
-        );
+function openCreator(){
+  hideScreens();
 
-    camera=
-        new THREE.PerspectiveCamera(
-            58,
-            innerWidth/innerHeight,
-            .1,
-            250
-        );
+  document.getElementById("creator").classList.remove("hidden");
 
-    camera.position.set(
-        0,
-        10,
-        16
+  username.value=playerInfo.username;
+  playerName.value=playerInfo.name;
+  skin.value=playerInfo.skin;
+  hair.value=playerInfo.hair;
+  eyes.value=playerInfo.eyes;
+  face.value=playerInfo.face;
+  jersey.value=playerInfo.jersey;
+}
+
+function savePlayer(){
+  playerInfo.username=username.value.trim()||"Player";
+  playerInfo.name=playerName.value.trim()||"Legend";
+  playerInfo.skin=skin.value;
+  playerInfo.hair=hair.value;
+  playerInfo.eyes=eyes.value;
+  playerInfo.face=face.value;
+  playerInfo.jersey=Number(jersey.value)||7;
+
+  saveData();
+  showMenu();
+}
+
+function chooseMode(){
+  hideScreens();
+  document.getElementById("modes").classList.remove("hidden");
+}
+
+function openTeam(){
+  hideScreens();
+  document.getElementById("team").classList.remove("hidden");
+}
+
+function openStats(){
+  hideScreens();
+
+  document.getElementById("stats").classList.remove("hidden");
+
+  statPoints.textContent=stats.points;
+  statAssists.textContent=stats.assists;
+  statSteals.textContent=stats.steals;
+  statGames.textContent=stats.games;
+}
+
+function openControls(){
+  hideScreens();
+  document.getElementById("controlScreen").classList.remove("hidden");
+}
+
+/* ---------- THREE.JS ---------- */
+
+function init3D(){
+
+  try{
+
+    scene=new THREE.Scene();
+
+    scene.background=new THREE.Color(0x111827);
+
+    camera=new THREE.PerspectiveCamera(
+      65,
+      window.innerWidth/window.innerHeight,
+      0.1,
+      1000
     );
 
-    renderer=
-        new THREE.WebGLRenderer({
-            antialias:true
-        });
+    camera.position.set(0,9,12);
 
-    renderer.setPixelRatio(
-        Math.min(
-            devicePixelRatio,
-            2
-        )
-    );
+    renderer=new THREE.WebGLRenderer({
+      antialias:true
+    });
 
     renderer.setSize(
-        innerWidth,
-        innerHeight
+      window.innerWidth,
+      window.innerHeight
     );
 
     renderer.shadowMap.enabled=true;
 
-    document
-        .getElementById("app")
-        .appendChild(renderer.domElement);
+    document.getElementById("game").innerHTML="";
+    document.getElementById("game").appendChild(renderer.domElement);
 
-    gameClock=
-        new THREE.Clock();
+    clock=new THREE.Clock();
 
-    addLights();
-    addArena();
-    addCourt();
-    addHoop(-1);
-    addHoop(1);
+    /* LIGHTS */
 
-    window.addEventListener(
-        "resize",
-        resize
+    const ambient=new THREE.AmbientLight(
+      0xffffff,
+      0.65
     );
-
-    animate();
-
-}
-
-
-/* =========================================================
-   LIGHTS
-   ========================================================= */
-
-function addLights(){
-
-    const ambient=
-        new THREE.HemisphereLight(
-            0xffffff,
-            0x111522,
-            1.8
-        );
 
     scene.add(ambient);
 
-    const sun=
-        new THREE.DirectionalLight(
-            0xffffff,
-            2.5
-        );
-
-    sun.position.set(
-        -15,
-        30,
-        10
+    const light=new THREE.DirectionalLight(
+      0xffffff,
+      1.1
     );
 
-    sun.castShadow=true;
+    light.position.set(5,15,8);
+    light.castShadow=true;
 
-    sun.shadow.mapSize.width=2048;
-    sun.shadow.mapSize.height=2048;
+    scene.add(light);
 
-    scene.add(sun);
+    createArena();
 
-    const blue=
-        new THREE.PointLight(
-            0x3975ff,
-            80,
-            70
-        );
+    animate();
 
-    blue.position.set(
-        -30,
-        12,
-        0
-    );
+  }catch(error){
 
-    scene.add(blue);
+    console.error(error);
 
-    const red=
-        new THREE.PointLight(
-            0xff345d,
-            70,
-            70
-        );
-
-    red.position.set(
-        30,
-        12,
-        0
-    );
-
-    scene.add(red);
-
+    document.getElementById("game").innerHTML=
+      "<div style='color:white;padding:40px;font-size:20px'>"+
+      "3D could not start.<br><br>"+
+      error.message+
+      "</div>";
+  }
 }
 
+/* ---------- COURT ---------- */
 
-/* =========================================================
-   ARENA
-   ========================================================= */
+function createArena(){
 
-function addArena(){
+  const courtMat=new THREE.MeshStandardMaterial({
+    color:0xc98245
+  });
 
-    const floor=
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                100,
-                .5,
-                100
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0x080c14
-            })
-        );
+  const court=new THREE.Mesh(
+    new THREE.BoxGeometry(28,0.25,17),
+    courtMat
+  );
 
-    floor.position.y=-.5;
+  court.position.y=-0.15;
+  court.receiveShadow=true;
 
-    floor.receiveShadow=true;
+  scene.add(court);
 
-    scene.add(floor);
+  /* COURT LINES */
 
-    const wall=
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                90,
-                20,
-                1
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0x101827
-            })
-        );
+  const lineMat=new THREE.MeshBasicMaterial({
+    color:0xffffff
+  });
 
-    wall.position.set(
-        0,
-        9,
-        -34
+  function line(x,z,w,d){
+
+    const mesh=new THREE.Mesh(
+      new THREE.BoxGeometry(w,0.04,d),
+      lineMat
     );
 
-    scene.add(wall);
+    mesh.position.set(x,0,z);
 
-    /* arena screens */
+    scene.add(mesh);
+  }
 
-    for(let side of [-1,1]){
+  line(0,-8.5,28,.08);
+  line(0,8.5,28,.08);
+  line(-14,0,.08,17);
+  line(14,0,.08,17);
 
-        const screen=
-            new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    14,
-                    5,
-                    .3
-                ),
-                new THREE.MeshBasicMaterial({
-                    color:
-                        side===-1 ?
-                        0x194fff :
-                        0xff3154
-                })
-            );
+  line(0,0,.08,17);
 
-        screen.position.set(
-            side*25,
-            10,
-            0
-        );
+  /* center circle */
 
-        screen.rotation.y=
-            side===-1 ?
-            Math.PI/2 :
-            -Math.PI/2;
+  const circle=new THREE.Mesh(
+    new THREE.TorusGeometry(2.5,.04,8,64),
+    lineMat
+  );
 
-        scene.add(screen);
+  circle.rotation.x=Math.PI/2;
+  circle.position.y=.03;
 
-    }
+  scene.add(circle);
 
-    /* crowd */
+  /* keys */
 
-    for(let row=0;row<5;row++){
+  const keyMat=new THREE.MeshBasicMaterial({
+    color:0xe7a35d
+  });
 
-        for(let i=-20;i<=20;i+=2){
+  const key1=new THREE.Mesh(
+    new THREE.BoxGeometry(6,.05,5),
+    keyMat
+  );
 
-            for(let side of [-1,1]){
+  key1.position.set(0,0,5.5);
 
-                const seat=
-                    new THREE.Mesh(
-                        new THREE.BoxGeometry(
-                            1.2,
-                            .65,
-                            .8
-                        ),
-                        new THREE.MeshStandardMaterial({
-                            color:
-                                Math.random()>.5 ?
-                                0x33405c :
-                                0x20293b
-                        })
-                    );
+  scene.add(key1);
 
-                seat.position.set(
-                    i,
-                    .4+row,
-                    side*(28+row*1.2)
-                );
+  const key2=key1.clone();
 
-                scene.add(seat);
+  key2.position.z=-5.5;
 
-            }
+  scene.add(key2);
 
-        }
+  /* ARENA WALLS */
 
-    }
+  const wallMat=new THREE.MeshStandardMaterial({
+    color:0x202938
+  });
 
+  function wall(x,y,z,sx,sy,sz){
+
+    const m=new THREE.Mesh(
+      new THREE.BoxGeometry(sx,sy,sz),
+      wallMat
+    );
+
+    m.position.set(x,y,z);
+
+    scene.add(m);
+  }
+
+  wall(0,2,-12,32,4,1);
+  wall(0,2,12,32,4,1);
+  wall(-17,2,0,1,4,24);
+  wall(17,2,0,1,4,24);
+
+  /* HOOPS */
+
+  createHoop(-1,7);
+  createHoop(-1,-7);
+
+  /* CROWD */
+
+  for(let i=0;i<20;i++){
+
+    const seat=new THREE.Mesh(
+      new THREE.BoxGeometry(1.2,.5,.8),
+      new THREE.MeshStandardMaterial({
+        color:0x39445c
+      })
+    );
+
+    seat.position.set(
+      -14+i*1.4,
+      1,
+      -11
+    );
+
+    scene.add(seat);
+
+    const seat2=seat.clone();
+
+    seat2.position.z=11;
+
+    scene.add(seat2);
+  }
 }
 
+function createHoop(x,z){
 
-/* =========================================================
-   COURT
-   ========================================================= */
+  const poleMat=new THREE.MeshStandardMaterial({
+    color:0x444444
+  });
 
-function addCourt(){
+  const pole=new THREE.Mesh(
+    new THREE.CylinderGeometry(.25,.25,4),
+    poleMat
+  );
 
-    const court=
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                28,
-                .25,
-                50
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0xb87948,
-                roughness:.6
-            })
-        );
+  pole.position.set(x,2,z);
 
-    court.position.y=.1;
-    court.receiveShadow=true;
+  scene.add(pole);
 
-    scene.add(court);
+  const board=new THREE.Mesh(
+    new THREE.BoxGeometry(.2,3.5,6),
+    new THREE.MeshStandardMaterial({
+      color:0xffffff
+    })
+  );
 
-    /* court markings */
-
-    addFloorLine(
-        0,
-        0,
-        28,
-        .12
-    );
-
-    addFloorLine(
-        0,
-        -25,
-        28,
-        .12
-    );
-
-    addFloorLine(
-        0,
-        25,
-        28,
-        .12
-    );
-
-    const circle=
-        new THREE.Mesh(
-            new THREE.RingGeometry(
-                4.8,
-                5,
-                64
-            ),
-            new THREE.MeshBasicMaterial({
-                color:0xffffff,
-                side:THREE.DoubleSide
-            })
-        );
-
-    circle.rotation.x=
-        -Math.PI/2;
-
-    circle.position.y=.25;
-
-    scene.add(circle);
-
-    /* painted areas */
-
-    for(let z of [-18,18]){
-
-        const key=
-            new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    12,
-                    .03,
-                    14
-                ),
-                new THREE.MeshStandardMaterial({
-                    color:0x29416b
-                })
-            );
-
-        key.position.set(
-            0,
-            .25,
-            z
-        );
-
-        scene.add(key);
-
-    }
-
-}
-
-function addFloorLine(
+  board.position.set(
     x,
-    z,
-    width,
-    depth
-){
+    4,
+    z
+  );
 
-    const line=
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                width,
-                .04,
-                depth
-            ),
-            new THREE.MeshBasicMaterial({
-                color:0xffffff
-            })
-        );
+  scene.add(board);
 
-    line.position.set(
-        x,
-        .25,
-        z
-    );
+  const rim=new THREE.Mesh(
+    new THREE.TorusGeometry(.65,.08,8,32),
+    new THREE.MeshStandardMaterial({
+      color:0xff5a00
+    })
+  );
 
-    scene.add(line);
+  rim.rotation.x=Math.PI/2;
 
+  rim.position.set(
+    x,
+    3,
+    z
+  );
+
+  scene.add(rim);
 }
 
+/* ---------- PLAYER MODEL ---------- */
 
-/* =========================================================
-   HOOP
-   ========================================================= */
+function createPlayer(info,isUser=false){
 
-function addHoop(side){
+  const group=new THREE.Group();
 
-    const z=side*23;
+  group.userData.isPlayer=true;
+  group.userData.isUser=isUser;
 
-    const pole=
-        new THREE.Mesh(
-            new THREE.CylinderGeometry(
-                .28,
-                .4,
-                7,
-                16
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0x777f8e,
-                metalness:.6
-            })
-        );
+  const skinMat=new THREE.MeshStandardMaterial({
+    color:new THREE.Color(info.skin || "#8d5524")
+  });
 
-    pole.position.set(
-        0,
-        3.6,
-        z
+  const jerseyMat=new THREE.MeshStandardMaterial({
+    color:isUser?0x1976ff:0xe53935
+  });
+
+  const shortsMat=new THREE.MeshStandardMaterial({
+    color:isUser?0x0d47a1:0x9b1010
+  });
+
+  /* BODY */
+
+  const body=new THREE.Mesh(
+    new THREE.BoxGeometry(1.1,1.6,.65),
+    jerseyMat
+  );
+
+  body.position.y=2.1;
+  body.castShadow=true;
+
+  group.add(body);
+
+  /* HEAD */
+
+  const head=new THREE.Mesh(
+    new THREE.SphereGeometry(.55,24,24),
+    skinMat
+  );
+
+  head.position.y=3.45;
+  head.scale.set(
+    info.face==="square"?1.05:1,
+    1,
+    info.face==="oval"?.9:1
+  );
+
+  head.castShadow=true;
+
+  group.add(head);
+
+  /* HAIR */
+
+  if(info.hair!=="none"){
+
+    let hairColor=0x111111;
+
+    if(info.hair==="brown") hairColor=0x4a2814;
+    if(info.hair==="blonde") hairColor=0xd5a33b;
+
+    const hair=new THREE.Mesh(
+      new THREE.SphereGeometry(.57,20,20),
+      new THREE.MeshStandardMaterial({
+        color:hairColor
+      })
     );
 
-    pole.castShadow=true;
+    hair.position.y=3.75;
+    hair.scale.set(1,.55,1);
 
-    scene.add(pole);
+    group.add(hair);
+  }
 
-    const board=
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                10,
-                5,
-                .3
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0xe5eaf3,
-                transparent:true,
-                opacity:.82
-            })
-        );
+  /* EYES */
 
-    board.position.set(
-        0,
-        7,
-        z-side*.5
+  let eyeColor=0x351b0b;
+
+  if(info.eyes==="blue") eyeColor=0x1677ff;
+  if(info.eyes==="green") eyeColor=0x20a050;
+
+  const eyeMat=new THREE.MeshStandardMaterial({
+    color:eyeColor
+  });
+
+  [-.2,.2].forEach(x=>{
+
+    const eye=new THREE.Mesh(
+      new THREE.SphereGeometry(.075,12,12),
+      eyeMat
     );
 
-    scene.add(board);
-
-    const rim=
-        new THREE.Mesh(
-            new THREE.TorusGeometry(
-                1.35,
-                .1,
-                12,
-                32
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0xff5b20,
-                metalness:.5
-            })
-        );
-
-    rim.rotation.x=
-        Math.PI/2;
-
-    rim.position.set(
-        0,
-        5.8,
-        z-side*1.2
+    eye.position.set(
+      x,
+      3.5,
+      .5
     );
 
-    scene.add(rim);
+    group.add(eye);
+  });
 
+  /* NOSE */
+
+  const nose=new THREE.Mesh(
+    new THREE.SphereGeometry(.07,10,10),
+    skinMat
+  );
+
+  nose.position.set(0,3.35,.54);
+
+  group.add(nose);
+
+  /* MOUTH */
+
+  const mouth=new THREE.Mesh(
+    new THREE.BoxGeometry(.25,.04,.04),
+    new THREE.MeshBasicMaterial({
+      color:0x551111
+    })
+  );
+
+  mouth.position.set(0,3.18,.54);
+
+  group.add(mouth);
+
+  /* ARMS */
+
+  [-.75,.75].forEach(x=>{
+
+    const arm=new THREE.Mesh(
+      new THREE.CylinderGeometry(.15,.15,1.5),
+      skinMat
+    );
+
+    arm.position.set(
+      x,
+      2.15,
+      0
+    );
+
+    arm.rotation.z=x<0?-0.15:0.15;
+
+    arm.castShadow=true;
+
+    group.add(arm);
+  });
+
+  /* SHORTS */
+
+  const shorts=new THREE.Mesh(
+    new THREE.BoxGeometry(1.2,.7,.7),
+    shortsMat
+  );
+
+  shorts.position.y=1.15;
+
+  group.add(shorts);
+
+  /* LEGS */
+
+  [-.3,.3].forEach(x=>{
+
+    const leg=new THREE.Mesh(
+      new THREE.CylinderGeometry(.16,.16,1),
+      skinMat
+    );
+
+    leg.position.set(x,.55,0);
+
+    group.add(leg);
+
+    const shoe=new THREE.Mesh(
+      new THREE.BoxGeometry(.45,.2,.8),
+      new THREE.MeshStandardMaterial({
+        color:0xffffff
+      })
+    );
+
+    shoe.position.set(x,.05,.15);
+
+    group.add(shoe);
+  });
+
+  /* JERSEY NUMBER */
+
+  const canvas=document.createElement("canvas");
+
+  canvas.width=128;
+  canvas.height=128;
+
+  const ctx=canvas.getContext("2d");
+
+  ctx.fillStyle="white";
+  ctx.font="bold 70px Arial";
+  ctx.textAlign="center";
+  ctx.fillText(
+    String(info.jersey||7),
+    64,
+    82
+  );
+
+  const texture=new THREE.CanvasTexture(canvas);
+
+  const number=new THREE.Mesh(
+    new THREE.PlaneGeometry(.65,.65),
+    new THREE.MeshBasicMaterial({
+      map:texture,
+      transparent:true
+    })
+  );
+
+  number.position.set(
+    0,
+    2.2,
+    .34
+  );
+
+  group.add(number);
+
+  return group;
 }
 
-
-/* =========================================================
-   PLAYER
-   ========================================================= */
-
-function createPlayer(
-    team,
-    user,
-    index
-){
-
-    const g=
-        new THREE.Group();
-
-    const skin=
-        user ?
-        playerInfo.skin :
-        (Math.random()>.5 ?
-            0x7b4b31 :
-            0x9a6849);
-
-    const jersey=
-        team==="home" ?
-        0x1769ff :
-        0xe33c4e;
-
-    /* body */
-
-    const body=
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                1.7,
-                2.1,
-                .95
-            ),
-            new THREE.MeshStandardMaterial({
-                color:jersey
-            })
-        );
-
-    body.position.y=2.55;
-
-    body.castShadow=true;
-
-    g.add(body);
-
-    /* shorts */
-
-    const shorts=
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                1.8,
-                .7,
-                1
-            ),
-            new THREE.MeshStandardMaterial({
-                color:
-                    team==="home" ?
-                    0x112e70 :
-                    0x681e28
-            })
-        );
-
-    shorts.position.y=1.2;
-
-    g.add(shorts);
-
-    /* head */
-
-    const head=
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .82,
-                24,
-                20
-            ),
-            new THREE.MeshStandardMaterial({
-                color:skin
-            })
-        );
-
-    head.position.y=4.5;
-
-    if(user){
-
-        if(playerInfo.face==="oval")
-            head.scale.y=1.12;
-
-        if(playerInfo.face==="square")
-            head.scale.x=1.05;
-
-    }
-
-    head.castShadow=true;
-
-    g.add(head);
-
-    /* hair */
-
-    const hair=
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .86,
-                24,
-                16
-            ),
-            new THREE.MeshStandardMaterial({
-                color:
-                    user ?
-                    playerInfo.hairColor :
-                    0x15100d
-            })
-        );
-
-    hair.position.y=4.77;
-
-    hair.scale.set(
-        1.03,
-        .7,
-        1.03
-    );
-
-    g.add(hair);
-
-    /* eyes */
-
-    for(let s of [-1,1]){
-
-        const eye=
-            new THREE.Mesh(
-                new THREE.SphereGeometry(
-                    .12,
-                    12,
-                    10
-                ),
-                new THREE.MeshStandardMaterial({
-                    color:
-                        user ?
-                        playerInfo.eyes :
-                        0x21140d
-                })
-            );
-
-        eye.position.set(
-            s*.29,
-            4.58,
-            -.74
-        );
-
-        g.add(eye);
-
-        /* eyebrows */
-
-        const brow=
-            new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    .27,
-                    .06,
-                    .05
-                ),
-                new THREE.MeshStandardMaterial({
-                    color:0x17100c
-                })
-            );
-
-        brow.position.set(
-            s*.29,
-            4.78,
-            -.76
-        );
-
-        g.add(brow);
-
-    }
-
-    /* nose */
-
-    const nose=
-        new THREE.Mesh(
-            new THREE.ConeGeometry(
-                .1,
-                .28,
-                8
-            ),
-            new THREE.MeshStandardMaterial({
-                color:skin
-            })
-        );
-
-    nose.rotation.x=
-        Math.PI/2;
-
-    nose.position.set(
-        0,
-        4.38,
-        -.82
-    );
-
-    g.add(nose);
-
-    /* mouth */
-
-    const mouth=
-        new THREE.Mesh(
-            new THREE.TorusGeometry(
-                .18,
-                .025,
-                8,
-                16,
-                Math.PI
-            ),
-            new THREE.MeshBasicMaterial({
-                color:0x3a1515
-            })
-        );
-
-    mouth.rotation.x=
-        Math.PI/2;
-
-    mouth.position.set(
-        0,
-        4.12,
-        -.77
-    );
-
-    g.add(mouth);
-
-    /* arms */
-
-    for(let s of [-1,1]){
-
-        const arm=
-            new THREE.Mesh(
-                new THREE.CapsuleGeometry(
-                    .25,
-                    1.25,
-                    4,
-                    8
-                ),
-                new THREE.MeshStandardMaterial({
-                    color:skin
-                })
-            );
-
-        arm.position.set(
-            s*1.1,
-            2.6,
-            0
-        );
-
-        arm.rotation.z=
-            s*.15;
-
-        g.add(arm);
-
-    }
-
-    /* legs */
-
-    for(let s of [-1,1]){
-
-        const leg=
-            new THREE.Mesh(
-                new THREE.CapsuleGeometry(
-                    .3,
-                    1.3,
-                    4,
-                    8
-                ),
-                new THREE.MeshStandardMaterial({
-                    color:skin
-                })
-            );
-
-        leg.position.set(
-            s*.5,
-            .55,
-            0
-        );
-
-        g.add(leg);
-
-        const shoe=
-            new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    .75,
-                    .35,
-                    1.35
-                ),
-                new THREE.MeshStandardMaterial({
-                    color:0xffffff
-                })
-            );
-
-        shoe.position.set(
-            s*.5,
-            -.25,
-            -.25
-        );
-
-        g.add(shoe);
-
-    }
-
-    g.userData={
-        team,
-        user,
-        index,
-        basketballPlayer:true,
-        homeX:0,
-        homeZ:0
-    };
-
-    return g;
-
-}
-
-
-/* =========================================================
-   BALL
-   ========================================================= */
+/* ---------- BALL ---------- */
 
 function createBall(){
 
-    const b=
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                .38,
-                24,
-                24
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0xd87920,
-                roughness:.6
-            })
-        );
+  const geometry=new THREE.SphereGeometry(
+    .35,
+    24,
+    24
+  );
 
-    b.castShadow=true;
+  const material=new THREE.MeshStandardMaterial({
+    color:0xd66a20
+  });
 
-    scene.add(b);
+  ball=new THREE.Mesh(
+    geometry,
+    material
+  );
 
-    return b;
+  ball.castShadow=true;
 
+  scene.add(ball);
 }
 
+/* ---------- START GAME ---------- */
 
-/* =========================================================
-   SETUP TEAMS
-   ========================================================= */
+function startGame(players){
 
-function setupTeams(){
+  modePlayers=players;
 
-    /* remove old players */
+  hideScreens();
 
-    scene.children
-        .filter(
-            o=>o.userData &&
-            o.userData.basketballPlayer
-        )
-        .forEach(
-            o=>scene.remove(o)
-        );
+  document.getElementById("hud").classList.remove("hidden");
+  document.getElementById("meterBox").classList.remove("hidden");
+  document.getElementById("stamina").classList.remove("hidden");
+  document.getElementById("controls").classList.remove("hidden");
 
-    teammates=[];
-    opponents=[];
+  if(!scene) init3D();
 
-    userPlayer=
-        createPlayer(
-            "home",
-            true,
-            0
-        );
+  setupGame();
 
-    userPlayer.position.set(
-        0,
-        0,
-        8
+  running=true;
+  paused=false;
+
+  stats.games++;
+
+  saveData();
+
+  showMessage(
+    players+"v"+players+" GAME — GO!"
+  );
+}
+
+function startPractice(){
+
+  modePlayers=1;
+
+  hideScreens();
+
+  document.getElementById("hud").classList.remove("hidden");
+  document.getElementById("meterBox").classList.remove("hidden");
+  document.getElementById("stamina").classList.remove("hidden");
+  document.getElementById("controls").classList.remove("hidden");
+
+  if(!scene) init3D();
+
+  setupGame();
+
+  running=true;
+  paused=false;
+
+  showMessage("PRACTICE MODE");
+}
+
+/* ---------- GAME SETUP ---------- */
+
+function setupGame(){
+
+  teammates.forEach(x=>scene.remove(x));
+  opponents.forEach(x=>scene.remove(x));
+
+  teammates=[];
+  opponents=[];
+
+  player= createPlayer(
+    playerInfo,
+    true
+  );
+
+  player.position.set(
+    0,
+    0,
+    0
+  );
+
+  scene.add(player);
+
+  /* TEAMMATES */
+
+  for(let i=0;i<modePlayers-1;i++){
+
+    const mateInfo={
+      skin:"#c68642",
+      hair:"black",
+      eyes:"brown",
+      face:"round",
+      jersey:i+2
+    };
+
+    const mate=createPlayer(
+      mateInfo,
+      false
     );
 
-    scene.add(userPlayer);
+    mate.position.set(
+      -5+i*2.5,
+      0,
+      -2-i
+    );
 
-    /* teammates */
+    scene.add(mate);
 
-    for(let i=1;i<mode;i++){
+    teammates.push(mate);
+  }
 
-        const p=
-            createPlayer(
-                "home",
-                false,
-                i
-            );
+  /* OPPONENTS */
 
-        p.position.set(
-            (i-(mode-1)/2)*4,
-            0,
-            4
-        );
+  if(modePlayers>1){
 
-        p.userData.homeX=p.position.x;
-        p.userData.homeZ=p.position.z;
+    for(let i=0;i<modePlayers;i++){
 
-        teammates.push(p);
+      const oppInfo={
+        skin:"#8d5524",
+        hair:"black",
+        eyes:"brown",
+        face:"round",
+        jersey:i+10
+      };
 
-        scene.add(p);
+      const opp=createPlayer(
+        oppInfo,
+        false
+      );
 
+      opp.position.set(
+        -5+i*2.5,
+        0,
+        -6
+      );
+
+      scene.add(opp);
+
+      opponents.push(opp);
+    }
+  }
+
+  createBall();
+
+  ball.position.set(
+    0,
+    .5,
+    0
+  );
+
+  homeScore=0;
+  awayScore=0;
+
+  quarter=1;
+  gameTime=180;
+
+  updateHUD();
+}
+
+/* ---------- INPUT ---------- */
+
+window.addEventListener(
+  "keydown",
+  e=>{
+    keys[e.key.toLowerCase()]=true;
+
+    if(!running)return;
+
+    const key=e.key.toLowerCase();
+
+    if(key==="p"){
+      paused=!paused;
+      showMessage(
+        paused?"PAUSED":"RESUMED"
+      );
     }
 
-    /* opponents */
+    if(key==="e") passBall();
 
-    for(let i=0;i<mode;i++){
+    if(key==="f") steal();
 
-        const p=
-            createPlayer(
-                "away",
-                false,
-                i
-            );
+    if(key==="b") block();
 
-        p.position.set(
-            (i-(mode-1)/2)*4,
-            0,
-            -7-(i%2)*3
-        );
+    if(key==="c") layup();
 
-        p.userData.homeX=p.position.x;
-        p.userData.homeZ=p.position.z;
+    if(key==="x") dunk();
 
-        opponents.push(p);
+    if(key==="r") resetBall();
 
-        scene.add(p);
-
+    if(e.code==="Space"){
+      shotCharging=true;
+      shotPower=0;
     }
+  }
+);
 
-    if(!ball)
-        ball=createBall();
+window.addEventListener(
+  "keyup",
+  e=>{
 
-    resetBall();
+    keys[e.key.toLowerCase()]=false;
 
-}
+    if(e.code==="Space" && shotCharging){
 
-
-/* =========================================================
-   RESET BALL
-   ========================================================= */
-
-function resetBall(){
-
-    ballMode="dribble";
-
-    ballVelocity.set(
-        0,
-        0,
-        0
-    );
-
-    ball.position.set(
-        userPlayer.position.x+.8,
-        1,
-        userPlayer.position.z
-    );
-
-}
-
-
-/* =========================================================
-   GAME START
-   ========================================================= */
-
-function startGame(){
-
-    hideAllScreens();
-
-    document
-        .getElementById("hud")
-        .classList.remove("hidden");
-
-    gameStarted=true;
-    paused=false;
-
-    homeScore=0;
-    awayScore=0;
-
-    quarter=1;
-    quarterTime=180;
-
-    stamina=100;
-
-    setupTeams();
-
-    updateScore();
-
-    showEvent(
-        practice ?
-        "PRACTICE START" :
-        mode+"v"+mode+" TIP OFF!"
-    );
-
-    updateHUD();
-
-}
-
-
-/* =========================================================
-   MODES
-   ========================================================= */
-
-function setMode(n){
-
-    mode=n;
-    practice=false;
-
-}
-
-function setPractice(){
-
-    mode=3;
-    practice=true;
-
-}
-
-
-/* =========================================================
-   MOVEMENT
-   ========================================================= */
-
-function updateUser(delta){
-
-    if(!userPlayer || paused)
-        return;
-
-    const dir=
-        new THREE.Vector3();
-
-    if(keys.w) dir.z-=1;
-    if(keys.s) dir.z+=1;
-    if(keys.a) dir.x-=1;
-    if(keys.d) dir.x+=1;
-
-    if(dir.length()>0){
-
-        dir.normalize();
-
-        const sprint=
-            keys.shift &&
-            stamina>0;
-
-        const speed=
-            sprint ? 11 : 6.5;
-
-        userPlayer.position.addScaledVector(
-            dir,
-            speed*delta
-        );
-
-        if(sprint)
-            stamina-=28*delta;
-        else
-            stamina+=14*delta;
-
-        userPlayer.rotation.y=
-            Math.atan2(
-                dir.x,
-                dir.z
-            );
-
-        /* running animation */
-
-        userPlayer.position.y=
-            Math.abs(
-                Math.sin(
-                    performance.now()*.012
-                )
-            )*
-            (sprint?.25:.12);
-
-    }else{
-
-        stamina+=18*delta;
-
+      shotCharging=false;
+      shoot();
     }
+  }
+);
 
-    stamina=
-        Math.max(
-            0,
-            Math.min(
-                100,
-                stamina
-            )
-        );
+/* ---------- MOVEMENT ---------- */
 
-    userPlayer.position.x=
-        THREE.MathUtils.clamp(
-            userPlayer.position.x,
-            -12,
-            12
-        );
+function movePlayer(dt){
 
-    userPlayer.position.z=
-        THREE.MathUtils.clamp(
-            userPlayer.position.z,
-            -21,
-            21
-        );
+  if(!player)return;
 
+  const speed=
+    keys["shift"]?7:4;
+
+  let dx=0;
+  let dz=0;
+
+  if(keys["w"])dz-=1;
+  if(keys["s"])dz+=1;
+  if(keys["a"])dx-=1;
+  if(keys["d"])dx+=1;
+
+  const length=Math.hypot(dx,dz);
+
+  if(length>0){
+
+    dx/=length;
+    dz/=length;
+
+    player.position.x+=dx*speed*dt;
+    player.position.z+=dz*speed*dt;
+
+    player.rotation.y=
+      Math.atan2(dx,dz);
+
+    /* SIMPLE RUN ANIMATION */
+
+    const t=performance.now()/100;
+
+    player.children.forEach((part,i)=>{
+
+      if(
+        part.geometry instanceof THREE.CylinderGeometry
+      ){
+        part.rotation.x=
+          Math.sin(t+i)*.2;
+      }
+    });
+  }
+
+  player.position.x=
+    THREE.MathUtils.clamp(
+      player.position.x,
+      -12.5,
+      12.5
+    );
+
+  player.position.z=
+    THREE.MathUtils.clamp(
+      player.position.z,
+      -7.5,
+      7.5
+    );
+
+  if(keys["shift"] && length>0){
+
+    staminaFill.style.width=
+      Math.max(
+        0,
+        Number(staminaFill.style.width.replace("%","")||100)-dt*20
+      )+"%";
+
+  }else{
+
+    let value=
+      Number(
+        staminaFill.style.width.replace("%","")||100
+      );
+
+    staminaFill.style.width=
+      Math.min(
+        100,
+        value+dt*10
+      )+"%";
+  }
 }
 
+/* ---------- DRIBBLE ---------- */
 
-/* =========================================================
-   DRIBBLING
-   ========================================================= */
+function updateBall(){
 
-function updateDribble(){
+  if(!ball||!player)return;
 
-    if(ballMode!=="dribble")
-        return;
-
-    if(!userPlayer)
-        return;
-
-    const t=
-        performance.now()*.012;
+  if(
+    !shotCharging &&
+    ball.userData.flying!==true
+  ){
 
     ball.position.x=
-        userPlayer.position.x+.75;
+      player.position.x+
+      Math.sin(performance.now()/120)*.45;
 
     ball.position.z=
-        userPlayer.position.z+.1;
+      player.position.z+.35;
 
     ball.position.y=
-        .45+
-        Math.abs(
-            Math.sin(t)
-        )*.8;
+      .45+
+      Math.abs(
+        Math.sin(performance.now()/140)
+      )*.65;
+  }
 
+  if(ball.userData.flying){
+
+    ball.position.y+=
+      ball.userData.vy*.016;
+
+    ball.userData.vy-=.015;
+
+    ball.position.x+=
+      ball.userData.vx*.016;
+
+    ball.position.z+=
+      ball.userData.vz*.016;
+
+    if(ball.position.y<.35){
+
+      ball.position.y=.35;
+
+      ball.userData.vy*=-.55;
+    }
+
+    if(ball.position.y<.5){
+
+      checkScore();
+    }
+  }
 }
 
-
-/* =========================================================
-   SHOOTING
-   ========================================================= */
-
-function beginShot(){
-
-    if(shooting)
-        return;
-
-    if(ballMode!=="dribble")
-        return;
-
-    shooting=true;
-
-    shotValue=0;
-    shotDirection=1;
-
-    const fill=
-        document.getElementById(
-            "shotFill"
-        );
-
-    const timer=
-        setInterval(()=>{
-
-            if(!shooting){
-
-                clearInterval(timer);
-                return;
-
-            }
-
-            shotValue+=
-                shotDirection*3;
-
-            if(shotValue>=100){
-
-                shotValue=100;
-                shotDirection=-1;
-
-            }
-
-            if(shotValue<=0){
-
-                shotValue=0;
-                shotDirection=1;
-
-            }
-
-            fill.style.width=
-                shotValue+"%";
-
-        },20);
-
-    setTimeout(()=>{
-
-        if(shooting){
-
-            shooting=false;
-
-            clearInterval(timer);
-
-            shoot();
-
-        }
-
-    },850);
-
-}
-
-
-/* =========================================================
-   SHOOT
-   ========================================================= */
+/* ---------- SHOOTING ---------- */
 
 function shoot(){
 
-    ballMode="physics";
+  if(!player||!ball)return;
 
-    const start=
-        ball.position.clone();
-
-    const distance=
-        Math.abs(
-            userPlayer.position.z+23
-        );
-
-    const accuracy=
-        Math.abs(
-            shotValue-72
-        );
-
-    const success=
-        accuracy<23 &&
-        distance<22;
-
-    const target=
-        new THREE.Vector3(
-            success ?
-            0 :
-            (Math.random()>.5?2.8:-2.8),
-            5.8,
-            -23
-        );
-
-    let t=0;
-
-    showEvent(
-        "SHOT!"
+  shotPower=
+    Math.min(
+      100,
+      Math.max(
+        15,
+        shotPower
+      )
     );
 
-    function fly(){
+  const targetZ=
+    player.position.z<0?-8:8;
 
-        if(ballMode!=="physics")
-            return;
+  const targetX=0;
 
-        t+=.035;
+  const dx=targetX-ball.position.x;
+  const dz=targetZ-ball.position.z;
 
-        ball.position.x=
-            THREE.MathUtils.lerp(
-                start.x,
-                target.x,
-                t
-            );
+  const distance=Math.hypot(dx,dz);
 
-        ball.position.z=
-            THREE.MathUtils.lerp(
-                start.z,
-                target.z,
-                t
-            );
+  const speed=
+    10+
+    shotPower*.05;
 
-        ball.position.y=
-            THREE.MathUtils.lerp(
-                start.y,
-                target.y,
-                t
-            )+
-            Math.sin(
-                Math.PI*t
-            )*6;
+  ball.userData={
+    flying:true,
+    vx:dx/distance*speed,
+    vz:dz/distance*speed,
+    vy:7+shotPower*.035
+  };
 
-        if(t<1){
-
-            requestAnimationFrame(fly);
-
-        }else{
-
-            if(success){
-
-                homeScore+=2;
-
-                career.points+=2;
-                career.xp+=20;
-
-                showEvent(
-                    "🔥 BUCKET!"
-                );
-
-            }else{
-
-                showEvent(
-                    "MISS!"
-                );
-
-                reboundBall();
-
-            }
-
-            updateScore();
-
-            saveGame();
-
-            if(success)
-                resetBall();
-
-        }
-
-    }
-
-    fly();
-
-}
-
-
-/* =========================================================
-   LAYUP
-   ========================================================= */
-
-function layup(){
-
-    if(ballMode!=="dribble")
-        return;
-
-    const distance=
-        Math.abs(
-            userPlayer.position.z+23
-        );
-
-    if(distance>7){
-
-        showEvent(
-            "GET CLOSER!"
-        );
-
-        return;
-
-    }
-
-    ballMode="physics";
-
-    let t=0;
-
-    const start=
-        ball.position.clone();
-
-    showEvent(
-        "🏀 LAYUP!"
+  const accuracy=
+    Math.abs(
+      shotPower-70
     );
 
-    function fly(){
+  const made=
+    accuracy<18;
 
-        t+=.07;
+  setTimeout(()=>{
 
-        ball.position.x=
-            THREE.MathUtils.lerp(
-                start.x,
-                0,
-                t
-            );
+    if(made){
 
-        ball.position.z=
-            THREE.MathUtils.lerp(
-                start.z,
-                -24,
-                t
-            );
+      if(Math.abs(ball.position.z)>6){
 
-        ball.position.y=
-            start.y+
-            Math.sin(
-                Math.PI*t
-            )*5;
+        homeScore+=2;
+        stats.points+=2;
 
-        userPlayer.position.y=
-            Math.sin(
-                Math.PI*t
-            )*1.5;
+        showMessage("🏀 BUCKET! +2");
 
-        if(t<1){
-
-            requestAnimationFrame(fly);
-
-        }else{
-
-            userPlayer.position.y=0;
-
-            homeScore+=2;
-
-            career.points+=2;
-            career.xp+=20;
-
-            updateScore();
-
-            saveGame();
-
-            resetBall();
-
-        }
-
-    }
-
-    fly();
-
-}
-
-
-/* =========================================================
-   DUNK
-   ========================================================= */
-
-function dunk(){
-
-    if(ballMode!=="dribble")
-        return;
-
-    const distance=
-        Math.abs(
-            userPlayer.position.z+23
-        );
-
-    if(distance>5){
-
-        showEvent(
-            "TOO FAR TO DUNK!"
-        );
-
-        return;
-
-    }
-
-    ballMode="physics";
-
-    let t=0;
-
-    showEvent(
-        "💥 DUNK!"
-    );
-
-    function animation(){
-
-        t+=.06;
-
-        userPlayer.position.y=
-            Math.sin(
-                Math.PI*t
-            )*4;
-
-        ball.position.set(
-            userPlayer.position.x,
-            5.9,
-            -24
-        );
-
-        if(t<1){
-
-            requestAnimationFrame(
-                animation
-            );
-
-        }else{
-
-            userPlayer.position.y=0;
-
-            homeScore+=2;
-
-            career.points+=2;
-            career.xp+=35;
-
-            updateScore();
-
-            saveGame();
-
-            resetBall();
-
-        }
-
-    }
-
-    animation();
-
-}
-
-
-/* =========================================================
-   PASS
-   ========================================================= */
-
-function passBall(){
-
-    if(ballMode!=="dribble")
-        return;
-
-    if(teammates.length===0)
-        return;
-
-    let target=
-        teammates[0];
-
-    let closest=
-        userPlayer.position.distanceTo(
-            target.position
-        );
-
-    for(const mate of teammates){
-
-        const d=
-            userPlayer.position.distanceTo(
-                mate.position
-            );
-
-        if(d<closest){
-
-            closest=d;
-            target=mate;
-
-        }
-
-    }
-
-    ballMode="pass";
-
-    const start=
-        ball.position.clone();
-
-    const end=
-        target.position.clone();
-
-    end.y+=1.5;
-
-    let t=0;
-
-    showEvent(
-        "PASS!"
-    );
-
-    function pass(){
-
-        t+=.08;
-
-        ball.position.lerpVectors(
-            start,
-            end,
-            t
-        );
-
-        ball.position.y+=
-            Math.sin(
-                Math.PI*t
-            )*2;
-
-        if(t<1){
-
-            requestAnimationFrame(pass);
-
-        }else{
-
-            setTimeout(
-                resetBall,
-                200
-            );
-
-        }
-
-    }
-
-    pass();
-
-}
-
-
-/* =========================================================
-   DEFENSE
-   ========================================================= */
-
-function steal(){
-
-    let closest=null;
-    let distance=999;
-
-    for(const enemy of opponents){
-
-        const d=
-            userPlayer.position.distanceTo(
-                enemy.position
-            );
-
-        if(d<distance){
-
-            distance=d;
-            closest=enemy;
-
-        }
-
-    }
-
-    if(!closest)
-        return;
-
-    if(distance<3){
-
-        if(Math.random()<.55){
-
-            career.steals++;
-            career.xp+=15;
-
-            showEvent(
-                "🔥 STEAL!"
-            );
-
-            resetBall();
-
-        }else{
-
-            showEvent(
-                "STEAL MISSED"
-            );
-
-        }
+      }
 
     }else{
 
-        showEvent(
-            "TOO FAR!"
-
-        );
+      showMessage("Miss!");
 
     }
 
-    saveGame();
+    updateHUD();
 
+  },1000);
 }
+
+/* ---------- LAYUP ---------- */
+
+function layup(){
+
+  if(!player)return;
+
+  showMessage("🏀 LAYUP!");
+
+  homeScore+=2;
+  stats.points+=2;
+
+  updateHUD();
+
+  player.position.z=
+    player.position.z<0?
+    -6.5:
+    6.5;
+
+  resetBall();
+}
+
+/* ---------- DUNK ---------- */
+
+function dunk(){
+
+  if(!player)return;
+
+  const hoopDistance=
+    Math.min(
+      Math.abs(player.position.z-7),
+      Math.abs(player.position.z+7)
+    );
+
+  if(hoopDistance<3){
+
+    showMessage("🔥 DUNK!");
+
+    homeScore+=2;
+    stats.points+=2;
+
+    updateHUD();
+
+    resetBall();
+
+  }else{
+
+    showMessage(
+      "Get closer to the basket!"
+    );
+  }
+}
+
+/* ---------- PASS ---------- */
+
+function passBall(){
+
+  if(!player||teammates.length===0)return;
+
+  let closest=teammates[0];
+
+  let distance=999;
+
+  teammates.forEach(m=>{
+
+    const d=player.position.distanceTo(
+      m.position
+    );
+
+    if(d<distance){
+
+      distance=d;
+      closest=m;
+    }
+  });
+
+  ball.position.copy(
+    closest.position
+  );
+
+  ball.position.y=.8;
+
+  stats.assists++;
+
+  showMessage(
+    "PASS → TEAMMATE"
+  );
+}
+
+/* ---------- STEAL ---------- */
+
+function steal(){
+
+  if(!player)return;
+
+  let success=false;
+
+  opponents.forEach(o=>{
+
+    if(
+      player.position.distanceTo(o.position)<2
+    ){
+      success=true;
+    }
+  });
+
+  if(success){
+
+    stats.steals++;
+
+    showMessage("🛡️ STEAL!");
+
+    resetBall();
+
+  }else{
+
+    showMessage("Missed steal");
+  }
+}
+
+/* ---------- BLOCK ---------- */
 
 function block(){
 
-    let closest=null;
-    let distance=999;
+  showMessage("🛡️ BLOCK ATTEMPT!");
 
-    for(const enemy of opponents){
+  if(Math.random()<.5){
 
-        const d=
-            userPlayer.position.distanceTo(
-                enemy.position
-            );
+    showMessage("🔥 BLOCK!");
 
-        if(d<distance){
-
-            distance=d;
-            closest=enemy;
-
-        }
-
-    }
-
-    if(
-        closest &&
-        distance<3.5
-    ){
-
-        if(Math.random()<.5){
-
-            career.blocks++;
-            career.xp+=18;
-
-            showEvent(
-                "🛡️ BLOCK!"
-            );
-
-        }else{
-
-            showEvent(
-                "BLOCK MISSED"
-            );
-
-        }
-
-    }
-
-    saveGame();
-
+    resetBall();
+  }
 }
 
+/* ---------- RESET ---------- */
 
-/* =========================================================
-   AI
-   ========================================================= */
+function resetBall(){
 
-let aiShotTimer=0;
+  if(!ball||!player)return;
 
-function updateAI(delta){
+  ball.userData.flying=false;
 
-    if(!userPlayer)
-        return;
+  ball.position.copy(
+    player.position
+  );
 
-    /* opponents defend */
-
-    opponents.forEach(
-        (enemy,i)=>{
-
-            const target=
-                userPlayer.position;
-
-            const dir=
-                new THREE.Vector3()
-                    .subVectors(
-                        target,
-                        enemy.position
-                    );
-
-            const distance=
-                dir.length();
-
-            if(distance>2.5){
-
-                dir.normalize();
-
-                enemy.position.addScaledVector(
-                    dir,
-                    delta*2.2
-                );
-
-                enemy.rotation.y=
-                    Math.atan2(
-                        dir.x,
-                        dir.z
-                    );
-
-                enemy.position.y=
-                    Math.abs(
-                        Math.sin(
-                            performance.now()*.01+i
-                        )
-                    )*.1;
-
-            }
-
-        }
-    );
-
-    /* teammates spread */
-
-    teammates.forEach(
-        (mate,i)=>{
-
-            const wantedX=
-                (i-(mode-1)/2)*5;
-
-            const wantedZ=3;
-
-            mate.position.x +=
-                (
-                    wantedX-
-                    mate.position.x
-                )*delta;
-
-            mate.position.z +=
-                (
-                    wantedZ-
-                    mate.position.z
-                )*delta;
-
-        }
-    );
-
-    aiShotTimer+=delta;
-
-    if(
-        !practice &&
-        aiShotTimer>6
-    ){
-
-        aiShotTimer=0;
-
-        if(Math.random()<.6){
-
-            awayScore+=2;
-
-            showEvent(
-                "TITANS SCORE"
-            );
-
-            updateScore();
-
-        }
-
-    }
-
+  ball.position.y=.5;
 }
 
+/* ---------- AI ---------- */
 
-/* =========================================================
-   REBOUNDS
-   ========================================================= */
+function updateAI(dt){
 
-function reboundBall(){
+  opponents.forEach((opp,i)=>{
 
-    ballMode="loose";
+    if(!opp)return;
 
-    ballVelocity.set(
-        (Math.random()-.5)*5,
-        5,
-        3
-    );
+    const target=player.position;
 
-    let time=0;
+    const dx=target.x-opp.position.x;
+    const dz=target.z-opp.position.z;
 
-    function physics(){
+    const dist=Math.hypot(dx,dz);
 
-        if(ballMode!=="loose")
-            return;
+    if(dist>2){
 
-        time+=.03;
+      opp.position.x+=
+        dx/dist*dt*1.5;
 
-        ballVelocity.y-=.22;
+      opp.position.z+=
+        dz/dist*dt*1.5;
 
-        ball.position.add(
-            ballVelocity
-        );
-
-        if(ball.position.y<.4){
-
-            ball.position.y=.4;
-
-            ballVelocity.y*=-.65;
-            ballVelocity.x*=.8;
-            ballVelocity.z*=.8;
-
-        }
-
-        if(time<2){
-
-            requestAnimationFrame(
-                physics
-            );
-
-        }else{
-
-            career.rebounds++;
-
-            saveGame();
-
-            resetBall();
-
-            showEvent(
-                "REBOUND!"
-            );
-
-        }
-
+      opp.lookAt(
+        player.position.x,
+        opp.position.y,
+        player.position.z
+      );
     }
 
-    physics();
+  });
 
+  teammates.forEach((mate,i)=>{
+
+    if(!mate)return;
+
+    const tx=
+      Math.sin(performance.now()/2000+i)*5;
+
+    const tz=
+      Math.cos(performance.now()/1800+i)*3;
+
+    mate.position.x+=
+      (tx-mate.position.x)*dt*.5;
+
+    mate.position.z+=
+      (tz-mate.position.z)*dt*.5;
+  });
 }
 
+/* ---------- SCORE CHECK ---------- */
 
-/* =========================================================
-   CLOCK
-   ========================================================= */
+function checkScore(){
 
-function updateClock(delta){
+  if(!ball.userData.flying)return;
 
-    if(
-        !gameStarted ||
-        paused ||
-        practice
-    )
-        return;
+  if(
+    Math.abs(ball.position.z)>7 &&
+    ball.position.y<3.5
+  ){
 
-    quarterTime-=delta;
+    if(ball.userData.scored)return;
 
-    if(quarterTime<=0){
+    ball.userData.scored=true;
+
+    homeScore+=2;
+    stats.points+=2;
+
+    showMessage("🏀 SCORE!");
+
+    updateHUD();
+
+    setTimeout(resetBall,800);
+  }
+
+  if(
+    Math.abs(ball.position.x)>14
+  ){
+
+    resetBall();
+  }
+}
+
+/* ---------- GAME CLOCK ---------- */
+
+let timerAccumulator=0;
+
+function updateGameClock(dt){
+
+  if(!running||paused)return;
+
+  timerAccumulator+=dt;
+
+  if(timerAccumulator>=1){
+
+    timerAccumulator=0;
+
+    gameTime--;
+
+    if(gameTime<=0){
+
+      if(quarter<4){
 
         quarter++;
+        gameTime=180;
 
-        if(quarter>4){
-
-            endGame();
-
-            return;
-
-        }
-
-        quarterTime=180;
-
-        showEvent(
-            "QUARTER "+quarter
+        showMessage(
+          "END OF QUARTER "+(quarter-1)
         );
 
+      }else{
+
+        running=false;
+
+        showMessage(
+          "🏆 FINAL SCORE!"
+        );
+
+        saveData();
+      }
     }
 
+    updateHUD();
+  }
 }
 
-
-/* =========================================================
-   END GAME
-   ========================================================= */
-
-function endGame(){
-
-    gameStarted=false;
-
-    career.games++;
-
-    career.xp+=
-        homeScore>=awayScore ?
-        100 :
-        50;
-
-    saveGame();
-
-    showEvent(
-        homeScore>awayScore ?
-        "🏆 VICTORY!" :
-        "GAME OVER"
-    );
-
-    setTimeout(
-        quitGame,
-        3000
-    );
-
-}
-
-
-/* =========================================================
-   CAMERA
-   ========================================================= */
-
-function updateCamera(){
-
-    if(!userPlayer)
-        return;
-
-    const wanted=
-        new THREE.Vector3(
-            userPlayer.position.x,
-            10,
-            userPlayer.position.z+14
-        );
-
-    camera.position.lerp(
-        wanted,
-        .06
-    );
-
-    const look=
-        new THREE.Vector3(
-            userPlayer.position.x,
-            2.5,
-            userPlayer.position.z-4
-        );
-
-    camera.lookAt(look);
-
-}
-
-
-/* =========================================================
-   HUD
-   ========================================================= */
-
-function updateScore(){
-
-    document.getElementById(
-        "homeScore"
-    ).textContent=homeScore;
-
-    document.getElementById(
-        "awayScore"
-    ).textContent=awayScore;
-
-}
+/* ---------- HUD ---------- */
 
 function updateHUD(){
 
-    const minutes=
-        Math.floor(
-            quarterTime/60
-        );
+  homeScoreEl.textContent=homeScore;
+  awayScoreEl.textContent=awayScore;
 
-    const seconds=
-        Math.floor(
-            quarterTime%60
-        );
+  quarterEl.textContent=quarter;
 
-    document.getElementById(
-        "gameClock"
-    ).textContent=
-        String(minutes).padStart(2,"0")+
-        ":"+
-        String(seconds).padStart(2,"0");
+  const mins=
+    Math.floor(gameTime/60);
 
-    document.getElementById(
-        "period"
-    ).textContent=
-        practice ?
-        "PRACTICE" :
-        "Q"+quarter;
+  const secs=
+    String(gameTime%60).padStart(2,"0");
 
-    document.getElementById(
-        "hudName"
-    ).textContent=
-        playerInfo.name;
-
-    document.getElementById(
-        "stamina"
-    ).textContent=
-        Math.round(stamina);
-
-    document.getElementById(
-        "hudMode"
-    ).textContent=
-        mode+"v"+mode;
-
+  clockEl.textContent=
+    mins+":"+secs;
 }
 
+function showMessage(text){
 
-/* =========================================================
-   EVENTS
-   ========================================================= */
+  gameMessage.textContent=text;
 
-let eventTimer;
+  clearTimeout(window.msgTimer);
 
-function showEvent(text){
-
-    const el=
-        document.getElementById(
-            "event"
-        );
-
-    el.textContent=text;
-    el.style.opacity="1";
-
-    clearTimeout(eventTimer);
-
-    eventTimer=
-        setTimeout(
-            ()=>{
-                el.style.opacity="0";
-            },
-            1500
-        );
-
+  window.msgTimer=setTimeout(()=>{
+    gameMessage.textContent="";
+  },2000);
 }
 
+/* ---------- CAMERA ---------- */
 
-/* =========================================================
-   CHAT
-   ========================================================= */
+function updateCamera(){
 
-function sendChat(){
+  if(!player)return;
 
-    const input=
-        document.getElementById(
-            "chatText"
-        );
+  const target=new THREE.Vector3(
+    player.position.x,
+    3,
+    player.position.z+9
+  );
 
-    const text=
-        input.value.trim();
+  camera.position.lerp(
+    target,
+    .08
+  );
 
-    if(!text)
-        return;
-
-    addChat(
-        playerInfo.username,
-        text
-    );
-
-    input.value="";
-
-    const replies=[
-        "I'm open!",
-        "Let's go!",
-        "Nice pass!",
-        "Lock them up!",
-        "Take the shot!",
-        "Good defense!",
-        "We got this!"
-    ];
-
-    setTimeout(
-        ()=>{
-            addChat(
-                "Teammate",
-                replies[
-                    Math.floor(
-                        Math.random()*
-                        replies.length
-                    )
-                ]
-            );
-        },
-        500
-    );
-
+  camera.lookAt(
+    player.position.x,
+    1.8,
+    player.position.z
+  );
 }
 
-function addChat(
-    name,
-    message
-){
+/* ---------- SHOT METER ---------- */
 
-    const log=
-        document.getElementById(
-            "chatLog"
-        );
+function updateShotMeter(dt){
 
-    const div=
-        document.createElement(
-            "div"
-        );
+  if(shotCharging){
 
-    div.className="chatLine";
+    shotPower+=
+      dt*90;
 
-    div.textContent=
-        name+": "+message;
+    if(shotPower>100)
+      shotPower=0;
 
-    log.appendChild(div);
+    meter.style.width=
+      shotPower+"%";
 
-    log.scrollTop=
-        log.scrollHeight;
+  }else{
 
+    meter.style.width="0%";
+  }
 }
 
-
-/* =========================================================
-   CREATOR
-   ========================================================= */
-
-function openCreator(){
-
-    hideAllScreens();
-
-    document
-        .getElementById("creator")
-        .classList.remove("hidden");
-
-    document.getElementById(
-        "username"
-    ).value=playerInfo.username;
-
-    document.getElementById(
-        "playerName"
-    ).value=playerInfo.name;
-
-    document.getElementById(
-        "skin"
-    ).value=playerInfo.skin;
-
-    document.getElementById(
-        "face"
-    ).value=playerInfo.face;
-
-    document.getElementById(
-        "hair"
-    ).value=playerInfo.hair;
-
-    document.getElementById(
-        "hairColor"
-    ).value=playerInfo.hairColor;
-
-    document.getElementById(
-        "eyes"
-    ).value=playerInfo.eyes;
-
-    document.getElementById(
-        "number"
-    ).value=playerInfo.number;
-
-    updatePreview();
-
-}
-
-function savePlayer(){
-
-    playerInfo.username=
-        document.getElementById(
-            "username"
-        ).value ||
-        "Player";
-
-    playerInfo.name=
-        document.getElementById(
-            "playerName"
-        ).value ||
-        "Legend";
-
-    playerInfo.skin=
-        document.getElementById(
-            "skin"
-        ).value;
-
-    playerInfo.face=
-        document.getElementById(
-            "face"
-        ).value;
-
-    playerInfo.hair=
-        document.getElementById(
-            "hair"
-        ).value;
-
-    playerInfo.hairColor=
-        document.getElementById(
-            "hairColor"
-        ).value;
-
-    playerInfo.eyes=
-        document.getElementById(
-            "eyes"
-        ).value;
-
-    playerInfo.number=
-        Number(
-            document.getElementById(
-                "number"
-            ).value
-        )||7;
-
-    saveGame();
-
-    updateMenu();
-
-    closeScreens();
-
-    showEvent(
-        "PLAYER SAVED"
-    );
-
-}
-
-function updatePreview(){
-
-    const head=
-        document.getElementById(
-            "pvHead"
-        );
-
-    const hair=
-        document.getElementById(
-            "pvHair"
-        );
-
-    head.style.background=
-        playerInfo.skin;
-
-    hair.style.background=
-        playerInfo.hairColor;
-
-    if(playerInfo.face==="square")
-        head.style.borderRadius="25px";
-
-    else if(playerInfo.face==="oval")
-        head.style.borderRadius="48%";
-
-    else
-        head.style.borderRadius="50%";
-
-    document.getElementById(
-        "pvNumber"
-    ).textContent=
-        playerInfo.number;
-
-}
-
-
-/* =========================================================
-   MENUS
-   ========================================================= */
-
-function hideAllScreens(){
-
-    document
-        .querySelectorAll(".screen")
-        .forEach(
-            s=>s.classList.add("hidden")
-        );
-
-    document
-        .getElementById("hud")
-        .classList.add("hidden");
-
-}
-
-function closeScreens(){
-
-    hideAllScreens();
-
-    document
-        .getElementById("menu")
-        .classList.remove("hidden");
-
-    updateMenu();
-
-}
-
-function updateMenu(){
-
-    document.getElementById(
-        "menuPlayer"
-    ).textContent=
-        playerInfo.name;
-
-    document.getElementById(
-        "menuUser"
-    ).textContent=
-        playerInfo.username;
-
-}
-
-function openModes(){
-
-    hideAllScreens();
-
-    document
-        .getElementById("modes")
-        .classList.remove("hidden");
-
-}
-
-function openTeams(){
-
-    hideAllScreens();
-
-    document
-        .getElementById("teams")
-        .classList.remove("hidden");
-
-}
-
-function openStats(){
-
-    hideAllScreens();
-
-    document
-        .getElementById("stats")
-        .classList.remove("hidden");
-
-    document.getElementById(
-        "careerGames"
-    ).textContent=career.games;
-
-    document.getElementById(
-        "careerPoints"
-    ).textContent=career.points;
-
-    document.getElementById(
-        "careerSteals"
-    ).textContent=career.steals;
-
-    document.getElementById(
-        "careerBlocks"
-    ).textContent=career.blocks;
-
-    document.getElementById(
-        "careerRebounds"
-    ).textContent=career.rebounds;
-
-    document.getElementById(
-        "careerXP"
-    ).textContent=career.xp;
-
-}
-
-function openControls(){
-
-    hideAllScreens();
-
-    document
-        .getElementById("controlsScreen")
-        .classList.remove("hidden");
-
-}
-
-
-/* =========================================================
-   PAUSE
-   ========================================================= */
-
-function resumeGame(){
-
-    paused=false;
-
-    document
-        .getElementById("pause")
-        .classList.add("hidden");
-
-}
-
-function quitGame(){
-
-    gameStarted=false;
-    paused=false;
-
-    document
-        .getElementById("hud")
-        .classList.add("hidden");
-
-    document
-        .getElementById("pause")
-        .classList.add("hidden");
-
-    document
-        .getElementById("menu")
-        .classList.remove("hidden");
-
-    updateMenu();
-
-}
-
-
-/* =========================================================
-   INPUT
-   ========================================================= */
-
-window.addEventListener(
-    "keydown",
-    e=>{
-
-        const key=
-            e.key.toLowerCase();
-
-        keys[key]=true;
-
-        if(key===" "){
-            e.preventDefault();
-
-            if(gameStarted && !paused)
-                beginShot();
-        }
-
-        if(key==="e" && gameStarted)
-            passBall();
-
-        if(key==="c" && gameStarted)
-            layup();
-
-        if(key==="x" && gameStarted)
-            dunk();
-
-        if(key==="f" && gameStarted)
-            steal();
-
-        if(key==="b" && gameStarted)
-            block();
-
-        if(key==="r" && gameStarted){
-
-            userPlayer.position.set(
-                0,
-                0,
-                8
-            );
-
-            resetBall();
-
-        }
-
-        if(key==="t" && gameStarted){
-
-            document
-                .getElementById("chat")
-                .classList.toggle(
-                    "hidden"
-                );
-
-        }
-
-        if(key==="p" && gameStarted){
-
-            paused=!paused;
-
-            document
-                .getElementById("pause")
-                .classList.toggle(
-                    "hidden",
-                    !paused
-                );
-
-        }
-
-    }
-);
-
-window.addEventListener(
-    "keyup",
-    e=>{
-        keys[
-            e.key.toLowerCase()
-        ]=false;
-    }
-);
-
-
-/* =========================================================
-   PREVIEW EVENTS
-   ========================================================= */
-
-[
-    "skin",
-    "face",
-    "hair",
-    "hairColor",
-    "eyes",
-    "number"
-].forEach(
-    id=>{
-        document
-            .getElementById(id)
-            .addEventListener(
-                "input",
-                ()=>{
-                    playerInfo.skin=
-                        document.getElementById(
-                            "skin"
-                        ).value;
-
-                    playerInfo.face=
-                        document.getElementById(
-                            "face"
-                        ).value;
-
-                    playerInfo.hair=
-                        document.getElementById(
-                            "hair"
-                        ).value;
-
-                    playerInfo.hairColor=
-                        document.getElementById(
-                            "hairColor"
-                        ).value;
-
-                    playerInfo.eyes=
-                        document.getElementById(
-                            "eyes"
-                        ).value;
-
-                    playerInfo.number=
-                        Number(
-                            document.getElementById(
-                                "number"
-                            ).value
-                        )||7;
-
-                    updatePreview();
-
-                }
-            );
-    }
-);
-
-
-/* =========================================================
-   CHAT ENTER
-   ========================================================= */
-
-document
-    .getElementById("chatText")
-    .addEventListener(
-        "keydown",
-        e=>{
-            if(e.key==="Enter")
-                sendChat();
-        }
-    );
-
-
-/* =========================================================
-   ANIMATION LOOP
-   ========================================================= */
+/* ---------- MAIN LOOP ---------- */
 
 function animate(){
 
-    requestAnimationFrame(
-        animate
+  requestAnimationFrame(animate);
+
+  const dt=
+    Math.min(
+      clock.getDelta(),
+      .05
     );
 
-    const delta=
-        Math.min(
-            gameClock.getDelta(),
-            .05
-        );
+  if(running&&!paused){
 
-    if(gameStarted && !paused){
+    movePlayer(dt);
 
-        updateUser(delta);
+    updateAI(dt);
 
-        updateDribble();
+    updateBall();
 
-        updateAI(delta);
+    updateGameClock(dt);
 
-        updateClock(delta);
+    updateShotMeter(dt);
 
-        updateCamera();
+    updateCamera();
+  }
 
-        updateHUD();
-
-    }
-
-    renderer.render(
-        scene,
-        camera
-    );
-
+  renderer.render(
+    scene,
+    camera
+  );
 }
 
+/* ---------- RESIZE ---------- */
 
-/* =========================================================
-   RESIZE
-   ========================================================= */
+window.addEventListener(
+  "resize",
+  ()=>{
 
-function resize(){
+    if(!camera||!renderer)return;
 
     camera.aspect=
-        innerWidth/innerHeight;
+      window.innerWidth/
+      window.innerHeight;
 
     camera.updateProjectionMatrix();
 
     renderer.setSize(
-        innerWidth,
-        innerHeight
+      window.innerWidth,
+      window.innerHeight
     );
+  }
+);
 
-}
+/* ---------- ELEMENT REFERENCES ---------- */
 
+const homeScoreEl=
+  document.getElementById("homeScore");
 
-/* =========================================================
-   INITIAL UI
-   ========================================================= */
+const awayScoreEl=
+  document.getElementById("awayScore");
 
-updatePreview();
+const quarterEl=
+  document.getElementById("quarter");
+
+const clockEl=
+  document.getElementById("clock");
+
+const gameMessage=
+  document.getElementById("gameMessage");
+
+const meter=
+  document.getElementById("meter");
+
+const staminaFill=
+  document.getElementById("staminaFill");
+
+/* ---------- START ---------- */
+
+loadData();
+
+showMenu();
 
 </script>
 
